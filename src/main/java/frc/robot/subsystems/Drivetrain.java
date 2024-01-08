@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.showNonessentialShuffleboardInfo;
 
 public class Drivetrain extends SubsystemBase {
+  final double WHEEL_DIAMETER = 7 + (3 / 8);
+  final double GEAR_RATIO = 1 / 8.45864661654;
 
   private DifferentialDrive drive;
 
@@ -41,7 +43,6 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getDistanceDrivenInInches() {
-    final double WHEEL_DIAMETER = 7 + (3 / 8);
     return getWheelRotations() * WHEEL_DIAMETER * Math.PI;
   }
 
@@ -118,8 +119,6 @@ public class Drivetrain extends SubsystemBase {
     frontLeftEnc = frontLeft.getEncoder();
     backRightEnc = backRight.getEncoder();
     backLeftEnc = backLeft.getEncoder();
-
-    final double GEAR_RATIO = 1 / 8.45864661654;
 
     frontRightEnc.setPositionConversionFactor(GEAR_RATIO);
     frontLeftEnc.setPositionConversionFactor(GEAR_RATIO);
