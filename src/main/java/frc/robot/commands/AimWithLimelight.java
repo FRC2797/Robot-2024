@@ -2,13 +2,14 @@ package frc.robot.commands;
 
 import static java.lang.Math.abs;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
 
 public class AimWithLimelight extends Command {
     final double TOLERANCE = 1;
-    final double SPEED = 0.2;
+    final double SPEED = 0.08;
     final private Drivetrain drivetrain;
     final private Limelight limelight;
 
