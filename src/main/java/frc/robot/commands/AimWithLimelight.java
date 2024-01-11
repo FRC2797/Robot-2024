@@ -16,7 +16,6 @@ public class AimWithLimelight extends Command {
         this.drivetrain = drivetrain;
         this.limelight = limelight;
         addRequirements(drivetrain);
-        withName("aim with limelight");
     }
 
     @Override
