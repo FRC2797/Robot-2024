@@ -5,8 +5,8 @@ import static edu.wpi.first.math.MathUtil.applyDeadband;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.controllers.CommandJoystick;
 import frc.robot.subsystems.Drivetrain;
 
 public class TeleopArcadeDrive extends Command {
