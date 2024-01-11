@@ -31,6 +31,11 @@ public class AimWithLimelight extends Command {
     }
 
     @Override
+    public void end(boolean interrupted) {
+        drivetrain.arcadeDrive(0, 0);
+    }
+
+    @Override
     public boolean isFinished() {
         return abs(limelight.getHorizontalOffset()) < TOLERANCE;
     }
