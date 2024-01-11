@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.showNonessentialShuffleboardInfo;
 
 public class Drivetrain extends SubsystemBase {
-  final double WHEEL_DIAMETER = 7 + (3 / 8);
+  final double WHEEL_DIAMETER = 8;
   final double GEAR_RATIO = 1 / 8.45864661654;
 
   private DifferentialDrive drive;
@@ -39,7 +39,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getDistanceDrivenInInches() {
-    return getWheelRotations() * WHEEL_DIAMETER * Math.PI;
+    return getWheelRotations() * WHEEL_DIAMETER * Math.PI * -1;
   }
 
   public void arcadeDrive(double xSpeed, double rotation) {
