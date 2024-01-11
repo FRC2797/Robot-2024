@@ -18,15 +18,11 @@ public class Drivetrain extends SubsystemBase {
 
   private DifferentialDrive drive;
 
-  private CANSparkMax frontRight;
-  private CANSparkMax frontLeft;
-  private CANSparkMax backRight;
-  private CANSparkMax backLeft;
+  private CANSparkMax right;
+  private CANSparkMax left;
 
-  private RelativeEncoder frontRightEnc;
-  private RelativeEncoder frontLeftEnc;
-  private RelativeEncoder backRightEnc;
-  private RelativeEncoder backLeftEnc;
+  private RelativeEncoder rightEnc;
+  private RelativeEncoder leftEnc;
 
   public Drivetrain() {
 
@@ -37,9 +33,9 @@ public class Drivetrain extends SubsystemBase {
   }
 
   private double getWheelRotations() {
-    double total = +(frontRightEnc.getPosition() * -1) + (backRightEnc.getPosition() * -1);
+    double total = +(rightEnc.getPosition() * -1);
 
-    return total / 2;
+    return total;
   }
 
   public double getDistanceDrivenInInches() {
@@ -57,24 +53,18 @@ public class Drivetrain extends SubsystemBase {
   }
 
   private void setMotorsToBrake() {
-    frontRight.setIdleMode(IdleMode.kBrake);
-    frontLeft.setIdleMode(IdleMode.kBrake);
-    backRight.setIdleMode(IdleMode.kBrake);
-    backLeft.setIdleMode(IdleMode.kBrake);
+    right.setIdleMode(IdleMode.kBrake);
+    left.setIdleMode(IdleMode.kBrake);
   }
 
   private void setMotorsToCoast() {
-    frontRight.setIdleMode(IdleMode.kCoast);
-    frontLeft.setIdleMode(IdleMode.kCoast);
-    backRight.setIdleMode(IdleMode.kCoast);
-    backLeft.setIdleMode(IdleMode.kCoast);
+    right.setIdleMode(IdleMode.kCoast);
+    left.setIdleMode(IdleMode.kCoast);
   }
 
   public void resetEncoders() {
-    frontRightEnc.setPosition(0);
-    frontLeftEnc.setPosition(0);
-    backRightEnc.setPosition(0);
-    backLeftEnc.setPosition(0);
+    rightEnc.setPosition(0);
+    leftEnc.setPosition(0);
   }
 
   private void setUpShuffleboard() {
@@ -84,46 +74,31 @@ public class Drivetrain extends SubsystemBase {
     tab.add(drive);
     tab.addDouble("Distance drive in inches", this::getDistanceDrivenInInches);
     tab.addDouble("Get wheel rotations", this::getWheelRotations);
-    tab.addDouble("Front Left Encoder get position", frontLeftEnc::getPosition);
-    tab.addDouble("Front Right Encoder get position", frontRightEnc::getPosition);
-    tab.addDouble("Back Left Encoder get position", backLeftEnc::getPosition);
-    tab.addDouble("Back Right Encoder get position", backRightEnc::getPosition);
+    tab.addDouble("Right Encoder get position", rightEnc::getPosition);
+    tab.addDouble("Left Encoder get position", leftEnc::getPosition);
   }
 
   private void configureMotorControllersAndDrivetrain() {
-    final int FRONT_RIGHT = 3;
-    final int BACK_RIGHT = 1;
-    final int FRONT_LEFT = 4;
-    final int BACK_LEFT = 2;
+    final int RIGHT = 1;
+    final int LEFT = 2;
 
-    frontRight = new CANSparkMax(FRONT_RIGHT, kBrushless);
-    frontLeft = new CANSparkMax(FRONT_LEFT, kBrushless);
-    backRight = new CANSparkMax(BACK_RIGHT, kBrushless);
-    backLeft = new CANSparkMax(BACK_LEFT, kBrushless);
+    right = new CANSparkMax(RIGHT, kBrushless);
+    left = new CANSparkMax(LEFT, kBrushless);
 
-    MotorControllerGroup leftMotors = new MotorControllerGroup(frontLeft, backLeft);
-    MotorControllerGroup rightMotors = new MotorControllerGroup(frontRight, backRight);
-    rightMotors.setInverted(true);
-    frontRight.setInverted(false);
-    frontLeft.setInverted(false);
-    backRight.setInverted(false);
-    backLeft.setInverted(false);
+    right.setInverted(true);
+    left.setInverted(false);
 
-    drive = new DifferentialDrive(leftMotors, rightMotors);
+    drive = new DifferentialDrive(left, right);
     drive.setDeadband(0);
     setMotorsToCoast();
   }
 
   private void configureEncoders() {
-    frontRightEnc = frontRight.getEncoder();
-    frontLeftEnc = frontLeft.getEncoder();
-    backRightEnc = backRight.getEncoder();
-    backLeftEnc = backLeft.getEncoder();
+    rightEnc = right.getEncoder();
+    leftEnc = left.getEncoder();
 
-    frontRightEnc.setPositionConversionFactor(GEAR_RATIO);
-    frontLeftEnc.setPositionConversionFactor(GEAR_RATIO);
-    backRightEnc.setPositionConversionFactor(GEAR_RATIO);
-    backLeftEnc.setPositionConversionFactor(GEAR_RATIO);
+    rightEnc.setPositionConversionFactor(GEAR_RATIO);
+    leftEnc.setPositionConversionFactor(GEAR_RATIO);
     resetEncoders();
   }
 }
