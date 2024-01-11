@@ -12,6 +12,13 @@ public class AimWithLimelight extends Command {
     final private Drivetrain drivetrain;
     final private Limelight limelight;
 
+    public AimWithLimelight(Drivetrain drivetrain, Limelight limelight) {
+        this.drivetrain = drivetrain;
+        this.limelight = limelight;
+        addRequirements(drivetrain);
+        withName("aim with limelight");
+    }
+
     @Override
     public void execute() {
         double horizontalOffset = limelight.getHorizontalOffset();
@@ -26,12 +33,5 @@ public class AimWithLimelight extends Command {
     @Override
     public boolean isFinished() {
         return abs(limelight.getHorizontalOffset()) < TOLERANCE;
-    }
-
-    public AimWithLimelight(Drivetrain drivetrain, Limelight limelight) {
-        this.drivetrain = drivetrain;
-        this.limelight = limelight;
-        addRequirements(drivetrain);
-        withName("aim with limelight");
     }
 }
