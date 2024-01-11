@@ -5,11 +5,12 @@ import static edu.wpi.first.math.MathUtil.applyDeadband;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Drivetrain;
 
 public class TeleopArcadeDrive extends Command {
-    private CommandXboxController controller;
+    private CommandJoystick joystick;
     private Drivetrain drivetrain;
 
     private static double transformStickInput(double stickInput) {
@@ -32,20 +33,19 @@ public class TeleopArcadeDrive extends Command {
 
     @Override
     public void execute() {
-        double leftY = controller.getLeftY();
-        double rightX = controller.getRightX();
-        double transformedLeftY = transformStickInput(leftY);
-        double transformedRightX = transformStickInput(rightX);
+        double Y = joystick.getY();
+        double X = joystick.getX();
+        double transformedY = transformStickInput(Y);
+        double transformedX = transformStickInput(X);
 
         drivetrain.arcadeDrive(
-                forwardLimiter.calculate(transformedLeftY),
-                transformedRightX);
+                forwardLimiter.calculate(transformedY),
+                transformedX);
     }
 
-    public TeleopArcadeDrive(Drivetrain drivetrain, CommandXboxController controller) {
+    public TeleopArcadeDrive(Drivetrain drivetrain, CommandJoystick joystick) {
         this.drivetrain = drivetrain;
-        this.controller = controller;
+        this.joystick = joystick;
         addRequirements(drivetrain);
-        withName("Teleop Arcade Drive");
     }
 }
