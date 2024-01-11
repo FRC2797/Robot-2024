@@ -6,19 +6,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 
 public class DriveDistance extends Command {
-    private double inches;
     private Drivetrain drivetrain;
+    private double distanceToDrive;
 
     final double PROP_TERM = 0.004;
-    final double MIN_TERM = inches > 0 ? 0.05 : -0.05;
-    final double distanceToDrive = inches;
+    final double MIN_TERM;
 
-    public DriveDistance(double inches, Drivetrain drivetrain) {
-        this.inches = inches;
+    public DriveDistance(double distanceToDrive, Drivetrain drivetrain) {
+        this.distanceToDrive = distanceToDrive;
         this.drivetrain = drivetrain;
+        this.MIN_TERM = distanceToDrive > 0 ? 0.05 : -0.05;
         addRequirements(drivetrain);
-
-        withName("Drive " + inches + " inches");
     }
 
     @Override
@@ -36,8 +34,13 @@ public class DriveDistance extends Command {
     }
 
     @Override
-    public boolean isFinished() {
-        return abs(drivetrain.getDistanceDrivenInInches()) > abs(inches);
+    public void end(boolean interrupted) {
+        drivetrain.arcadeDrive(0, 0);
+        drivetrain.resetEncoders();
     }
 
+    @Override
+    public boolean isFinished() {
+        return abs(drivetrain.getDistanceDrivenInInches()) > abs(distanceToDrive);
+    }
 }
