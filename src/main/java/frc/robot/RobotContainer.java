@@ -6,9 +6,9 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.commands.AimWithLimelight;
 import frc.robot.commands.TeleopArcadeDrive;
+import frc.robot.controllers.CommandJoystick;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
 
@@ -23,6 +23,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     drivetrain.setDefaultCommand(new TeleopArcadeDrive(drivetrain, joystick));
+    joystick.five.toggleOnTrue(new AimWithLimelight(drivetrain, limelight));
   }
 
   public Command getAutonomousCommand() {
