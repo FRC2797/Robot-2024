@@ -25,6 +25,7 @@ public class Limelight extends SubsystemBase {
 
   public Limelight() {
     Shuffleboard.getTab("Driver").addBoolean("Has Target", this::hasTarget);
+    Shuffleboard.getTab("Limelight").addDouble("horizontal offset", this::getHorizontalOffset);
   }
 
   private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
