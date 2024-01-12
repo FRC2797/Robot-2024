@@ -25,8 +25,6 @@ public class DriveRotation extends Command {
 
         this.drivetrain = drivetrain;
         addRequirements(navx, drivetrain);
-
-        withName("rotate " + degreesToRotate);
     }
 
     @Override
