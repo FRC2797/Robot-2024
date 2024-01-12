@@ -10,11 +10,11 @@ import frc.robot.subsystems.Navx;
 public class DriveRotation extends Command {
     private final double PROP_TERM = 0.004;
     private final double MIN_TERM = 0.1;
-    private final double TOLERANCE = 1;
 
     private final Drivetrain drivetrain;
 
     final double degreesToRotate;
+    double degreesRotated;
     private double initialYaw;
 
     private Navx navx;
@@ -26,7 +26,7 @@ public class DriveRotation extends Command {
         this.drivetrain = drivetrain;
         addRequirements(navx, drivetrain);
     }
-
+//Command to for rotation
     @Override
     public void initialize() {
         initialYaw = navx.getYaw();
@@ -34,16 +34,28 @@ public class DriveRotation extends Command {
 
     @Override
     public void execute() {
-        double distanceRotated = navx.getYaw() - initialYaw;
-        double error = degreesToRotate - distanceRotated;
+        degreesRotated = navx.getYaw() - initialYaw;
+        double error = degreesToRotate - degreesRotated;
         double speed = (error * PROP_TERM) + MIN_TERM * signum(error);
 
         drivetrain.arcadeDrive(0, speed);
     }
 
     @Override
+    public void end(boolean interrupted) {
+        drivetrain.arcadeDrive(0, 0);
+    }
+
+    @Override
     public boolean isFinished() {
-        return abs(navx.getYaw() - initialYaw) < TOLERANCE;
+      if(degreesRotated > degreesToRotate)
+      {
+        return true;
+      }
+      else 
+      {
+        return false;
+      }
     }
 
 }

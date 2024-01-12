@@ -4,22 +4,26 @@
 
 package frc.robot;
 
+import edu.wpi.first.hal.communication.NIRioStatus;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.Navx;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+  private Navx navx = new Navx();
 
   @Override
   public void robotInit() {
-    m_robotContainer = new RobotContainer();
+    // m_robotContainer = new RobotContainer();
   }
 
   @Override
   public void robotPeriodic() {
+    System.out.println(navx.getPitch());
     CommandScheduler.getInstance().run();
   }
 
