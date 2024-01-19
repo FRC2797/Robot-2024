@@ -24,7 +24,7 @@ public class RobotContainer {
 
   SwerveJoystick joystickTeleCommand = new SwerveJoystick(
     drivetrain,
-    controller::getLeftY,
+    () -> controller.getLeftY() * -1,
     controller::getLeftX,
     controller::getRightX,
     () -> true
