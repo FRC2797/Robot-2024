@@ -40,28 +40,7 @@ public class SwerveDrivetrain extends SubsystemBase {
             DriveConstants.kBackRightTurningEncoderReversed
             );
 
-    private final AHRS gyro = new AHRS(SPI.Port.kMXP);
-
     public SwerveDrivetrain() {
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                zeroHeading();
-            } catch (Exception e) {
-            }
-        }).start();
-    }
-
-    public void zeroHeading() {
-        gyro.reset();
-    }
-
-    public double getHeading() {
-        return Math.IEEEremainder(gyro.getAngle(), 360);
-    }
-
-    public Rotation2d getRotation2d() {
-        return Rotation2d.fromDegrees(getHeading());
     }
 
     public void stopModules() {

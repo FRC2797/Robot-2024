@@ -14,9 +14,11 @@ import frc.robot.commands.TeleopArcadeDrive;
 import frc.robot.controllers.CommandJoystick;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Navx;
 import frc.robot.subsystems.SwerveDrivetrain;
 
 public class RobotContainer {
+  Navx navx = new Navx();
   SwerveDrivetrain drivetrain = new SwerveDrivetrain();
   Limelight limelight = new Limelight();
   CommandJoystick joystick = new CommandJoystick(0);
@@ -24,6 +26,7 @@ public class RobotContainer {
 
   SwerveJoystick joystickTeleCommand = new SwerveJoystick(
     drivetrain,
+    navx,
     () -> controller.getLeftY() * -1,
     controller::getLeftX,
     controller::getRightX,
