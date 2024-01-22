@@ -24,7 +24,8 @@ public class SwerveModule {
 
     private final PIDController turningPidController;
 
-    public SwerveModule(int driveMotorId, int turningMotorId, boolean driveMotorReversed, boolean turningMotorReversed) {
+    public SwerveModule(int driveMotorId, int turningMotorId, boolean driveMotorReversed,
+            boolean turningMotorReversed) {
 
         driveMotor = new CANSparkMax(driveMotorId, MotorType.kBrushless);
         turningMotor = new CANSparkMax(turningMotorId, MotorType.kBrushless);
@@ -48,7 +49,7 @@ public class SwerveModule {
         resetEncoders();
 
         ShuffleboardTab swerveDriveMotors = Shuffleboard.getTab("Swerve Drive Motors");
-        swerveDriveMotors.addDouble("ID: " + driveMotorId + " Angle in degrees", () -> getState().angle.getDegrees() );
+        swerveDriveMotors.addDouble("ID: " + driveMotorId + " Angle in degrees", () -> getState().angle.getDegrees());
     }
 
     public double getDrivePosition() {
@@ -69,7 +70,7 @@ public class SwerveModule {
 
     public void resetEncoders() {
         driveEncoder.setPosition(0);
-        //TODO: This will be set the absolute value encoder once we have it
+        // TODO: This will be set the absolute value encoder once we have it
         turningEncoder.setPosition(0);
     }
 
@@ -84,7 +85,7 @@ public class SwerveModule {
         }
         state = SwerveModuleState.optimize(state, getState().angle);
         driveMotor.set(state.speedMetersPerSecond / ModuleConstants.kPhysicalMaxSpeedMetersPerSecond);
-        double pidCalculation = turningPidController.calculate(getTurningPosition(), state.angle.getRadians()); 
+        double pidCalculation = turningPidController.calculate(getTurningPosition(), state.angle.getRadians());
         turningMotor.set(pidCalculation);
     }
 
