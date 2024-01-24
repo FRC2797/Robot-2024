@@ -19,7 +19,7 @@ import frc.robot.subsystems.SwerveDrivetrain;
 
 public class RobotContainer {
   Navx navx = new Navx();
-  SwerveDrivetrain drivetrain = new SwerveDrivetrain();
+  SwerveDrivetrain drivetrain = new SwerveDrivetrain(navx);
   Limelight limelight = new Limelight();
   CommandJoystick joystick = new CommandJoystick(0);
   CommandXboxController controller = new CommandXboxController(0);
