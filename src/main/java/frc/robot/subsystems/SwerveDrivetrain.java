@@ -1,11 +1,12 @@
 package frc.robot.subsystems;
 
-import com.kauailabs.navx.frc.AHRS;
-
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
@@ -40,7 +41,56 @@ public class SwerveDrivetrain extends SubsystemBase {
             DriveConstants.kBackRightTurningEncoderReversed
             );
 
-    public SwerveDrivetrain() {
+    private final Navx navx;
+    private final SwerveDriveOdometry odometer; 
+    private final ShuffleboardTab tab = Shuffleboard.getTab("SwerveDrivetrain");
+
+    public SwerveDrivetrain(Navx navx) {
+        this.navx = navx;
+
+        SwerveModulePosition[] initialPositions = {
+            frontLeft.getPosition(),
+            frontRight.getPosition(),
+            backLeft.getPosition(),
+            backRight.getPosition()
+        };
+
+        this.odometer = new SwerveDriveOdometry(
+            DriveConstants.kDriveKinematics,
+            navx.getRotation2d(),
+            initialPositions
+        );
+    }
+
+    @Override
+    public void periodic() {
+        SwerveModulePosition[] positions = {
+            frontLeft.getPosition(),
+            frontRight.getPosition(),
+            backLeft.getPosition(),
+            backRight.getPosition()
+        };
+
+        odometer.update(
+            navx.getRotation2d(),
+            positions
+        );
+
+        tab.add("Robot Location", getPose().getTranslation().toString());
+    }
+
+    public Pose2d getPose() {
+        return odometer.getPoseMeters();
+    }
+
+    public void resetOdometry(Pose2d pose) {
+        SwerveModulePosition[] positions = {
+            frontLeft.getPosition(),
+            frontRight.getPosition(),
+            backLeft.getPosition(),
+            backRight.getPosition()
+        };
+        odometer.resetPosition(navx.getRotation2d(), positions, pose);
     }
 
     public void stopModules() {
