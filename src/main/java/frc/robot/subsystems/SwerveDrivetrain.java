@@ -104,4 +104,13 @@ public class SwerveDrivetrain extends SubsystemBase {
         SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
         setModuleStates(moduleStates);
     }
+
+    public double getDistanceDrivenInMeters() {
+        return (
+            frontLeft.getDrivePosition()
+            + frontRight.getDrivePosition()
+            + backLeft.getDrivePosition()
+            + backRight.getDrivePosition()
+        ) / 4;
+    }
 }
