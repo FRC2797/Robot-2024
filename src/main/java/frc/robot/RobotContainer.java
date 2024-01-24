@@ -4,15 +4,18 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.AimWithLimelight;
 import frc.robot.commands.SwerveJoystick;
-import frc.robot.commands.TeleopArcadeDrive;
+import frc.robot.commands.autos.MiddleAuto;
+import frc.robot.commands.autos.SideAuto;
 import frc.robot.controllers.CommandJoystick;
-import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Navx;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -23,6 +26,8 @@ public class RobotContainer {
   Limelight limelight = new Limelight();
   CommandJoystick joystick = new CommandJoystick(0);
   CommandXboxController controller = new CommandXboxController(0);
+  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+
 
   SwerveJoystick joystickTeleCommand = new SwerveJoystick(
     drivetrain,
@@ -36,13 +41,22 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
+    configureDriverShuffleboard();
   }
 
   private void configureBindings() {
     drivetrain.setDefaultCommand(joystickTeleCommand);
   }
 
+  private void configureDriverShuffleboard() {
+    ShuffleboardTab driverTab = Shuffleboard.getTab("Driver");
+    driverTab.add(autoChooser);
+
+    autoChooser.addOption("Middle Auto", new MiddleAuto(drivetrain, limelight));
+    autoChooser.addOption("Sideways Auto", new SideAuto(drivetrain, limelight));
+  }
+
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return autoChooser.getSelected();
   }
 }
