@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -54,6 +55,9 @@ public class RobotContainer {
 
     autoChooser.addOption("Middle Auto", new MiddleAuto(drivetrain, limelight));
     autoChooser.addOption("Sideways Auto", new SideAuto(drivetrain, limelight));
+
+    driverTab.addBoolean("Has Target To Aim", limelight::hasTarget);
+    driverTab.add(CameraServer.startAutomaticCapture());
   }
 
   public Command getAutonomousCommand() {
