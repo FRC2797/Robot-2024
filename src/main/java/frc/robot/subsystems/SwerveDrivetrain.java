@@ -48,32 +48,18 @@ public class SwerveDrivetrain extends SubsystemBase {
     public SwerveDrivetrain(Navx navx) {
         this.navx = navx;
 
-        SwerveModulePosition[] initialPositions = {
-            frontLeft.getPosition(),
-            frontRight.getPosition(),
-            backLeft.getPosition(),
-            backRight.getPosition()
-        };
-
         this.odometer = new SwerveDriveOdometry(
             DriveConstants.kDriveKinematics,
             navx.getRotation2d(),
-            initialPositions
+            getPositions()
         );
     }
 
     @Override
     public void periodic() {
-        SwerveModulePosition[] positions = {
-            frontLeft.getPosition(),
-            frontRight.getPosition(),
-            backLeft.getPosition(),
-            backRight.getPosition()
-        };
-
         odometer.update(
             navx.getRotation2d(),
-            positions
+            getPositions()
         );
 
         tab.add("Robot Location", getPose().getTranslation().toString());
@@ -84,13 +70,17 @@ public class SwerveDrivetrain extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
+        odometer.resetPosition(navx.getRotation2d(), getPositions(), pose);
+    }
+
+    private SwerveModulePosition[] getPositions() {
         SwerveModulePosition[] positions = {
             frontLeft.getPosition(),
             frontRight.getPosition(),
             backLeft.getPosition(),
             backRight.getPosition()
         };
-        odometer.resetPosition(navx.getRotation2d(), positions, pose);
+        return positions; 
     }
 
     public void stopModules() {
