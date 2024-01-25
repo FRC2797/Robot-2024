@@ -38,12 +38,12 @@ public class Constants {
         new Translation2d(-kWheelBase / 2, -kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, kTrackWidth / 2));
 
-    public static final int kFrontLeftDriveMotorPort = 7;
+    public static final int kFrontLeftDriveMotorPort = 8;
     public static final int kBackLeftDriveMotorPort = 2;
     public static final int kFrontRightDriveMotorPort = 6;
     public static final int kBackRightDriveMotorPort = 4;
 
-    public static final int kFrontLeftTurningMotorPort = 8;
+    public static final int kFrontLeftTurningMotorPort = 7;
     public static final int kBackLeftTurningMotorPort = 1;
     public static final int kFrontRightTurningMotorPort = 5;
     public static final int kBackRightTurningMotorPort = 3;
