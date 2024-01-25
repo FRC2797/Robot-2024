@@ -2,6 +2,9 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import static frc.robot.Constants.showNonessentialShuffleboardInfo;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
@@ -24,6 +27,8 @@ public class SwerveModule {
     private final RelativeEncoder turningEncoder;
 
     private final PIDController turningPidController;
+
+    ShuffleboardTab tab = Shuffleboard.getTab("Swerve Drive Motors");
 
     public SwerveModule(int driveMotorId, int turningMotorId, boolean driveMotorReversed,
             boolean turningMotorReversed) {
@@ -49,8 +54,14 @@ public class SwerveModule {
 
         resetEncoders();
 
-        ShuffleboardTab swerveDriveMotors = Shuffleboard.getTab("Swerve Drive Motors");
-        swerveDriveMotors.addDouble("ID: " + driveMotorId + " Angle in degrees", () -> getState().angle.getDegrees());
+        if (showNonessentialShuffleboardInfo) {
+            String moduleName = "D: " + driveMotorId + " T: " + turningMotorId;
+            tab.addDouble(moduleName + " Angle in degrees", () -> getState().angle.getDegrees());
+            tab.addDouble(moduleName + " Drive Position", this::getDrivePosition);
+            tab.addDouble(moduleName + " Turning Position", this::getTurningPosition);
+            tab.addDouble(moduleName + " Drive Velocity", this::getDriveVelocity);
+            tab.addDouble(moduleName + "Turning Velocity", this::getTurningVelocity);
+        }
     }
 
     public double getDrivePosition() {

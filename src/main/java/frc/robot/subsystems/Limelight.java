@@ -1,17 +1,20 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
+import static frc.robot.Constants.showNonessentialShuffleboardInfo;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Limelight extends SubsystemBase {
   private final int ENTRY_NOT_FOUND = -9999;
 
+  ShuffleboardTab tab = Shuffleboard.getTab("Limelight");
   public enum Pipeline {
     placeholder(0),
     anotherPlaceholder(1);
@@ -25,7 +28,10 @@ public class Limelight extends SubsystemBase {
 
   public Limelight() {
     Shuffleboard.getTab("Driver").addBoolean("Has Target", this::hasTarget);
-    Shuffleboard.getTab("Limelight").addDouble("horizontal offset", this::getHorizontalOffset);
+    if (showNonessentialShuffleboardInfo) {
+        tab.addDouble("horizontal offset", this::getHorizontalOffset);
+        tab.addBoolean("Has Target", this::hasTarget);
+    }
   }
 
   private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");

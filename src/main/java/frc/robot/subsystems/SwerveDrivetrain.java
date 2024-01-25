@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.showNonessentialShuffleboardInfo;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -54,6 +56,10 @@ public class SwerveDrivetrain extends SubsystemBase {
             navx.getRotation2d(),
             getPositions()
         );
+
+        if (showNonessentialShuffleboardInfo) {
+            tab.addDouble("Distance Driven in meters ", this::getDistanceDrivenInMeters);
+        }
     }
 
     @Override
@@ -63,7 +69,8 @@ public class SwerveDrivetrain extends SubsystemBase {
             getPositions()
         );
 
-        tab.add("Robot Location", getPose().getTranslation().toString());
+        if (showNonessentialShuffleboardInfo)
+            tab.add("Robot Location", getPose().getTranslation().toString());
     }
 
     public Pose2d getPose() {
