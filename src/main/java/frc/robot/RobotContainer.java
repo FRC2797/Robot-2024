@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import static edu.wpi.first.wpilibj2.command.Commands.run;
+import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -12,7 +15,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.DriveDistance;
+import frc.robot.commands.DriveRotation;
 import frc.robot.commands.SwerveJoystick;
 import frc.robot.commands.autos.MiddleAuto;
 import frc.robot.commands.autos.SideAuto;
@@ -27,6 +34,7 @@ public class RobotContainer {
   Limelight limelight = new Limelight();
   CommandJoystick joystick = new CommandJoystick(0);
   CommandXboxController controller = new CommandXboxController(0);
+  ShuffleboardTab commandsTab = Shuffleboard.getTab("Commands");
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
 
@@ -55,9 +63,17 @@ public class RobotContainer {
 
     autoChooser.addOption("Middle Auto", new MiddleAuto(drivetrain, limelight));
     autoChooser.addOption("Sideways Auto", new SideAuto(drivetrain, limelight));
+    autoChooser.addOption("Move Forward a meter", new DriveDistance(1, drivetrain));
+
+    autoChooser.addOption("Rotate 360deg", new DriveRotation(360, navx, drivetrain));
+
+    Command realignWheelsForward = run(() -> drivetrain.arcadeDrive(0.1, 0), drivetrain).finallyDo((boolean isInterrupted) -> drivetrain.stopModules()).withTimeout(0.3);
+    commandsTab.add(realignWheelsForward.withName("Realign wheels Forward"));
 
     driverTab.addBoolean("Has Target To Aim", limelight::hasTarget);
-    driverTab.add(CameraServer.startAutomaticCapture());
+    if (false) {
+      driverTab.add(CameraServer.startAutomaticCapture());
+    }
   }
 
   public Command getAutonomousCommand() {
