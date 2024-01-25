@@ -10,8 +10,8 @@ public class DriveDistance extends Command {
     private SwerveDrivetrain drivetrain;
     private double distanceToDriveInMeters;
 
-    final double PROP_TERM = 0.004;
-    final double TOLERANCE = 0.2;
+    final double PROP_TERM = 0.8;
+    final double TOLERANCE = 0.05;
     final double MIN_TERM;
 
     private double distanceAlreadyDriven = 0;
@@ -20,7 +20,7 @@ public class DriveDistance extends Command {
     public DriveDistance(double distanceToDriveInMeters, SwerveDrivetrain drivetrain) {
         this.distanceToDriveInMeters = distanceToDriveInMeters;
         this.drivetrain = drivetrain;
-        this.MIN_TERM = distanceToDriveInMeters > 0 ? 0.05 : -0.05;
+        this.MIN_TERM = distanceToDriveInMeters > 0 ? 0.25 : -0.25;
         addRequirements(drivetrain);
     }
 
