@@ -5,7 +5,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
-  public static boolean showNonessentialShuffleboardInfo = false;
+  public static boolean showNonessentialShuffleboardInfo = true;
 
   public static final class ModuleConstants {
     // Need to update wheelDiameter
