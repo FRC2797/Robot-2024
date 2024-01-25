@@ -59,6 +59,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 
         if (showNonessentialShuffleboardInfo) {
             tab.addDouble("Distance Driven in meters ", this::getDistanceDrivenInMeters);
+            tab.addString("Robot Location", () -> getPose().getTranslation().toString());
         }
     }
 
@@ -68,9 +69,6 @@ public class SwerveDrivetrain extends SubsystemBase {
             navx.getRotation2d(),
             getPositions()
         );
-
-        if (showNonessentialShuffleboardInfo)
-            tab.add("Robot Location", getPose().getTranslation().toString());
     }
 
     public Pose2d getPose() {
