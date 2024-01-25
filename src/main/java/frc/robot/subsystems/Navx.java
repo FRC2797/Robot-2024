@@ -44,6 +44,10 @@ public class Navx extends SubsystemBase {
     return ahrs.getYaw();
   }
 
+  public double getAngle() {
+    return ahrs.getAngle();
+  }
+
   public void zeroHeading() {
     ahrs.reset();
   }
