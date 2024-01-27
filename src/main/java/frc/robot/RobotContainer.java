@@ -31,7 +31,7 @@ import frc.robot.subsystems.SwerveDrivetrain;
 
 public class RobotContainer {
   Navx navx = new Navx();
-  SwerveDrivetrain drivetrain = new SwerveDrivetrain(navx);
+  SwerveDrivetrain drivetrain = new SwerveDrivetrain();
   Limelight limelight = new Limelight();
   CommandJoystick joystick = new CommandJoystick(0);
   CommandXboxController controller = new CommandXboxController(0);
@@ -68,7 +68,7 @@ public class RobotContainer {
 
     autoChooser.addOption("Rotate 360deg", new DriveRotation(360, navx, drivetrain));
 
-    Command realignWheelsForward = run(() -> drivetrain.arcadeDrive(0.1, 0), drivetrain).finallyDo((boolean isInterrupted) -> drivetrain.stopModules()).withTimeout(0.3);
+    Command realignWheelsForward = run(() -> drivetrain.arcadeDrive(0.1, 0), drivetrain).withTimeout(0.3);
     commandsTab.add(realignWheelsForward.withName("Realign wheels Forward"));
 
     Command moveForwardAndComeBack = sequence(

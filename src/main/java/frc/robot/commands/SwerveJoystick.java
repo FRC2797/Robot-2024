@@ -68,16 +68,11 @@ public class SwerveJoystick extends Command {
             chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
         }
 
-        // 5. Convert chassis speeds to individual module states
-        SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
-
-        // 6. Output each module states to wheels
-        swerveDrivetrain.setModuleStates(moduleStates);
+        swerveDrivetrain.drive(chassisSpeeds);
     }
 
     @Override
     public void end(boolean interrupted) {
-        swerveDrivetrain.stopModules();
     }
 
     @Override
