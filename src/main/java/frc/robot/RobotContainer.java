@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.wpilibj2.command.Commands.run;
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
+import static edu.wpi.first.wpilibj2.command.Commands.sequence;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -69,6 +70,18 @@ public class RobotContainer {
 
     Command realignWheelsForward = run(() -> drivetrain.arcadeDrive(0.1, 0), drivetrain).finallyDo((boolean isInterrupted) -> drivetrain.stopModules()).withTimeout(0.3);
     commandsTab.add(realignWheelsForward.withName("Realign wheels Forward"));
+
+    Command moveForwardAndComeBack = sequence(
+      new DriveDistance(2, drivetrain),
+      new DriveRotation(180, navx, drivetrain),
+      new DriveDistance(2, drivetrain)
+    ).withName("Move Forward and come back");
+
+    autoChooser.addOption("Move forward and come back", moveForwardAndComeBack);
+
+    Command moveBackward = new DriveDistance(-1, drivetrain).withName("Move Backward");
+
+    autoChooser.addOption("Move backward", moveBackward);
 
     driverTab.addBoolean("Has Target To Aim", limelight::hasTarget);
     if (false) {
