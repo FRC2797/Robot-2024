@@ -7,30 +7,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.controllers.MidiDevice.MidiController;
 
 public class Robot extends TimedRobot {
-  RobotContainer robotContainer = new RobotContainer();
+  // RobotContainer robotContainer = new RobotContainer();
   @Override
-  public void robotInit() {
-  }
-
-  @Override
-  public void robotPeriodic() {
-    CommandScheduler.getInstance().run();
-  }
-
-  @Override
-  public void autonomousInit() {
-    Command auto = robotContainer.getAutonomousCommand();
-    if (auto == null) {
-      System.out.println("No Auto command selected");
-    } else {
-        robotContainer.getAutonomousCommand().schedule();
-    }
-  }
-
-  @Override
-  public void autonomousExit() {
-    CommandScheduler.getInstance().cancelAll();
+  public void testInit() {
+    new MidiController();
   }
 }
