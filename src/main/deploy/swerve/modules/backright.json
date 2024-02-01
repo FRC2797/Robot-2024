@@ -10,7 +10,7 @@
       "canbus": null
     },
     "angle": {
-      "type": "sparkflex",
+      "type": "sparkmax",
       "id": 3,
       "canbus": null
     },
