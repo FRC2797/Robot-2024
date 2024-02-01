@@ -24,15 +24,9 @@ public class Robot extends TimedRobot {
     Preferences.initDouble("vy", 0);
     Preferences.initDouble("omega", 0);
 
-    // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
-    // objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try {
       swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve")).createSwerveDrive(5);
-      // Alternative method if you don't want to supply the conversion factor via JSON
-      // files.
-      // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed,
-      // angleConversionFactor, driveConversionFactor);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -46,28 +40,4 @@ public class Robot extends TimedRobot {
         Preferences.getDouble("vy", 0),
         Preferences.getDouble("omega", 0)));
   }
-  // RobotContainer robotContainer = new RobotContainer();
-  // @Override
-  // public void robotInit() {
-  // }
-
-  // @Override
-  // public void robotPeriodic() {
-  // CommandScheduler.getInstance().run();
-  // }
-
-  // @Override
-  // public void autonomousInit() {
-  // Command auto = robotContainer.getAutonomousCommand();
-  // if (auto == null) {
-  // System.out.println("No Auto command selected");
-  // } else {
-  // robotContainer.getAutonomousCommand().schedule();
-  // }
-  // }
-
-  // @Override
-  // public void autonomousExit() {
-  // CommandScheduler.getInstance().cancelAll();
-  // }
 }
