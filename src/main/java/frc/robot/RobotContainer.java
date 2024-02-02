@@ -43,8 +43,8 @@ public class RobotContainer {
     drivetrain,
     navx,
     () -> controller.getLeftY() * -1,
-    controller::getLeftX,
-    controller::getRightX,
+    () -> controller.getLeftX() * -1,
+    () -> controller.getRightX() * -1,
     () -> true
   );
 
