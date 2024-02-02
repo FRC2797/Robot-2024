@@ -9,6 +9,9 @@ import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import static edu.wpi.first.wpilibj2.command.Commands.sequence;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -61,16 +64,25 @@ public class RobotContainer {
   private void configureDriverShuffleboard() {
     ShuffleboardTab driverTab = Shuffleboard.getTab("Driver");
     driverTab.add(autoChooser);
+    setUpAutoChooser(autoChooser);
 
+
+    Command realignWheelsForward = run(() -> drivetrain.arcadeDrive(0.1, 0), drivetrain).withTimeout(0.3);
+    commandsTab.add(realignWheelsForward.withName("Realign wheels Forward"));
+
+
+    driverTab.addBoolean("Has Target To Aim", limelight::hasTarget);
+    if (false) {
+      driverTab.add(CameraServer.startAutomaticCapture());
+    }
+  }
+
+  private void setUpAutoChooser(SendableChooser<Command> autChooser) {
     autoChooser.addOption("Middle Auto", new MiddleAuto(drivetrain, limelight));
     autoChooser.addOption("Sideways Auto", new SideAuto(drivetrain, limelight));
     autoChooser.addOption("Move Forward a meter", new DriveDistance(1, drivetrain));
 
     autoChooser.addOption("Rotate 360deg", new DriveRotation(360, navx, drivetrain));
-
-    Command realignWheelsForward = run(() -> drivetrain.arcadeDrive(0.1, 0), drivetrain).withTimeout(0.3);
-    commandsTab.add(realignWheelsForward.withName("Realign wheels Forward"));
-
     Command moveForwardAndComeBack = sequence(
       new DriveDistance(2, drivetrain),
       new DriveRotation(180, navx, drivetrain),
@@ -83,10 +95,17 @@ public class RobotContainer {
 
     autoChooser.addOption("Move backward", moveBackward);
 
-    driverTab.addBoolean("Has Target To Aim", limelight::hasTarget);
-    if (false) {
-      driverTab.add(CameraServer.startAutomaticCapture());
-    }
+    autoChooser.addOption("Go to a pose 1 meter infront while being 180", drivetrain.driveToPose(
+      new Pose2d(
+        new Translation2d(
+          1,
+          0
+        ),
+        new Rotation2d(
+          Math.PI
+        )
+      )
+    ));
   }
 
   public Command getAutonomousCommand() {
