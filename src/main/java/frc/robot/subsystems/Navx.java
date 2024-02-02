@@ -27,6 +27,7 @@ public class Navx extends SubsystemBase {
       navxTab.addDouble("Current Pitch", this::getPitch);
       navxTab.addDouble("Current Roll", this::getRoll);
       navxTab.addDouble("Current Yaw", this::getYaw);
+      navxTab.addDouble("Continuous Heading", this::getContinuousHeading);
       navxTab.addBoolean("Is Calibrating", ahrs::isCalibrating);
     }
   }
@@ -41,6 +42,10 @@ public class Navx extends SubsystemBase {
 
   public double getYaw() {
     return ahrs.getYaw();
+  }
+
+  public double getAngle() {
+    return ahrs.getAngle();
   }
 
   public void zeroHeading() {

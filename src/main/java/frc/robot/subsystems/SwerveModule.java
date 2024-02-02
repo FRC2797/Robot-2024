@@ -2,11 +2,15 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import static frc.robot.Constants.showNonessentialShuffleboardInfo;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -24,7 +28,10 @@ public class SwerveModule {
 
     private final PIDController turningPidController;
 
-    public SwerveModule(int driveMotorId, int turningMotorId, boolean driveMotorReversed, boolean turningMotorReversed) {
+    ShuffleboardTab tab = Shuffleboard.getTab("Swerve Drive Motors");
+
+    public SwerveModule(int driveMotorId, int turningMotorId, boolean driveMotorReversed,
+            boolean turningMotorReversed) {
 
         driveMotor = new CANSparkMax(driveMotorId, MotorType.kBrushless);
         turningMotor = new CANSparkMax(turningMotorId, MotorType.kBrushless);
@@ -47,8 +54,14 @@ public class SwerveModule {
 
         resetEncoders();
 
-        ShuffleboardTab swerveDriveMotors = Shuffleboard.getTab("Swerve Drive Motors");
-        swerveDriveMotors.addDouble("ID: " + driveMotorId + " Angle in degrees", () -> getState().angle.getDegrees() );
+        if (showNonessentialShuffleboardInfo) {
+            String moduleName = "D: " + driveMotorId + " T: " + turningMotorId;
+            tab.addDouble(moduleName + " Angle in degrees", () -> getState().angle.getDegrees());
+            tab.addDouble(moduleName + " Drive Position", this::getDrivePosition);
+            tab.addDouble(moduleName + " Turning Position", this::getTurningPosition);
+            tab.addDouble(moduleName + " Drive Velocity", this::getDriveVelocity);
+            tab.addDouble(moduleName + "Turning Velocity", this::getTurningVelocity);
+        }
     }
 
     public double getDrivePosition() {
@@ -69,12 +82,16 @@ public class SwerveModule {
 
     public void resetEncoders() {
         driveEncoder.setPosition(0);
-        //TODO: This will be set the absolute value encoder once we have it
+        // TODO: This will be set the absolute value encoder once we have it
         turningEncoder.setPosition(0);
     }
 
     public SwerveModuleState getState() {
         return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getTurningPosition()));
+    }
+
+    public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(getDrivePosition(), new Rotation2d(getTurningPosition()));
     }
 
     public void setDesiredState(SwerveModuleState state, boolean ignoreLowSpeeds) {
@@ -84,7 +101,7 @@ public class SwerveModule {
         }
         state = SwerveModuleState.optimize(state, getState().angle);
         driveMotor.set(state.speedMetersPerSecond / ModuleConstants.kPhysicalMaxSpeedMetersPerSecond);
-        double pidCalculation = turningPidController.calculate(getTurningPosition(), state.angle.getRadians()); 
+        double pidCalculation = turningPidController.calculate(getTurningPosition(), state.angle.getRadians());
         turningMotor.set(pidCalculation);
     }
 
