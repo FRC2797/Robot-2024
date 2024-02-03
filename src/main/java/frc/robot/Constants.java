@@ -20,10 +20,6 @@ public class Constants {
     public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = 3;
   }
 
-  public static final class DriveConstants {
-
-  }
-
   public static final class OIConstants {
     public static final double kDeadband = 0.05;
   }
