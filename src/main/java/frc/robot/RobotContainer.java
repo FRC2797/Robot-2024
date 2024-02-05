@@ -124,6 +124,17 @@ public class RobotContainer {
         )
       )
     ));
+
+    autoChooser.addOption("Rotate 180 using canRotateFully", drivetrain.driveToPose(
+      new Pose2d(
+        new Translation2d(
+          0,
+          0),
+        new Rotation2d(
+          Math.PI)
+        ),
+        true
+      ));
   }
 
   public Command getAutonomousCommand() {
