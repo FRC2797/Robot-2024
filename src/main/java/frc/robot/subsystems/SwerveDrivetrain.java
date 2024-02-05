@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import java.io.File;
+import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -15,6 +16,7 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -28,12 +30,15 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
+
 import static edu.wpi.first.wpilibj2.command.Commands.*;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
+import swervelib.parser.PIDFConfig;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
@@ -162,6 +167,32 @@ public class SwerveDrivetrain extends SubsystemBase
         0.0, // Goal end velocity in meters/sec
         0.0 // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
                                      );
+  }
+
+  public Command driveToPose(Pose2d pose, boolean canFinishRotation) {
+    if (canFinishRotation) {
+      return driveToPose(pose).andThen(driveToRotation(pose.getRotation().getRadians()));
+    } else {
+      return driveToPose(pose);
+    }
+  }
+
+  public Command driveToRotation(double radians) {
+    PIDController controller = new PIDController(
+      swerveDrive.swerveController.config.headingPIDF.p,
+      swerveDrive.swerveController.config.headingPIDF.i,
+      swerveDrive.swerveController.config.headingPIDF.d
+    );
+
+    DoubleConsumer rotate = (output) -> swerveDrive.drive(new Translation2d(), output, false, false, new Translation2d());
+
+    return new PIDCommand(
+      controller,
+      () -> getPose().getRotation().getRadians(),
+      radians,
+      rotate,
+      this
+    );
   }
 
   /**
