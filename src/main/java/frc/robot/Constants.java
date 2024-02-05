@@ -6,6 +6,8 @@ import edu.wpi.first.math.util.Units;
 
 public class Constants {
   public static boolean showNonessentialShuffleboardInfo = true;
+  public static double kShooterLiftGearRatio = 1/9999999; 
+  public static double kShooterLiftMaxRotations = 0; 
 
   public static final class ModuleConstants {
     // Need to update wheelDiameter
