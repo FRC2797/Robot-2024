@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Limelight extends SubsystemBase {
   private final int ENTRY_NOT_FOUND = -9999;
@@ -41,6 +42,11 @@ public class Limelight extends SubsystemBase {
     return horizontalOffset.getDouble(ENTRY_NOT_FOUND);
   }
 
+  public double getVerticalOffset() {
+    NetworkTableEntry verticalOffset = table.getEntry("ty");
+    return verticalOffset.getDouble(ENTRY_NOT_FOUND);
+  }
+
   public boolean hasTarget() {
     NetworkTableEntry hasTarget = table.getEntry("tv");
     return hasTarget.getInteger(0) == 1 ? true : false;
@@ -52,5 +58,15 @@ public class Limelight extends SubsystemBase {
 
   public Command switchPipelineCommand(Pipeline pipeline) {
     return runOnce(() -> switchPipeline(pipeline)).andThen(waitSeconds(0.1));
+  }
+
+  public double getDistance() {
+    double angleToGoalDegrees = Constants.Limelight.mountingAngleDegrees + getVerticalOffset();
+    double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
+
+    //calculate distance
+    double distanceFromLimelightToGoalInches = (Constants.Limelight.goalHeightInches - Constants.Limelight.limelightLensHeightInches) / Math.tan(angleToGoalRadians);
+  
+    return distanceFromLimelightToGoalInches;
   }
 }

@@ -1,11 +1,27 @@
 package frc.robot;
 
-import com.pathplanner.lib.util.PIDConstants;
-
 public class Constants {
   public static boolean showNonessentialShuffleboardInfo = true;
   public static double kShooterLiftGearRatio = 1/9999999; 
   public static double kShooterLiftMaxRotations = 0; 
+
+  public static double kIntakeGearRatio = 1/999999;
+  public static double kShooterGearRatio = 1/999999;
+
+  public static double intakeDefaultRPM = 300;
+
+  public static final class Limelight {
+    // how many degrees back is your limelight rotated from perfectly vertical?
+    public static double mountingAngleDegrees = 10;
+
+    // distance from the center of the Limelight lens to the floor
+    public static double limelightLensHeightInches = 20.0;
+
+    // distance from the target to the floor
+    public static double goalHeightInches = 60.0; 
+
+    
+  }
 
   public static final class ModuleConstants {
     // Need to update wheelDiameter
