@@ -25,6 +25,7 @@ public class ShooterLift extends PIDSubsystem {
 
     ShuffleboardTab tab = Shuffleboard.getTab("ShooterLift");
 
+    // Should probably have a measurement using radians instead of 0 to 1 with 1 being perfectly vertical
     public ShooterLift() {
         super(getPidController());
 

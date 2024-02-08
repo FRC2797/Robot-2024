@@ -28,8 +28,10 @@ import frc.robot.commands.SwerveJoystick;
 import frc.robot.commands.autos.MiddleAuto;
 import frc.robot.commands.autos.SideAuto;
 import frc.robot.controllers.CommandJoystick;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Navx;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterLift;
 import frc.robot.subsystems.SwerveDrivetrain;
 
@@ -40,6 +42,8 @@ public class RobotContainer {
   ShooterLift shooterLift = new ShooterLift();
   CommandJoystick joystick = new CommandJoystick(0);
   CommandXboxController controller = new CommandXboxController(0);
+  Shooter shooter = new Shooter();
+  Intake intake = new Intake();
   ShuffleboardTab commandsTab = Shuffleboard.getTab("Commands");
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
