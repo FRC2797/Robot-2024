@@ -46,19 +46,4 @@ public class ShooterLift extends PIDSubsystem {
         motor.setIdleMode(IdleMode.kBrake);
         motor2.setIdleMode(IdleMode.kBrake);
     }
-
-    public void shooterUp(double speed) {
-        motor.set(speed);
-        motor2.set(speed);
-    }
-
-    public void shooterDown(double speed) {
-        motor.set(-speed);
-        motor2.set(-speed);
-    }
-
-    public void shooterStop() {
-        motor.set(0);
-        motor2.set(0);
-    }
 }
