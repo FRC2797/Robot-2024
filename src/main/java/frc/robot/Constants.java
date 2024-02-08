@@ -2,7 +2,7 @@ package frc.robot;
 
 public class Constants {
   public static boolean showNonessentialShuffleboardInfo = true;
-  public static double kShooterLiftGearRatio = 1/9999999; 
+  public static double kShooterLiftGearRatio = 127; 
   public static double kShooterLiftMaxRotations = 0; 
 
   public static double kIntakeGearRatio = 1/999999;
