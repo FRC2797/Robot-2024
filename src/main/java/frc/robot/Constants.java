@@ -6,7 +6,7 @@ public class Constants {
   public static double kShooterLiftMaxRotations = 0.08;
 
   public static double kIntakeGearRatio = 1/999999;
-  public static double kShooterGearRatio = 1/999999;
+  public static double kShooterGearRatio = 1;
 
   public static double intakeDefaultRPM = 300;
 
