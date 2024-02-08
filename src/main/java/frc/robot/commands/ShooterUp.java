@@ -15,7 +15,6 @@ public class ShooterUp extends Command {
 
     @Override
     public void initialize() {
-        shooterLift.enableMotors(true);
     }
 
     @Override
@@ -26,7 +25,6 @@ public class ShooterUp extends Command {
     @Override 
     public void end(boolean interrupted){
         shooterLift.shooterStop();
-        shooterLift.disableMotors(true);
     }
 
     @Override

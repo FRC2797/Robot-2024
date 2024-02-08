@@ -21,6 +21,7 @@ public class ShooterLift extends PIDSubsystem {
         super(new PIDController(0.4, 0, 0));
         encoder.setPositionConversionFactor(Constants.kShooterLiftGearRatio);
         encoder2.setPositionConversionFactor(Constants.kShooterLiftGearRatio);
+        brakeMotors();
     }   
 
     // Setpoint is from 0 to 1
@@ -41,18 +42,9 @@ public class ShooterLift extends PIDSubsystem {
         motor2.set(output);
     }
 
-    public void enableMotors(boolean on){
-        if (on){
-            motor.setIdleMode(IdleMode.kBrake);
-            motor2.setIdleMode(IdleMode.kBrake);
-        }
-    }
-
-    public void disableMotors(boolean off){
-        if (off){
-            motor.setIdleMode(IdleMode.kCoast);
-            motor2.setIdleMode(IdleMode.kCoast);
-        }
+    public void brakeMotors(){
+        motor.setIdleMode(IdleMode.kBrake);
+        motor2.setIdleMode(IdleMode.kBrake);
     }
 
     public void shooterUp(double speed) {
