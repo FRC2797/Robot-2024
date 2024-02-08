@@ -24,8 +24,6 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveDistance;
 import frc.robot.commands.DriveRotation;
-import frc.robot.commands.ShooterDown;
-import frc.robot.commands.ShooterUp;
 import frc.robot.commands.SwerveJoystick;
 import frc.robot.commands.autos.MiddleAuto;
 import frc.robot.commands.autos.SideAuto;
@@ -63,8 +61,6 @@ public class RobotContainer {
 
   private void configureBindings() {
     drivetrain.setDefaultCommand(joystickTeleCommand);
-    controller.a().whileTrue(new ShooterUp(shooterLift, 0.2));
-    controller.x().whileTrue(new ShooterDown(shooterLift, 0.2));
   }
 
   private void configureDriverShuffleboard() {
