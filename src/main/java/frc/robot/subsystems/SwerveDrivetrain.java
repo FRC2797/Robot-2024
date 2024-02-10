@@ -78,6 +78,8 @@ public class SwerveDrivetrain extends SubsystemBase
 
     tab.addString("The robot pose is", () -> swerveDrive.getPose().toString());
     tab.addString("One of the modules", () -> swerveDrive.getModulePositions()[0].toString());
+
+    swerveDrive.setHeadingCorrection(true);
   }
 
   public SwerveDrivetrain() {
