@@ -15,6 +15,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -187,7 +188,8 @@ public class SwerveDrivetrain extends SubsystemBase
 
   public Command driveToRotation(double radians) {
     PIDController controller = swerveDrive.swerveController.config.headingPIDF.createPIDController();
-    
+    controller.enableContinuousInput(-Math.PI, Math.PI);
+
     DoubleConsumer rotate = (output) -> swerveDrive.drive(new Translation2d(), output, false, false, new Translation2d());
 
     return new PIDCommand(
