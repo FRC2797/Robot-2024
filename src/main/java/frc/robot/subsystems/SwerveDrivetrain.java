@@ -30,14 +30,10 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
-
-import static edu.wpi.first.wpilibj2.command.Commands.*;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
-import swervelib.parser.PIDFConfig;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
@@ -188,12 +184,8 @@ public class SwerveDrivetrain extends SubsystemBase
   }
 
   public Command driveToRotation(double radians) {
-    PIDController controller = new PIDController(
-      swerveDrive.swerveController.config.headingPIDF.p,
-      swerveDrive.swerveController.config.headingPIDF.i,
-      swerveDrive.swerveController.config.headingPIDF.d
-    );
-
+    PIDController controller = swerveDrive.swerveController.config.headingPIDF.createPIDController();
+    
     DoubleConsumer rotate = (output) -> swerveDrive.drive(new Translation2d(), output, false, false, new Translation2d());
 
     return new PIDCommand(
