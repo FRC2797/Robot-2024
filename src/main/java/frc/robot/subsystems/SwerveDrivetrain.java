@@ -465,12 +465,12 @@ public class SwerveDrivetrain extends SubsystemBase
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
   }
 
-    public void arcadeDrive(double forwardInMetersPerSecond, double rotationInRadians) {
-      var chassisSpeeds = new ChassisSpeeds(forwardInMetersPerSecond, 0, rotationInRadians);
-      this.drive(chassisSpeeds);
-    }
+  public void arcadeDrive(double forwardInMetersPerSecond, double rotationInRadians) {
+    var chassisSpeeds = new ChassisSpeeds(forwardInMetersPerSecond, 0, rotationInRadians);
+    this.drive(chassisSpeeds);
+  }
 
-    public double getDistanceDrivenInMeters() {
-      return swerveDrive.getPose().getX();
-    }
+  public double getDistanceDrivenInMeters() {
+    return swerveDrive.getPose().getX();
+  }
 }
