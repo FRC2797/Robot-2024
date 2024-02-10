@@ -173,7 +173,7 @@ public class SwerveDrivetrain extends SubsystemBase
         currentPose.getTranslation().plus(pose.getTranslation()),
         currentPose.getRotation().plus(pose.getRotation())
       );
-      return driveToPose(addedFromCurrentPose, true);
+      return driveToPose(addedFromCurrentPose, canFinishRotation);
     });
   }
 
