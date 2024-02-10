@@ -12,6 +12,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -125,6 +126,8 @@ public class RobotContainer {
       )
     ));
 
+    autoChooser.addOption("Rotate 180 using just driverotation", drivetrain.driveToRotation(Math.PI));
+
     autoChooser.addOption("Rotate 180 using canRotateFully", drivetrain.driveToPose(
       new Pose2d(
         new Translation2d(
@@ -135,6 +138,12 @@ public class RobotContainer {
         ),
         true
       ));
+
+      autoChooser.addOption("Go forward for 3 seconds", new StartEndCommand(
+        () -> drivetrain.drive(new ChassisSpeeds(1, 0, 0)),
+        () -> drivetrain.drive(new ChassisSpeeds()), drivetrain)
+        .withTimeout(3)
+      );
   }
 
   public Command getAutonomousCommand() {
