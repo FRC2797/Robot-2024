@@ -5,7 +5,6 @@
 package frc.robot;
 
 import static edu.wpi.first.wpilibj2.command.Commands.run;
-import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import static edu.wpi.first.wpilibj2.command.Commands.sequence;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -17,10 +16,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveDistance;
@@ -41,10 +36,10 @@ public class RobotContainer {
   SwerveDrivetrain drivetrain = new SwerveDrivetrain();
   Limelight limelight = new Limelight();
   ShooterLift shooterLift = new ShooterLift();
+  Intake intake = new Intake();
   CommandJoystick joystick = new CommandJoystick(0);
   CommandXboxController controller = new CommandXboxController(0);
   Shooter shooter = new Shooter();
-  Intake intake = new Intake();
   ShuffleboardTab commandsTab = Shuffleboard.getTab("Commands");
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
@@ -66,6 +61,8 @@ public class RobotContainer {
 
   private void configureBindings() {
     drivetrain.setDefaultCommand(joystickTeleCommand);
+    controller.rightBumper().whileTrue(intake.intakeUntilNoteIsIn());
+    controller.b().whileTrue(intake.intake(0.15));
   }
 
   private void configureDriverShuffleboard() {

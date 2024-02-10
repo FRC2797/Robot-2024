@@ -8,8 +8,6 @@ public class Constants {
   public static double kIntakeGearRatio = 1/999999;
   public static double kShooterGearRatio = 1;
 
-  public static double intakeDefaultRPM = 300;
-
   public static final class Limelight {
     // how many degrees back is your limelight rotated from perfectly vertical?
     public static double mountingAngleDegrees = 10;
