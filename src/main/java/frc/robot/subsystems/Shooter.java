@@ -91,6 +91,10 @@ public class Shooter extends SubsystemBase {
         return goToRPM;
     }
 
+    public boolean atSetpoint() {
+        return getRotationsPerMinute() > setpoint;
+    }
+
 
     public double getRotationsPerMinute() {
         return (Math.abs(leftEnc.getVelocity()) + Math.abs(rightEnc.getVelocity())) / 2;
