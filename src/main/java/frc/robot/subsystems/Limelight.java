@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
 import static frc.robot.Constants.showNonessentialShuffleboardInfo;
 
@@ -12,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Limelight extends SubsystemBase {
+public class Limelight {
   private final int ENTRY_NOT_FOUND = -9999;
 
   ShuffleboardTab tab = Shuffleboard.getTab("Limelight");
