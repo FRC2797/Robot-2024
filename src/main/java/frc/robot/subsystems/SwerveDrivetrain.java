@@ -169,12 +169,7 @@ public class SwerveDrivetrain extends SubsystemBase
 
   public Command driveToPoseRelativeToCurrent(Pose2d pose, boolean canFinishRotation) {
     return defer(() -> {
-      Pose2d currentPose = getPose();
-      Pose2d addedFromCurrentPose = new Pose2d(
-        currentPose.getTranslation().plus(pose.getTranslation()),
-        currentPose.getRotation().plus(pose.getRotation())
-      );
-      return driveToPose(addedFromCurrentPose, canFinishRotation);
+      return driveToPose(pose.relativeTo(getPose()), canFinishRotation);
     });
   }
 
