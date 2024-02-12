@@ -50,4 +50,8 @@ public class Intake extends SubsystemBase {
     public Command intakeUntilNoteIsIn() {
         return intake().until(() -> noteIsIn());
     }
+
+    public Command intakeIntoShooter() {
+        return intake().withTimeout(3);
+    }
 }

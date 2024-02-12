@@ -113,4 +113,8 @@ public class ShooterLift extends PIDSubsystem {
         pid.setTolerance(0.05);
         return pid;
     }
+
+    public boolean atSetpoint() {
+        return MathUtil.isNear(getSetpoint(), getMeasurement(), 0.05);
+    }
 }
