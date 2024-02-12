@@ -21,4 +21,8 @@ public class FireNote extends SequentialCommandGroup {
             )
         );
     }
+
+    public FireNote() {
+        super(none());
+    }
 }
