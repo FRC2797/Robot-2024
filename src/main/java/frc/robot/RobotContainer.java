@@ -83,8 +83,8 @@ public class RobotContainer {
   }
 
   private void setUpAutoChooser(SendableChooser<Command> autChooser) {
-    autoChooser.addOption("Middle Auto", new MiddleAuto(drivetrain, limelight));
-    autoChooser.addOption("Sideways Auto", new SideAuto(drivetrain, limelight));
+    autoChooser.addOption("Middle Auto", new MiddleAuto(intake, shooter, shooterLift, drivetrain, limelight));
+    autoChooser.addOption("Sideways", new SideAuto(intake, shooter, shooterLift, drivetrain, limelight));
     autoChooser.addOption("Move Forward a meter", new DriveDistance(1, drivetrain));
 
     autoChooser.addOption("Rotate 360deg", new DriveRotation(360, navx, drivetrain));
