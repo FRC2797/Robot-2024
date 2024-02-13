@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
 import static frc.robot.Constants.showNonessentialShuffleboardInfo;
@@ -7,6 +8,8 @@ import static frc.robot.Constants.showNonessentialShuffleboardInfo;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.Distance;
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -61,13 +64,13 @@ public class Limelight {
     return runOnce(() -> switchPipeline(pipeline)).andThen(waitSeconds(0.1));
   }
 
-  public double getDistance() {
+  public Measure<Distance> getDistance() {
     double angleToGoalDegrees = Constants.Limelight.mountingAngleDegrees + getVerticalOffset();
     double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
 
     //calculate distance
     double distanceFromLimelightToGoalInches = (Constants.Limelight.goalHeightInches - Constants.Limelight.limelightLensHeightInches) / Math.tan(angleToGoalRadians);
   
-    return distanceFromLimelightToGoalInches;
+    return Inches.of(distanceFromLimelightToGoalInches);
   }
 }
