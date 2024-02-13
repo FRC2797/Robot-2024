@@ -5,6 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.wpilibj2.command.Commands.run;
+import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import static edu.wpi.first.wpilibj2.command.Commands.sequence;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -73,7 +74,7 @@ public class RobotContainer {
 
     Command realignWheelsForward = run(() -> drivetrain.arcadeDrive(0.1, 0), drivetrain).withTimeout(0.3);
     commandsTab.add(realignWheelsForward.withName("Realign wheels Forward"));
-
+    commandsTab.add(runOnce(() -> drivetrain.resetOdometry(new Pose2d())).withName("Reset odometry"));
 
     driverTab.addBoolean("Has Target To Aim", limelight::hasTarget);
     if (false) {
