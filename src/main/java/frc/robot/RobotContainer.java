@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.DriveDistance;
 import frc.robot.commands.DriveRotation;
 import frc.robot.commands.SwerveJoystick;
 import frc.robot.commands.autos.MiddleAuto;
@@ -85,18 +84,18 @@ public class RobotContainer {
   private void setUpAutoChooser(SendableChooser<Command> autChooser) {
     autoChooser.addOption("Middle Auto", new MiddleAuto(intake, shooter, shooterLift, drivetrain, limelight));
     autoChooser.addOption("Sideways", new SideAuto(intake, shooter, shooterLift, drivetrain, limelight));
-    autoChooser.addOption("Move Forward a meter", new DriveDistance(1, drivetrain));
+    autoChooser.addOption("Move Forward a meter", drivetrain.driveDistance(1));
 
     autoChooser.addOption("Rotate 360deg", new DriveRotation(360, navx, drivetrain));
     Command moveForwardAndComeBack = sequence(
-      new DriveDistance(2, drivetrain),
+      drivetrain.driveDistance(2),
       new DriveRotation(180, navx, drivetrain),
-      new DriveDistance(2, drivetrain)
+      drivetrain.driveDistance(2)
     ).withName("Move Forward and come back");
 
     autoChooser.addOption("Move forward and come back", moveForwardAndComeBack);
 
-    Command moveBackward = new DriveDistance(-1, drivetrain).withName("Move Backward");
+    Command moveBackward = drivetrain.driveDistance(-1).withName("Move Backward");
 
     autoChooser.addOption("Move backward", moveBackward);
 
