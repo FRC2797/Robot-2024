@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Radians;
+
 import java.io.File;
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
@@ -29,6 +32,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -185,7 +189,13 @@ public class SwerveDrivetrain extends SubsystemBase
     PIDController controller = swerveDrive.swerveController.config.headingPIDF.createPIDController();
     controller.enableContinuousInput(-Math.PI, Math.PI);
 
-    DoubleConsumer rotate = (output) -> swerveDrive.drive(new Translation2d(), output, false, false, new Translation2d());
+    // three degrees
+    controller.setTolerance(0.0524);
+
+    DoubleConsumer rotate = (output) -> {
+      swerveDrive.drive(new Translation2d(), output, false, false, new Translation2d());
+      SmartDashboard.putNumber("Current drive to rotation output", output);
+    };
 
     return new PIDCommand(
       controller,
@@ -193,7 +203,7 @@ public class SwerveDrivetrain extends SubsystemBase
       radians,
       rotate,
       this
-    );
+    ).until(controller::atSetpoint);
   }
 
   /**
