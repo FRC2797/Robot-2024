@@ -1,21 +1,32 @@
 package frc.robot.commands.autos;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.AimWithLimelight;
-import frc.robot.commands.DriveDistance;
-import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.SwerveDrivetrain;
 import static edu.wpi.first.math.util.Units.feetToMeters;
+import static edu.wpi.first.wpilibj2.command.Commands.race;
+
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterLift;
+import frc.robot.subsystems.SwerveDrivetrain;
 
 
 public class SideAuto extends SequentialCommandGroup {
-    public SideAuto(SwerveDrivetrain drivetrain, Limelight limelight) {
+        public SideAuto(
+        Intake intake,
+        Shooter shooter,
+        ShooterLift shooterLift,
+        SwerveDrivetrain drivetrain,
+        Limelight limelight
+    ) {
         super(
-            new AimWithLimelight(drivetrain, limelight),
-            new FireNote(),
-            new DriveDistance(feetToMeters(3.5), drivetrain),
-            new AimWithLimelight(drivetrain, limelight),
-            new FireNote()
+            new FireIntoSubwoofer(intake, shooter, shooterLift, drivetrain, limelight),
+            race(
+                intake.intake(),
+                shooterLift.getGoToPositionCommand(0),
+                drivetrain.driveDistance(feetToMeters(6))
+            ),
+            new FireIntoSubwoofer(intake, shooter, shooterLift, drivetrain, limelight)
         );
     }
 }

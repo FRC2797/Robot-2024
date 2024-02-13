@@ -4,9 +4,6 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Radians;
-
 import java.io.File;
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
@@ -18,7 +15,6 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -205,6 +201,14 @@ public class SwerveDrivetrain extends SubsystemBase
       this
     ).until(controller::atSetpoint);
   }
+
+  public Command driveDistance(double meters) {
+    return driveToPoseRelativeToCurrent(
+      new Pose2d(new Translation2d(meters, 0), new Rotation2d()),
+      false
+    );
+  }
+
 
   /**
    * Command to drive the robot using translative values and heading as a setpoint.
