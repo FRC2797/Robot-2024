@@ -85,6 +85,12 @@ public class RobotContainer {
     autoChooser.addOption("Middle Auto", new MiddleAuto(intake, shooter, shooterLift, drivetrain, limelight));
     autoChooser.addOption("Sideways", new SideAuto(intake, shooter, shooterLift, drivetrain, limelight));
     autoChooser.addOption("Move Forward a meter", drivetrain.driveDistance(1));
+    autoChooser.addOption("Move Forward a meter using driveToPose", drivetrain.driveToPose(
+      new Pose2d(
+        new Translation2d(1, 0), new Rotation2d()
+      )
+    ));
+
 
     autoChooser.addOption("Rotate 360deg", new DriveRotation(360, navx, drivetrain));
     Command moveForwardAndComeBack = sequence(
