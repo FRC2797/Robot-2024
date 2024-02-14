@@ -40,7 +40,7 @@ public class RobotContainer {
   CommandJoystick joystick = new CommandJoystick(0);
   CommandXboxController controller = new CommandXboxController(0);
   Shooter shooter = new Shooter();
-  ShuffleboardTab commandsTab = Shuffleboard.getTab("Commands");
+  ShuffleboardTab commandsForTesting = Shuffleboard.getTab("Commands for testing");
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
 
@@ -72,8 +72,8 @@ public class RobotContainer {
 
 
     Command realignWheelsForward = run(() -> drivetrain.arcadeDrive(0.1, 0), drivetrain).withTimeout(0.3);
-    commandsTab.add(realignWheelsForward.withName("Realign wheels Forward"));
-    commandsTab.add(runOnce(() -> drivetrain.resetOdometry(new Pose2d())).withName("Reset odometry"));
+    commandsForTesting.add(realignWheelsForward.withName("Realign wheels Forward"));
+    commandsForTesting.add(runOnce(() -> drivetrain.resetOdometry(new Pose2d())).withName("Reset odometry"));
 
     driverTab.addBoolean("Has Target To Aim", limelight::hasTarget);
     if (false) {
