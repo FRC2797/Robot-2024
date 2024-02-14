@@ -57,6 +57,7 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     configureDriverShuffleboard();
+    configureCommandsForTesting();
   }
 
   private void configureBindings() {
@@ -84,28 +85,31 @@ public class RobotContainer {
   private void setUpAutoChooser(SendableChooser<Command> autChooser) {
     autoChooser.addOption("Middle Auto", new MiddleAuto(intake, shooter, shooterLift, drivetrain, limelight));
     autoChooser.addOption("Sideways", new SideAuto(intake, shooter, shooterLift, drivetrain, limelight));
-    autoChooser.addOption("Move Forward a meter", drivetrain.driveDistance(1));
-    autoChooser.addOption("Move Forward a meter using driveToPose", drivetrain.driveToPose(
+  }
+
+  public void configureCommandsForTesting() {
+    commandsForTesting.add("Move Forward a meter", drivetrain.driveDistance(1));
+    commandsForTesting.add("Move Forward a meter using driveToPose", drivetrain.driveToPose(
       new Pose2d(
         new Translation2d(1, 0), new Rotation2d()
       )
     ));
 
 
-    autoChooser.addOption("Rotate 360deg", new DriveRotation(360, navx, drivetrain));
+    commandsForTesting.add("Rotate 360deg", new DriveRotation(360, navx, drivetrain));
     Command moveForwardAndComeBack = sequence(
       drivetrain.driveDistance(2),
       new DriveRotation(180, navx, drivetrain),
       drivetrain.driveDistance(2)
     ).withName("Move Forward and come back");
 
-    autoChooser.addOption("Move forward and come back", moveForwardAndComeBack);
+    commandsForTesting.add("Move forward and come back", moveForwardAndComeBack);
 
     Command moveBackward = drivetrain.driveDistance(-1).withName("Move Backward");
 
-    autoChooser.addOption("Move backward", moveBackward);
+    commandsForTesting.add("Move backward", moveBackward);
 
-    autoChooser.addOption("Go to a pose 1 meter infront while being 180", drivetrain.driveToPose(
+    commandsForTesting.add("Go to a pose 1 meter infront while being 180", drivetrain.driveToPose(
       new Pose2d(
         new Translation2d(
           1,
@@ -117,7 +121,7 @@ public class RobotContainer {
       )
     ));
 
-    autoChooser.addOption("Rotate 180 using poses", drivetrain.driveToPose(
+    commandsForTesting.add("Rotate 180 using poses", drivetrain.driveToPose(
       new Pose2d(
         new Translation2d(
           0,
@@ -129,9 +133,9 @@ public class RobotContainer {
       )
     ));
 
-    autoChooser.addOption("Rotate 180 using just driverotation", drivetrain.driveToRotation(Math.PI));
+    commandsForTesting.add("Rotate 180 using just driverotation", drivetrain.driveToRotation(Math.PI));
 
-    autoChooser.addOption("Rotate 180 using canRotateFully", drivetrain.driveToPose(
+    commandsForTesting.add("Rotate 180 using canRotateFully", drivetrain.driveToPose(
       new Pose2d(
         new Translation2d(
           0,
@@ -142,11 +146,12 @@ public class RobotContainer {
         true
       ));
 
-      autoChooser.addOption("Go forward for 3 seconds", new StartEndCommand(
+      commandsForTesting.add("Go forward for 3 seconds", new StartEndCommand(
         () -> drivetrain.drive(new ChassisSpeeds(1, 0, 0)),
         () -> drivetrain.drive(new ChassisSpeeds()), drivetrain)
         .withTimeout(3)
       );
+
   }
 
   public Command getAutonomousCommand() {
