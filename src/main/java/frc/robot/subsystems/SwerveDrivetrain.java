@@ -46,35 +46,20 @@ public class SwerveDrivetrain extends SubsystemBase
 {
 
   ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
-  /**
-   * Swerve drive object.
-   */
   private final SwerveDrive swerveDrive;
-  /**
-   * Maximum speed of the robot in meters per second, used to limit acceleration.
-   */
   public        double      maximumSpeed = Constants.ModuleConstants.kPhysicalMaxSpeedMetersPerSecond;
 
-  /**
-   * Initialize {@link SwerveDrive} with the directory provided.
-   *
-   * @param directory Directory of swerve drive config files.
-   */
   public SwerveDrivetrain(File directory)
   {
-    // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
     {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed);
-      // Alternative method if you don't want to supply the conversion factor via JSON files.
-      // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
     } catch (Exception e)
     {
       throw new RuntimeException(e);
     }
-    swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
-
+    
     setupPathPlanner();
 
     tab.addString("The robot pose is", () -> swerveDrive.getPose().toString());
