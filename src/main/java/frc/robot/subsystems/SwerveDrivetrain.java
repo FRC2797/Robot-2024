@@ -100,7 +100,7 @@ public class SwerveDrivetrain extends SubsystemBase
         this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                                         new PIDConstants(5.0, 0.0, 0.0),
+                                         getTranslationConstants(),
                                          // Translation PID constants
                                          new PIDConstants(swerveDrive.swerveController.config.headingPIDF.p,
                                                           swerveDrive.swerveController.config.headingPIDF.i,
@@ -207,6 +207,26 @@ public class SwerveDrivetrain extends SubsystemBase
       new Pose2d(new Translation2d(meters, 0), new Rotation2d()),
       false
     );
+  }
+
+  // Should be using the driveToPose but it wasn't working
+  public Command driveDistanceWithJustPID(double meters) {
+    PIDConstants constants = getTranslationConstants();
+    PIDController controller = new PIDController(constants.kP, constants.kI, constants.kD);
+
+    controller.setTolerance(0.1);
+
+    DoubleConsumer drive = (output) -> {
+      swerveDrive.drive(new Translation2d(output, 0), 0, false, false, new Translation2d());
+    };
+
+    return new PIDCommand(
+      controller,
+      () -> getPose().getTranslation().getX(),
+      getPose().getTranslation().getX() + meters,
+      drive,
+      this
+    ).until(controller::atSetpoint);
   }
 
 
@@ -483,5 +503,9 @@ public class SwerveDrivetrain extends SubsystemBase
 
   public double getDistanceDrivenInMeters() {
     return swerveDrive.getPose().getX();
+  }
+
+  private PIDConstants getTranslationConstants() {
+    return new PIDConstants(5.0, 0.0, 0.0);
   }
 }
