@@ -91,6 +91,24 @@ public class Shooter extends SubsystemBase {
         return goToRPM;
     }
 
+    public Command getGoToPowerCommand(double power) {
+        Command goToPower = new StartEndCommand(
+            () -> {
+                left.set(power);
+                right.set(power);
+
+            },
+            () -> {
+                left.set(0);
+                right.set(0);
+            },
+            this
+        );
+
+        return goToPower;
+    }
+
+
     public boolean atSetpoint() {
         return getRotationsPerMinute() > setpoint;
     }
