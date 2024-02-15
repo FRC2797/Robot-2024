@@ -70,6 +70,25 @@ public class RobotContainer {
     controller.leftTrigger().whileTrue(reverseIntake);
   }
 
+  private void configureDirectPowerControllerBindings() {
+    drivetrain.setDefaultCommand(joystickTeleCommand);
+
+    Command bringLiftDown = shooterLift.getGoToPowerCommand(0.3);
+    Command bringLiftUp = shooterLift.getGoToPowerCommand(-0.3);
+    controller.y().whileTrue(bringLiftUp);
+    controller.a().whileTrue(bringLiftDown);
+
+    Command intakeIn = intake.getGoToPowerCommand(0.77);
+    Command intakeOut = intake.getGoToPowerCommand(-0.77);
+    controller.b().whileTrue(intakeIn);
+    controller.x().whileTrue(intakeOut);
+
+    Command shoot = shooter.getGoToPowerCommand(0.3);
+    Command shootReverse = shooter.getGoToPowerCommand(-0.3);
+    controller.povUp().whileTrue(shoot);
+    controller.povDown().whileTrue(shootReverse);
+  }
+
   private void configureDriverShuffleboard() {
     ShuffleboardTab driverTab = Shuffleboard.getTab("Driver");
     driverTab.add(autoChooser);

@@ -61,4 +61,19 @@ public class Intake extends SubsystemBase {
     public Command intakeIntoShooter() {
         return intake().withTimeout(3);
     }
+
+    public Command getGoToPowerCommand(double power) {
+        Command goToPower = new StartEndCommand(
+            () -> {
+                motor.set(power);
+            },
+            () -> {
+                motor.set(0);
+            },
+            this
+        );
+
+        return goToPower;
+    }
+
 }
