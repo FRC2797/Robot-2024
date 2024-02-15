@@ -39,9 +39,16 @@ public class Intake extends SubsystemBase {
         );
     }
 
+
+    public static final double kIntakePower = 0.77;
     public Command intake() {
-        return intake(0.77);
+        return intake(kIntakePower);
     }
+
+    public Command reverseIntake() {
+        return intake(-kIntakePower);
+    }
+
 
     public boolean noteIsIn(){
         return colorSensor.getProximity() > 150;
