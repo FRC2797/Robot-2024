@@ -57,7 +57,6 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     configureDriverShuffleboard();
-    configureCommandsForTesting();
   }
 
   private void configureBindings() {
@@ -71,11 +70,6 @@ public class RobotContainer {
     driverTab.add(autoChooser);
     setUpAutoChooser(autoChooser);
 
-
-    Command realignWheelsForward = run(() -> drivetrain.arcadeDrive(0.1, 0), drivetrain).withTimeout(0.3);
-    commandsForTesting.add(realignWheelsForward.withName("Realign wheels Forward"));
-    commandsForTesting.add(runOnce(() -> drivetrain.resetOdometry(new Pose2d())).withName("Reset odometry"));
-
     driverTab.addBoolean("Has Target To Aim", limelight::hasTarget);
     if (false) {
       driverTab.add(CameraServer.startAutomaticCapture());
@@ -85,9 +79,6 @@ public class RobotContainer {
   private void setUpAutoChooser(SendableChooser<Command> autChooser) {
     autoChooser.addOption("Middle Auto", new MiddleAuto(intake, shooter, shooterLift, drivetrain, limelight));
     autoChooser.addOption("Sideways", new SideAuto(intake, shooter, shooterLift, drivetrain, limelight));
-  }
-
-  public void configureCommandsForTesting() {
   }
 
   public Command getAutonomousCommand() {
