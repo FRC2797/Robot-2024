@@ -76,9 +76,7 @@ public class RobotContainer {
     setUpAutoChooser(autoChooser);
 
     driverTab.addBoolean("Has Target To Aim", limelight::hasTarget);
-    if (false) {
-      driverTab.add(CameraServer.startAutomaticCapture());
-    }
+    driverTab.add(CameraServer.startAutomaticCapture());
   }
 
   private void setUpAutoChooser(SendableChooser<Command> autChooser) {
