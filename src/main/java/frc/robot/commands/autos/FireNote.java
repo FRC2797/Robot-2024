@@ -1,6 +1,5 @@
 package frc.robot.commands.autos;
 
-import static edu.wpi.first.wpilibj2.command.Commands.none;
 import static edu.wpi.first.wpilibj2.command.Commands.sequence;
 import static edu.wpi.first.wpilibj2.command.Commands.waitUntil;
 
@@ -20,9 +19,5 @@ public class FireNote extends ParallelRaceGroup {
                 intake.intakeIntoShooter()
             )
         );
-    }
-
-    public FireNote() {
-        super(none());
     }
 }
