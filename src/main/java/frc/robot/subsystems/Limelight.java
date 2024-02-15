@@ -63,6 +63,57 @@ public class Limelight {
     return runOnce(() -> switchPipeline(pipeline)).andThen(waitSeconds(0.1));
   }
 
+  public String getSeenAprilTagAsString() {
+    switch (getSeenAprilTag()) {
+      case ENTRY_NOT_FOUND:
+        return "No Apriltag";
+
+      case 1:
+        return "Blue's right source";
+
+      case 2:
+        return "Blue's left source";
+
+      case 3:
+        return "Red's right subwoofer";
+
+      case 4:
+        return "Red's middle subwoofer";
+
+      case 5:
+        return "Red's Amp";
+
+      case 6:
+        return "Blue's Amp";
+
+      case 7:
+        return "Blue's middle subwoofer";
+
+      case 8:
+        return "Blue's left subwoofer";
+
+      case 9:
+        return "Red's right source";
+
+      case 10:
+        return "Red's left source";
+
+      case 11, 12, 13:
+        return "Red stage";
+
+      case 14, 15, 16:
+        return "Blue stage";
+    
+      // default:
+      //   return "No Apriltag";
+    }
+  }
+
+  public int getSeenAprilTag() {
+    return (int) table.getEntry("tid").getInteger(ENTRY_NOT_FOUND);
+  }
+
+
   public Measure<Distance> getDistance() {
     double angleToGoalDegrees = Constants.Limelight.mountingAngleDegrees + getVerticalOffset();
     double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
