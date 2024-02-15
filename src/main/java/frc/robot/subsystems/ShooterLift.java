@@ -60,6 +60,8 @@ public class ShooterLift extends PIDSubsystem {
         tab.add(this.getGoToPositionCommand(0.9).withName("Go to 90%"));
         tab.add(this.getGoToPositionCommand(1).withName("Go to 100%"));
 
+        tab.add(getGoToPowerCommand(1).withName("Go to full power up"));
+        tab.add(getGoToPowerCommand(-1).withName("Go to full power down"));
 
         this.disable();
     }
@@ -102,6 +104,23 @@ public class ShooterLift extends PIDSubsystem {
 
         return goToPosition;
     }
+
+    public Command getGoToPowerCommand(double power) {
+        Command goToPower = new StartEndCommand(
+            () -> {
+                left.set(power);
+                right.set(power);
+            },
+            () -> {
+                left.set(0);
+                right.set(0);
+            },
+            this
+        );
+
+        return goToPower;
+    }
+
 
     public void unbrakeMotors(){
         left.setIdleMode(IdleMode.kCoast);
