@@ -104,8 +104,8 @@ public class Limelight {
       case 14, 15, 16:
         return "Blue stage";
     
-      // default:
-      //   return "No Apriltag";
+      default:
+        return "April tag pipeline broken";
     }
   }
 
