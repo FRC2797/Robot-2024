@@ -1,6 +1,7 @@
 package frc.robot.commands.autos;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.wpilibj2.command.Commands.sequence;
 
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import edu.wpi.first.units.Distance;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
+import frc.robot.commands.AimWithLimelight;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
@@ -34,8 +36,9 @@ public class FireIntoSubwoofer extends DeferredCommand {
             Translation2d translation = new Translation2d(currentDistance.minus(kDistanceToFireAt), Inches.of(0));
             Command goToDistance = drivetrain.driveToPoseRelativeToCurrent(new Pose2d(translation, new Rotation2d()), true);
             return 
-                goToDistance
-                .andThen(
+                sequence(
+                    new AimWithLimelight(drivetrain, limelight),
+                    goToDistance,
                     new FireNote(kHeightToFireAt, kShooterRPMToFireAt, intake, shooter, shooterLift)
                 );
         }, Set.of(intake, shooter, shooterLift, drivetrain));
