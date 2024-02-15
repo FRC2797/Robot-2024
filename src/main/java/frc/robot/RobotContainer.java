@@ -4,23 +4,15 @@
 
 package frc.robot;
 
-import static edu.wpi.first.wpilibj2.command.Commands.run;
-import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
-import static edu.wpi.first.wpilibj2.command.Commands.sequence;
-
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.DriveRotation;
 import frc.robot.commands.SwerveJoystick;
+import frc.robot.commands.autos.FireIntoAmp;
+import frc.robot.commands.autos.FireIntoSubwoofer;
 import frc.robot.commands.autos.MiddleAuto;
 import frc.robot.commands.autos.SideAuto;
 import frc.robot.controllers.CommandJoystick;
@@ -61,8 +53,21 @@ public class RobotContainer {
 
   private void configureBindings() {
     drivetrain.setDefaultCommand(joystickTeleCommand);
-    controller.rightBumper().whileTrue(intake.intakeUntilNoteIsIn());
-    controller.b().whileTrue(intake.intake(0.15));
+
+    Command intakeUntilNoteIsIn = intake.intakeUntilNoteIsIn();
+    controller.b().whileTrue(intakeUntilNoteIsIn);
+
+    Command fireIntoSubwoofer = new FireIntoSubwoofer(intake, shooter, shooterLift, drivetrain, limelight);
+    controller.x().whileTrue(fireIntoSubwoofer);
+
+    Command fireIntoAmp = new FireIntoAmp(intake, shooter, shooterLift, drivetrain, limelight);
+    controller.y().whileTrue(fireIntoAmp);
+
+    Command holdOntoChains = shooterLift.getGoToPositionCommand(0);
+    controller.a().whileTrue(holdOntoChains);
+
+    Command reverseIntake = intake.reverseIntake();
+    controller.leftTrigger().whileTrue(reverseIntake);
   }
 
   private void configureDriverShuffleboard() {
