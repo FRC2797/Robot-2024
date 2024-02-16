@@ -36,8 +36,7 @@ public class ShooterLift extends PIDSubsystem {
         left.setInverted(false);
         right.setInverted(true);
 
-        leftEncoder.setPosition(0);
-        leftEncoder.setPosition(0);
+        resetEncoderPositions();
 
         brakeMotors();
         tab.addDouble("Current measurement", this::getMeasurement);
@@ -76,8 +75,8 @@ public class ShooterLift extends PIDSubsystem {
     // From 0 to 1
     @Override
     public double getMeasurement() {
-        double encoderReadingsAveraged = (leftEncoder.getPosition() + rightEncoder.getPosition()) / 2;
-        return encoderReadingsAveraged / Constants.kShooterLiftMaxRotations;
+        double encoderReadingsAveraged = rightEncoder.getPosition();
+        return encoderReadingsAveraged / Constants.kShooterLiftMaxRotationsToFullyVertical;
     }
 
     @Override
@@ -137,5 +136,10 @@ public class ShooterLift extends PIDSubsystem {
 
     public boolean atSetpoint() {
         return MathUtil.isNear(getSetpoint(), getMeasurement(), 0.05);
+    }
+
+    public void resetEncoderPositions() {
+        leftEncoder.setPosition(0);
+        rightEncoder.setPosition(0);
     }
 }
