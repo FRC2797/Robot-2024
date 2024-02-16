@@ -33,8 +33,8 @@ public class ShooterLift extends PIDSubsystem {
         rightEncoder.setPositionConversionFactor(1 / Constants.kShooterLiftGearRatio);
 
 
-        left.setInverted(true);
-        right.setInverted(false);
+        left.setInverted(false);
+        right.setInverted(true);
 
         leftEncoder.setPosition(0);
         leftEncoder.setPosition(0);
