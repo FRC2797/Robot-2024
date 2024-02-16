@@ -110,8 +110,8 @@ public class ShooterLift extends PIDSubsystem {
     public Command getGoToPowerCommand(double power) {
         Command goToPower = new StartEndCommand(
             () -> {
-                left.set(power);
-                right.set(power);
+                left.set(getMeasurement() > 0.8 ? 0 : power);
+                right.set(getMeasurement() > 0.8 ? 0 : power);
             },
             () -> {
                 left.set(0);
