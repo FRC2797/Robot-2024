@@ -65,6 +65,8 @@ public class ShooterLift extends PIDSubsystem {
         tab.add(getGoToPowerCommand(-0.3).withName("Go to -0.3 Power"));
         tab.add(getGoToPowerCommand(-1).withName("Go to full power down"));
 
+        tab.add("Reset Encoders", runOnce(this::resetEncoderPositions));
+
         this.disable();
     }
 
