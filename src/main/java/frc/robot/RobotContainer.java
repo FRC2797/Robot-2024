@@ -47,7 +47,7 @@ public class RobotContainer {
 
 
   public RobotContainer() {
-    configureBindings();
+    configureDirectPowerControllerBindings();
     configureDriverShuffleboard();
   }
 
@@ -73,8 +73,8 @@ public class RobotContainer {
   private void configureDirectPowerControllerBindings() {
     drivetrain.setDefaultCommand(joystickTeleCommand);
 
-    Command bringLiftDown = shooterLift.getGoToPowerCommand(-0.3);
-    Command bringLiftUp = shooterLift.getGoToPowerCommand(0.3);
+    Command bringLiftDown = shooterLift.getGoToPowerCommand(-0.1);
+    Command bringLiftUp = shooterLift.getGoToPowerCommand(0.1);
     controller.y().whileTrue(bringLiftUp);
     controller.a().whileTrue(bringLiftDown);
 

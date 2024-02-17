@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.Constants;
 
@@ -38,7 +39,7 @@ public class ShooterLift extends PIDSubsystem {
 
         resetEncoderPositions();
 
-        brakeMotors();
+        unbrakeMotors();
         tab.addDouble("Current measurement", this::getMeasurement);
         tab.addDouble("Current setpoint", this::getSetpoint);
         tab.addDouble("Current left speed", left::get);
@@ -63,6 +64,8 @@ public class ShooterLift extends PIDSubsystem {
         tab.add(getGoToPowerCommand(0.3).withName("Go to 0.3 Power"));
         tab.add(getGoToPowerCommand(-0.3).withName("Go to -0.3 Power"));
         tab.add(getGoToPowerCommand(-1).withName("Go to full power down"));
+
+        tab.add("Reset Encoders", runOnce(this::resetEncoderPositions));
 
         this.disable();
     }
@@ -107,17 +110,13 @@ public class ShooterLift extends PIDSubsystem {
     }
 
     public Command getGoToPowerCommand(double power) {
-        Command goToPower = new StartEndCommand(
-            () -> {
-                left.set(getMeasurement() > 0.8 ? 0 : power);
-                right.set(getMeasurement() > 0.8 ? 0 : power);
-            },
-            () -> {
-                left.set(0);
-                right.set(0);
-            },
-            this
-        );
+        Command goToPower = run(() -> {
+            left.set(getMeasurement() > 0.5 ? 0 : power);
+            right.set(getMeasurement() > 0.5 ? 0 : power);
+        }).finallyDo(() -> {
+            left.set(0);
+            left.set(0);
+        });
 
         return goToPower;
     }
