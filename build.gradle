@@ -10,8 +10,6 @@ java {
 
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
 
-wpi.sim.envVar("HALSIMWS_HOST", "127.0.0.1")
-wpi.sim.addWebsocketsClient().defaultEnabled = true
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
 deploy {
