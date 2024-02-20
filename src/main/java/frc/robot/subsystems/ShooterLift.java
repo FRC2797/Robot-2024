@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.Constants;
 
@@ -107,17 +108,13 @@ public class ShooterLift extends PIDSubsystem {
     }
 
     public Command getGoToPowerCommand(double power) {
-        Command goToPower = new StartEndCommand(
-            () -> {
-                left.set(getMeasurement() > 0.8 ? 0 : power);
-                right.set(getMeasurement() > 0.8 ? 0 : power);
-            },
-            () -> {
-                left.set(0);
-                right.set(0);
-            },
-            this
-        );
+        Command goToPower = run(() -> {
+            left.set(getMeasurement() > 0.5 ? 0 : power);
+            right.set(getMeasurement() > 0.5 ? 0 : power);
+        }).finallyDo(() -> {
+            left.set(0);
+            left.set(0);
+        });
 
         return goToPower;
     }
