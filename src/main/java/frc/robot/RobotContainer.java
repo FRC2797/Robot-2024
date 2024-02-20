@@ -22,6 +22,7 @@ import frc.robot.subsystems.Navx;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterLift;
 import frc.robot.subsystems.SwerveDrivetrain;
+import frc.robot.subsystems.Winch;
 
 public class RobotContainer {
   Navx navx = new Navx();
@@ -29,6 +30,7 @@ public class RobotContainer {
   Limelight limelight = new Limelight();
   ShooterLift shooterLift = new ShooterLift();
   Intake intake = new Intake();
+  Winch winch = new Winch();
   CommandJoystick joystick = new CommandJoystick(0);
   CommandXboxController controller = new CommandXboxController(0);
   Shooter shooter = new Shooter();
@@ -87,6 +89,11 @@ public class RobotContainer {
     Command shootReverse = shooter.getGoToPowerCommand(-0.3);
     controller.povUp().whileTrue(shoot);
     controller.povDown().whileTrue(shootReverse);
+
+    Command winchUp = winch.getGoToPowerCommand(0.1);
+    Command winchDown = winch.getGoToPowerCommand(-0.1);
+    controller.povRight().whileTrue(winchUp);
+    controller.povLeft().whileTrue(winchDown);
   }
 
   private void configureDriverShuffleboard() {
