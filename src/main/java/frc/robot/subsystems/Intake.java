@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-    public static CANSparkMax motor = new CANSparkMax(11, MotorType.kBrushless);
+    protected static CANSparkMaxSimWrapper motor = new CANSparkMaxSimWrapper(11, MotorType.kBrushless);
     RelativeEncoder encoder = motor.getEncoder();
     BangBangController bangBang = new BangBangController();
     ShuffleboardTab tab = Shuffleboard.getTab("Intake");
