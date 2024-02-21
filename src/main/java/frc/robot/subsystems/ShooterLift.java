@@ -78,8 +78,8 @@ public class ShooterLift extends PIDSubsystem {
     // From 0 to 1
     @Override
     public double getMeasurement() {
-        double encoderReadingsAveraged = rightEncoder.getPosition();
-        return encoderReadingsAveraged / Constants.kShooterLiftMaxRotationsToFullyVertical;
+        double encoderReading = rightEncoder.getPosition();
+        return encoderReading / Constants.kShooterLiftMaxRotationsToFullyVertical;
     }
 
     @Override
