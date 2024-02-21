@@ -3,6 +3,10 @@ package frc.robot;
 public class Constants {
   public static boolean showNonessentialShuffleboardInfo = true;
   public static double kShooterLiftGearRatio = 127; 
+  public static double kShooterLiftLengthInches = 31;
+  public static double kShooterLiftMassRoughlyPounds = 25;
+  public static double kShooterLiftMaxAngleDegrees = 130;
+  public static double kShooterLiftMinAngleDegrees = -85;
   public static double kShooterLiftMaxRotationsToFullyVertical = 0.08;
 
   public static double kIntakeGearRatio = 1/999999;

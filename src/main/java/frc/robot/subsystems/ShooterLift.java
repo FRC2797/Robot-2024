@@ -16,11 +16,11 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.Constants;
 
 public class ShooterLift extends PIDSubsystem {
-    CANSparkMax left = new CANSparkMax(9, MotorType.kBrushless);
-    CANSparkMax right = new CANSparkMax(10, MotorType.kBrushless);
+    protected CANSparkMaxSimWrapper left = new CANSparkMaxSimWrapper(9, MotorType.kBrushless);
+    protected CANSparkMaxSimWrapper right = new CANSparkMaxSimWrapper(10, MotorType.kBrushless);
 
-    RelativeEncoder leftEncoder = left.getEncoder();
-    RelativeEncoder rightEncoder = right.getEncoder();
+    protected RelativeEncoder leftEncoder = left.getEncoder();
+    protected RelativeEncoder rightEncoder = right.getEncoder();
 
     PIDController pid = new PIDController(1.3, 0.1, 0);
 
