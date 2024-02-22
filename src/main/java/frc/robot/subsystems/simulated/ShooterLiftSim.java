@@ -2,10 +2,11 @@ package frc.robot.subsystems.simulated;
 
 import static edu.wpi.first.math.util.Units.degreesToRadians;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -47,17 +48,16 @@ public class ShooterLiftSim extends ShooterLift {
               6,
               new Color8Bit(Color.kYellow)));
 
+  private ShuffleboardTab tab = Shuffleboard.getTab("Shooter Lift Simulated");
+
   public ShooterLiftSim() {
-    SmartDashboard.putData("ShooterLift sim visualization", m_mech2d);
+    tab.add("ShooterLift sim visualization", m_mech2d);
     
     m_armTower.setColor(new Color8Bit(Color.kBlue));
   }
 
   @Override
   public void simulationPeriodic() {
-      SmartDashboard.putNumber("Left speed is ", left.get());
-      SmartDashboard.putNumber("Right speed is ", right.get());
-
       // just average them together
       armSim.setInput((left.getAppliedOutput() + right.getAppliedOutput()) / 2);
 
