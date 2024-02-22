@@ -23,7 +23,7 @@ public class MiddleAuto extends SequentialCommandGroup {
             race(
                 intake.intake(),
                 shooterLift.getGoToPositionCommand(0),
-                drivetrain.driveDistance(feetToMeters(6))
+                drivetrain.driveDistanceWithJustPID(feetToMeters(6))
             ),
             new FireIntoSubwoofer(intake, shooter, shooterLift, drivetrain, limelight)
         );
