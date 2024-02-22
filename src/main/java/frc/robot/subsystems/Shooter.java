@@ -30,7 +30,7 @@ public class Shooter extends SubsystemBase {
         left.setIdleMode(IdleMode.kCoast);
         right.setIdleMode(IdleMode.kCoast);
 
-        left.setInverted(false);
+        left.setInverted(true);
         right.setInverted(true);
 
         leftEnc.setVelocityConversionFactor(Constants.kShooterGearRatio);
