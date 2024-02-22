@@ -51,7 +51,11 @@ public class Intake extends SubsystemBase {
 
 
     public boolean noteIsIn(){
-        return colorSensor.getProximity() > 150;
+        return getProximity() > 150;
+    }
+
+    public double getProximity() {
+        return colorSensor.getProximity();
     }
 
     public Command intakeUntilNoteIsIn() {
