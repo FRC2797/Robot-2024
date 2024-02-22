@@ -63,7 +63,7 @@ public class Intake extends SubsystemBase {
     }
 
     public Command intakeIntoShooter() {
-        return intake().withTimeout(3);
+        return intake().withTimeout(1.5);
     }
 
     public Command getGoToPowerCommand(double power) {
