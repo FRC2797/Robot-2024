@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.AimWithLimelight;
 import frc.robot.commands.SwerveJoystick;
 import frc.robot.commands.autos.FireIntoAmp;
 import frc.robot.commands.autos.FireIntoSubwoofer;
@@ -34,6 +35,7 @@ public class RobotContainer {
   CommandJoystick joystick = new CommandJoystick(0);
   CommandXboxController controller = new CommandXboxController(0);
   Shooter shooter = new Shooter();
+  ShuffleboardTab commandsForTesting = Shuffleboard.getTab("Commands for testing");
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
 
@@ -50,6 +52,7 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     configureDriverShuffleboard();
+    commandsForTesting.add("Aim with limelight", new AimWithLimelight(drivetrain, limelight));
   }
 
   private void configureBindings() {
