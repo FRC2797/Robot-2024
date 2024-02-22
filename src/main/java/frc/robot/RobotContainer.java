@@ -34,7 +34,6 @@ public class RobotContainer {
   CommandJoystick joystick = new CommandJoystick(0);
   CommandXboxController controller = new CommandXboxController(0);
   Shooter shooter = new Shooter();
-  ShuffleboardTab commandsForTesting = Shuffleboard.getTab("Commands for testing");
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
 
