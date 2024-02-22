@@ -12,13 +12,9 @@ public class ShooterSim extends Shooter {
   double minProximityValue = 0;
   double proximitySensorDistanceToNote = minProximityValue;
 
-  /** Update the simulation model. */
   public void simulationPeriodic() {
-    // In this method, we update our simulation of what our arm is doing
-    // First, we set our "inputs" (voltages)
     shooterSim.setInput((left.getAppliedOutput() + right.getAppliedOutput()) / 2);
 
-    // Next, we update it. The standard loop time is 20ms.
     shooterSim.update(0.020);
 
     SmartDashboard.putNumber("Shooter wheel rpm sim", shooterSim.getAngularVelocityRPM());
@@ -34,5 +30,4 @@ public class ShooterSim extends Shooter {
     System.out.println("getRotations is NOT SIMULATED");
     return 0;
   }
-    
 }
