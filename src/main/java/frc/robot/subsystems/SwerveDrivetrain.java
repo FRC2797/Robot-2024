@@ -62,6 +62,7 @@ public class SwerveDrivetrain extends SubsystemBase
 
     tab.addString("The robot pose is", () -> swerveDrive.getPose().toString());
     tab.addString("One of the modules", () -> swerveDrive.getModulePositions()[0].toString());
+    tab.add("Reset odometry", runOnce(() -> resetOdometry(new Pose2d())));
 
     swerveDrive.setHeadingCorrection(true);
   }
