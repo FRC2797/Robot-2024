@@ -11,7 +11,8 @@ import frc.robot.subsystems.SwerveDrivetrain;
 public class AimWithLimelight extends DeferredCommand {
     public AimWithLimelight(SwerveDrivetrain drivetrain, Limelight limelight) {
         super(() -> {
-            return drivetrain.driveToRotationRelative(degreesToRadians(limelight.getHorizontalOffset()));
+            // negative cause the limelight is technically on the back of the bot
+            return drivetrain.driveToRotationRelative(-degreesToRadians(limelight.getHorizontalOffset()));
         }, Set.of(drivetrain));
     }
 }
