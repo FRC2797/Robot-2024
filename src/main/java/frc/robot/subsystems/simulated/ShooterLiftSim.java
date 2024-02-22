@@ -34,7 +34,6 @@ public class ShooterLiftSim extends ShooterLift {
     );
 
 
-  // Create a Mechanism2d display of an Arm with a fixed ArmTower and moving Arm.
   private final Mechanism2d m_mech2d = new Mechanism2d(60, 60);
   private final MechanismRoot2d m_armPivot = m_mech2d.getRoot("ArmPivot", 30, 30);
   private final MechanismLigament2d m_armTower =
@@ -48,7 +47,6 @@ public class ShooterLiftSim extends ShooterLift {
               6,
               new Color8Bit(Color.kYellow)));
 
-  /** Subsystem constructor. */
   public ShooterLiftSim() {
     SmartDashboard.putData("ShooterLift sim visualization", m_mech2d);
     
@@ -63,14 +61,10 @@ public class ShooterLiftSim extends ShooterLift {
       // just average them together
       armSim.setInput((left.getAppliedOutput() + right.getAppliedOutput()) / 2);
 
-      // Next, we update it. The standard loop time is 20ms.
       armSim.update(0.020);
 
-      // Finally, we set our simulated encoder's readings and simulated battery voltage
-      // convert the encoders to percentages
       double armSimAngleAsPercentage = (armSim.getAngleRads() - degreesToRadians(Constants.kShooterLiftMinAngleDegrees)) / degreesToRadians(Constants.kShooterLiftMaxAngleDegrees);
       measurement = armSimAngleAsPercentage;
-      // Update the Mechanism Arm angle based on the simulated arm angle
       m_arm.setAngle(Units.radiansToDegrees(armSim.getAngleRads()));
   }
 
