@@ -2,10 +2,10 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.BangBangController;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -14,13 +14,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
-    CANSparkMax left = new CANSparkMax(12, MotorType.kBrushless);
-    CANSparkMax right = new CANSparkMax(13, MotorType.kBrushless);
+    protected CANSparkMaxSimWrapper left = new CANSparkMaxSimWrapper(12, MotorType.kBrushless);
+    protected CANSparkMaxSimWrapper right = new CANSparkMaxSimWrapper(13, MotorType.kBrushless);
 
     ShuffleboardTab tab = Shuffleboard.getTab("Shooter");
 
-    RelativeEncoder leftEnc = left.getEncoder();
-    RelativeEncoder rightEnc = right.getEncoder();
+    protected RelativeEncoder leftEnc = left.getEncoder();
+    protected RelativeEncoder rightEnc = right.getEncoder();
 
     boolean enabled = false;
     BangBangController bangBang = new BangBangController();
