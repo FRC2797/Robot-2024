@@ -14,6 +14,7 @@ import frc.robot.commands.AimWithLimelight;
 import frc.robot.commands.SwerveJoystick;
 import frc.robot.commands.autos.FireIntoAmp;
 import frc.robot.commands.autos.FireIntoSubwoofer;
+import frc.robot.commands.autos.FireNote;
 import frc.robot.commands.autos.MiddleAuto;
 import frc.robot.commands.autos.SideAuto;
 import frc.robot.controllers.CommandJoystick;
@@ -121,6 +122,8 @@ public class RobotContainer {
     commandsForTesting.add("Fire into subwoofer", new FireIntoSubwoofer(intake, shooter, shooterLift, drivetrain, limelight));
     commandsForTesting.add("Middle auto", new MiddleAuto(intake, shooter, shooterLift, drivetrain, limelight));
     commandsForTesting.add("Side Auto", new SideAuto(intake, shooter, shooterLift, drivetrain, limelight));
+    commandsForTesting.add("Fire Note", new FireNote(0, 2000, intake, shooter, shooterLift));
+
   }
 
   public Command getAutonomousCommand() {
