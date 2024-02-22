@@ -59,9 +59,6 @@ public class Shooter extends SubsystemBase {
             right.set(
                 bangBang.calculate(getRotationsPerMinute(), setpoint)
             );
-        } else {
-            left.set(0);
-            right.set(0);
         }
     }
 
@@ -75,6 +72,8 @@ public class Shooter extends SubsystemBase {
 
     public void disable() {
         enabled = false;
+        left.set(0);
+        right.set(0);
     }
 
     public Command getGoToRPMCommand(double setpoint) {
