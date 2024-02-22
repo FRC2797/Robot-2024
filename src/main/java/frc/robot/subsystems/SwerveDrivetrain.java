@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.math.util.Units.degreesToRadians;
+
 import java.io.File;
 import java.util.function.DoubleConsumer;
 
@@ -62,8 +63,10 @@ public class SwerveDrivetrain extends SubsystemBase
     setupPathPlanner();
 
     tab.addString("The robot pose is", () -> swerveDrive.getPose().toString());
+    tab.addDouble("The current rotation in degrees is ", () -> swerveDrive.getPose().getRotation().getDegrees());
     tab.addString("One of the modules", () -> swerveDrive.getModulePositions()[0].toString());
     tab.add("Reset odometry", runOnce(() -> resetOdometry(new Pose2d())));
+    tab.add("Drive to rotation 0", driveToRotation(0));
 
     swerveDrive.setHeadingCorrection(true);
   }
