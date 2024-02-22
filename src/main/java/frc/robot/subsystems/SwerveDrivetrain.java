@@ -196,7 +196,7 @@ public class SwerveDrivetrain extends SubsystemBase
     return driveToRotation(getPose().getRotation().getRadians() + radians);
   }
 
-  public Command driveDistance(double meters) {
+  public Command driveDistanceUsingPoses(double meters) {
     return driveToPoseRelativeToCurrent(
       new Pose2d(new Translation2d(meters, 0), new Rotation2d()),
       false
