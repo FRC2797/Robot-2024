@@ -79,8 +79,8 @@ public class RobotContainer {
   private void configureDirectPowerControllerBindings() {
     drivetrain.setDefaultCommand(joystickTeleCommand);
 
-    Command bringLiftDown = shooterLift.getGoToPowerCommand(-0.1);
-    Command bringLiftUp = shooterLift.getGoToPowerCommand(0.1);
+    Command bringLiftDown = shooterLift.getGoToPowerCommand(-0.2);
+    Command bringLiftUp = shooterLift.getGoToPowerCommand(0.2);
     controller.y().whileTrue(bringLiftUp);
     controller.a().whileTrue(bringLiftDown);
 
