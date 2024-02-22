@@ -52,8 +52,7 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     configureDriverShuffleboard();
-
-    commandsForTesting.add("Aim with limelight", new AimWithLimelight(drivetrain, limelight));
+    configureCommandsForTesting();
   }
 
   private void configureBindings() {
@@ -113,6 +112,10 @@ public class RobotContainer {
   private void setUpAutoChooser(SendableChooser<Command> autChooser) {
     autoChooser.addOption("Middle Auto", new MiddleAuto(intake, shooter, shooterLift, drivetrain, limelight));
     autoChooser.addOption("Sideways", new SideAuto(intake, shooter, shooterLift, drivetrain, limelight));
+  }
+
+  private void configureCommandsForTesting() {
+    commandsForTesting.add("Aim with limelight", new AimWithLimelight(drivetrain, limelight));
   }
 
   public Command getAutonomousCommand() {
