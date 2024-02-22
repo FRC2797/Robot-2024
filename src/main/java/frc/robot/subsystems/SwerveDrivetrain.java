@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.math.util.Units.degreesToRadians;
 import java.io.File;
 import java.util.function.DoubleConsumer;
 
@@ -170,8 +171,7 @@ public class SwerveDrivetrain extends SubsystemBase
     PIDController controller = swerveDrive.swerveController.config.headingPIDF.createPIDController();
     controller.enableContinuousInput(-Math.PI, Math.PI);
 
-    // three degrees
-    controller.setTolerance(0.0524);
+    controller.setTolerance(degreesToRadians(1));
 
     DoubleConsumer rotate = (output) -> {
       swerveDrive.drive(new Translation2d(), output, false, false, new Translation2d());
