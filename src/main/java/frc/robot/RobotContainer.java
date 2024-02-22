@@ -31,10 +31,11 @@ public class RobotContainer {
   Limelight limelight = new Limelight();
   ShooterLift shooterLift = new ShooterLift();
   Intake intake = new Intake();
+  Shooter shooter = new Shooter();
   Winch winch = new Winch();
+  
   CommandJoystick joystick = new CommandJoystick(0);
   CommandXboxController controller = new CommandXboxController(0);
-  Shooter shooter = new Shooter();
   ShuffleboardTab commandsForTesting = Shuffleboard.getTab("Commands for testing");
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
