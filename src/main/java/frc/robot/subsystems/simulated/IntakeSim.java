@@ -2,6 +2,8 @@ package frc.robot.subsystems.simulated;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Intake;
@@ -12,8 +14,15 @@ public class IntakeSim extends Intake {
 
   private final FlywheelSim intake = new FlywheelSim(m_armGearbox, 5, 0.00017548352);
 
+  ShuffleboardTab tab = Shuffleboard.getTab("Intake Simulated");
+
   double minProximityValue = 0;
   double proximitySensorDistanceToNote = minProximityValue;
+
+  public IntakeSim() {
+    tab.addDouble("RPM", intake::getAngularVelocityRPM);
+    tab.addDouble("Distance to note", () -> proximitySensorDistanceToNote);
+  }
 
   public void simulationPeriodic() {
     intake.setInput(motor.getAppliedOutput());
@@ -28,9 +37,6 @@ public class IntakeSim extends Intake {
     } else if (intake.getAngularVelocityRPM() < 0) {
         proximitySensorDistanceToNote = Math.min(proximitySensorDistanceToNote - distanceToNoteSimSpeed, minProximityValue);
     }
-
-    SmartDashboard.putNumber("Intake wheel rpm sim", intake.getAngularVelocityRPM());
-    SmartDashboard.putNumber("Distance to note", proximitySensorDistanceToNote);
   }
 
   public void loadNote() {
