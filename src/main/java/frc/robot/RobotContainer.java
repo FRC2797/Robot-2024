@@ -119,6 +119,8 @@ public class RobotContainer {
     commandsForTesting.add("Aim with limelight", new AimWithLimelight(drivetrain, limelight));
     commandsForTesting.add("Fire into amp", new FireIntoAmp(intake, shooter, shooterLift, drivetrain, limelight));
     commandsForTesting.add("Fire into subwoofer", new FireIntoSubwoofer(intake, shooter, shooterLift, drivetrain, limelight));
+    commandsForTesting.add("Middle auto", new MiddleAuto(intake, shooter, shooterLift, drivetrain, limelight));
+    commandsForTesting.add("Side Auto", new SideAuto(intake, shooter, shooterLift, drivetrain, limelight));
   }
 
   public Command getAutonomousCommand() {
