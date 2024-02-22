@@ -115,7 +115,7 @@ public class ShooterLift extends PIDSubsystem {
             right.set(getMeasurement() > 0.5 ? 0 : power);
         }).finallyDo(() -> {
             left.set(0);
-            left.set(0);
+            right.set(0);
         });
 
         return goToPower;
