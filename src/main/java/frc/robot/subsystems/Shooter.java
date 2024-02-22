@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
-    protected CANSparkMaxSimWrapper left = new CANSparkMaxSimWrapper(12, MotorType.kBrushless);
-    protected CANSparkMaxSimWrapper right = new CANSparkMaxSimWrapper(13, MotorType.kBrushless);
+    protected CANSparkMaxSimWrapper left = new CANSparkMaxSimWrapper(11, MotorType.kBrushless);
+    protected CANSparkMaxSimWrapper right = new CANSparkMaxSimWrapper(12, MotorType.kBrushless);
 
     ShuffleboardTab tab = Shuffleboard.getTab("Shooter");
 
