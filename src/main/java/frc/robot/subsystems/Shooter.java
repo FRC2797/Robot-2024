@@ -42,7 +42,9 @@ public class Shooter extends SubsystemBase {
         leftEnc.setPosition(0);
         rightEnc.setPosition(0);
 
-        tab.addDouble("Rotations", this::getRotations);
+        if (RobotBase.isReal()) {
+            tab.addDouble("Rotations", this::getRotations);
+        }
         tab.addDouble("RPM", this::getRotationsPerMinute);
 
         tab.add("2000 RPM", getGoToRPMCommand(2000));
