@@ -67,7 +67,8 @@ public class SwerveDrivetrain extends SubsystemBase
     tab.addString("One of the modules", () -> swerveDrive.getModulePositions()[0].toString());
     tab.add("Reset odometry", runOnce(() -> resetOdometry(new Pose2d())));
     tab.add("Drive to rotation 0", driveToRotation(0));
-    tab.add("Drive 1 meter with just pid", driveDistanceWithJustPID(1));
+    tab.add("Drive 1 meter with just pid", driveDistanceWithJustPID(1).withName("Drive 1 meter with just pid"));
+    tab.add("Drive -1 meter with just pid", driveDistanceWithJustPID(-1).withName("Drive -1 meter with just pid"));
 
     swerveDrive.setHeadingCorrection(true);
   }
@@ -214,13 +215,16 @@ public class SwerveDrivetrain extends SubsystemBase
     };
 
     return defer(
-      () -> new PIDCommand(
-        controller,
-        () -> getPose().getTranslation().getX(),
-        getPose().getTranslation().getX() + meters,
-        drive,
-        this
-      ).until(controller::atSetpoint)
+      () -> {
+        Translation2d originalTranslation = getPose().getTranslation();
+        return new PIDCommand(
+          controller,
+          () -> originalTranslation.getDistance(getPose().getTranslation()) * Math.signum(meters),
+          meters,
+          drive,
+          this
+        ).until(controller::atSetpoint);
+      }
     );
   }
 
