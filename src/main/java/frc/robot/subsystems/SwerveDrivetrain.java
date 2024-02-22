@@ -187,6 +187,10 @@ public class SwerveDrivetrain extends SubsystemBase
     ).until(controller::atSetpoint);
   }
 
+  public Command driveToRotationRelative(double radians) {
+    return driveToRotation(getPose().getRotation().getRadians() + radians);
+  }
+
   public Command driveDistance(double meters) {
     return driveToPoseRelativeToCurrent(
       new Pose2d(new Translation2d(meters, 0), new Rotation2d()),
