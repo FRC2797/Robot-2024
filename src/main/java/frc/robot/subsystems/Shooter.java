@@ -119,7 +119,6 @@ public class Shooter extends SubsystemBase {
     }
 
 
-    // rotations not working for whatever reason
     public double getRotations() {
         return (
             Math.abs(leftEnc.getPosition()) + Math.abs(rightEnc.getPosition())) / 2;
