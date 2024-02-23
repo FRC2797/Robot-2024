@@ -5,6 +5,9 @@ import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
 import static frc.robot.Constants.showNonessentialShuffleboardInfo;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -113,6 +116,15 @@ public class Limelight {
     return (int) table.getEntry("tid").getInteger(ENTRY_NOT_FOUND);
   }
 
+
+  public Pose2d getRobotPoseInFieldSpaceWithBlueOrigin() {
+    double[] botpose_wpiblue = table.getEntry("botpose_wpiblue").getDoubleArray(new double[6]);
+    // TODO: Need to figure out what unit this translation2d is in
+    Translation2d translation = new Translation2d(botpose_wpiblue[0], botpose_wpiblue[1]);
+    Rotation2d rotation = Rotation2d.fromDegrees(botpose_wpiblue[6]);
+
+    return new Pose2d(translation, rotation);
+  }
 
   public Measure<Distance> getDistance() {
     double angleToGoalDegrees = Constants.Limelight.mountingAngleDegrees + getVerticalOffset();
