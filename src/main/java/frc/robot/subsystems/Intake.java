@@ -29,6 +29,7 @@ public class Intake extends SubsystemBase {
         motor.setIdleMode(IdleMode.kCoast);
 
         tab.addBoolean("Is the ring in?", this::noteIsIn);
+        tab.addDouble("Current proximity", this::getProximity);
     }
 
     public Command intake(double speed) {
