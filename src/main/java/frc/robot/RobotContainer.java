@@ -122,7 +122,7 @@ public class RobotContainer {
     commandsForTesting.add("Fire into subwoofer", new FireIntoSubwoofer(intake, shooter, shooterLift, drivetrain, limelight));
     commandsForTesting.add("Middle auto", new MiddleAuto(intake, shooter, shooterLift, drivetrain, limelight));
     commandsForTesting.add("Side Auto", new SideAuto(intake, shooter, shooterLift, drivetrain, limelight));
-    commandsForTesting.add("Fire Note", new FireNote(0, 2000, intake, shooter, shooterLift));
+    commandsForTesting.add("Fire Note", new FireNote(0.5, 2000, intake, shooter, shooterLift));
 
   }
 
