@@ -118,12 +118,7 @@ public class Limelight {
 
 
   public Pose2d getRobotPoseInFieldSpaceWithBlueOrigin() {
-    double[] botpose_wpiblue = table.getEntry("botpose_wpiblue").getDoubleArray(new double[6]);
-    // TODO: Need to figure out what unit this translation2d is in
-    Translation2d translation = new Translation2d(botpose_wpiblue[0], botpose_wpiblue[1]);
-    Rotation2d rotation = Rotation2d.fromDegrees(botpose_wpiblue[6]);
-
-    return new Pose2d(translation, rotation);
+    return LimelightHelpers.getBotPose2d_wpiBlue("limelight");
   }
 
   public Measure<Distance> getDistance() {
