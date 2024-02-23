@@ -7,7 +7,7 @@ public class Constants {
   public static double kShooterLiftMassRoughlyPounds = 25;
   public static double kShooterLiftMaxAngleDegrees = 130;
   public static double kShooterLiftMinAngleDegrees = -85;
-  public static double kShooterLiftMaxRotationsToFullyVertical = 0.15;
+  public static double kShooterLiftMaxRotationsToFullyVertical = 0.18;
 
   public static double kIntakeGearRatio = 1/999999;
   public static double kShooterGearRatio = 1;
