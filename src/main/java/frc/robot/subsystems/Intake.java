@@ -30,6 +30,7 @@ public class Intake extends SubsystemBase {
 
         tab.addBoolean("Is the ring in?", this::noteIsIn);
         tab.addDouble("Current proximity", this::getProximity);
+        tab.addDouble("Current encoder position", encoder::getPosition);
     }
 
     public Command intake(double speed) {
