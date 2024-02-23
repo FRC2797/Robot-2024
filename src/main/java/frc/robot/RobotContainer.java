@@ -28,8 +28,8 @@ import frc.robot.subsystems.Winch;
 
 public class RobotContainer {
   Navx navx = new Navx();
-  SwerveDrivetrain drivetrain = new SwerveDrivetrain();
   Limelight limelight = new Limelight();
+  SwerveDrivetrain drivetrain = new SwerveDrivetrain(limelight);
   ShooterLift shooterLift = new ShooterLift();
   Intake intake = new Intake();
   Shooter shooter = new Shooter();
