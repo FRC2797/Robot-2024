@@ -418,6 +418,21 @@ public class SwerveDrivetrain extends SubsystemBase
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
   }
 
+  public void addLimelightReadingToOdometry() {
+    boolean hasAValidTarget = LimelightHelpers.getTV("limelight");
+    if (hasAValidTarget) {
+      Pose2d limelightPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight");
+
+      boolean poseIsTooOff = getPose().getTranslation().getDistance(limelightPose.getTranslation()) > 1;
+      if (poseIsTooOff) {
+        return;
+      } else {
+        double latency = LimelightHelpers.getLatency_Capture("limelight") + LimelightHelpers.getLatency_Pipeline("pipeline");
+        swerveDrive.addVisionMeasurement(limelightPose, Timer.getFPGATimestamp() - latency);
+      }
+    }
+  }
+
   public void arcadeDrive(double forwardInMetersPerSecond, double rotationInRadians) {
     var chassisSpeeds = new ChassisSpeeds(forwardInMetersPerSecond, 0, rotationInRadians);
     this.drive(chassisSpeeds);
