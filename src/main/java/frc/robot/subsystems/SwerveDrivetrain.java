@@ -48,8 +48,9 @@ public class SwerveDrivetrain extends SubsystemBase
   ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
   private final SwerveDrive swerveDrive;
   public        double      maximumSpeed = Constants.ModuleConstants.kPhysicalMaxSpeedMetersPerSecond;
+  private Limelight limelight;
 
-  public SwerveDrivetrain(File directory)
+  public SwerveDrivetrain(File directory, Limelight limelight)
   {
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
@@ -71,11 +72,14 @@ public class SwerveDrivetrain extends SubsystemBase
     tab.add("Drive -1 meter with just pid", driveDistanceWithJustPID(-1).withName("Drive -1 meter with just pid"));
 
     swerveDrive.setHeadingCorrection(true);
+
+    this.limelight = limelight;
   }
 
-  public SwerveDrivetrain() {
+  public SwerveDrivetrain(Limelight limelight) {
     this(
-      new File(Filesystem.getDeployDirectory(), "swerve")
+      new File(Filesystem.getDeployDirectory(), "swerve"),
+      limelight
     );
   }
 
@@ -419,16 +423,14 @@ public class SwerveDrivetrain extends SubsystemBase
   }
 
   public void addLimelightReadingToOdometry() {
-    boolean hasAValidTarget = LimelightHelpers.getTV("limelight");
-    if (hasAValidTarget) {
-      Pose2d limelightPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight");
+    if (limelight.hasTarget()) {
+      Pose2d limelightPose = limelight.getBosePose2d_wpiBlue();
 
       boolean poseIsTooOff = getPose().getTranslation().getDistance(limelightPose.getTranslation()) > 1;
       if (poseIsTooOff) {
         return;
       } else {
-        double latency = LimelightHelpers.getLatency_Capture("limelight") + LimelightHelpers.getLatency_Pipeline("pipeline");
-        swerveDrive.addVisionMeasurement(limelightPose, Timer.getFPGATimestamp() - latency);
+        swerveDrive.addVisionMeasurement(limelightPose, Timer.getFPGATimestamp() - limelight.getLatency());
       }
     }
   }
