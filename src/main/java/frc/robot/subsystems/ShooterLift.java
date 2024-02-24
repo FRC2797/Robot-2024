@@ -84,8 +84,7 @@ public class ShooterLift extends PIDSubsystem {
 
     @Override
     protected void useOutput(double output, double setpoint) {
-        left.set(output);
-        right.set(output);
+        setMotors(output);
     }
 
     public void brakeMotors(){
@@ -111,11 +110,9 @@ public class ShooterLift extends PIDSubsystem {
 
     public Command getGoToPowerCommand(double power) {
         Command goToPower = run(() -> {
-            left.set(getMeasurement() > 0.5 ? 0 : power);
-            right.set(getMeasurement() > 0.5 ? 0 : power);
+            setMotors(getMeasurement() > 0.5 ? 0 : power);
         }).finallyDo(() -> {
-            left.set(0);
-            right.set(0);
+            setMotors(0);
         });
 
         return goToPower;
@@ -135,6 +132,11 @@ public class ShooterLift extends PIDSubsystem {
 
     public boolean atSetpoint() {
         return MathUtil.isNear(getSetpoint(), getMeasurement(), 0.05);
+    }
+
+    private void setMotors(double speed) {
+        left.set(speed);
+        right.set(speed);
     }
 
     public void resetEncoderPositions() {
