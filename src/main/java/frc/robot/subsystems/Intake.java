@@ -41,7 +41,7 @@ public class Intake extends SubsystemBase {
     }
 
 
-    public static final double kIntakePower = 0.4;
+    public static final double kIntakePower = 0.20;
     public Command intake() {
         return intake(kIntakePower);
     }
@@ -52,7 +52,7 @@ public class Intake extends SubsystemBase {
 
 
     public boolean noteIsIn(){
-        return getProximity() > 150;
+        return getProximity() > 95;
     }
 
     public double getProximity() {
@@ -60,7 +60,7 @@ public class Intake extends SubsystemBase {
     }
 
     public Command intakeUntilNoteIsIn() {
-        return intake().until(() -> noteIsIn());
+        return intake().until(() -> noteIsIn()).andThen(intake().withTimeout(0.5));
     }
 
     public Command intakeIntoShooter() {
