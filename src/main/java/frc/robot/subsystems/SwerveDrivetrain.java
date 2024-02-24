@@ -70,6 +70,13 @@ public class SwerveDrivetrain extends SubsystemBase
     tab.add("Drive to rotation 0", driveToRotation(0));
     tab.add("Drive 1 meter with just pid", driveDistanceWithJustPID(1).withName("Drive 1 meter with just pid"));
     tab.add("Drive -1 meter with just pid", driveDistanceWithJustPID(-1).withName("Drive -1 meter with just pid"));
+    tab.add("Drive to pose (1, 0)", driveToPose(new Pose2d(new Translation2d(2, 3), new Rotation2d())));
+    tab.add("Pathfind to BLUE_SOURCE", driveToPose(Poses.BLUE_SOURCE.value).withName("Pathfind to BLUE_SOURCE"));
+    tab.add("Pathfind to RED_SOURCE", driveToPose(Poses.RED_SOURCE.value).withName("Pathfind to RED_SOURCE"));
+    tab.add("Pathfind to BLUE_SUBWOOFER", driveToPose(Poses.BLUE_SUBWOOFER.value).withName("Pathfind to BLUE_SUBWOOFER"));
+    tab.add("Pathfind to RED_SUBWOOFER", driveToPose(Poses.RED_SUBWOOFER.value).withName("Pathfind to RED_SUBWOOFER"));
+    tab.add("Pathfind to BLUE_AMP", driveToPose(Poses.BLUE_AMP.value).withName("Pathfind to BLUE_AMP"));
+    tab.add("Pathfind to RED_AMP", driveToPose(Poses.RED_AMP.value).withName("Pathfind to RED_AMP"));
 
     swerveDrive.setHeadingCorrection(true);
 
