@@ -74,7 +74,7 @@ public class Limelight {
     return LimelightHelpers.getTV("limelight");
   }
 
-  private void switchPipeline(Pipeline pipeline) {
+  protected void switchPipeline(Pipeline pipeline) {
     table.getEntry("pipeline").setNumber(pipeline.value);
   }
 
