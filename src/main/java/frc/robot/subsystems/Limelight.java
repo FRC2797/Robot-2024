@@ -37,7 +37,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 
 public class Limelight {
-  private final int ENTRY_NOT_FOUND = -9999;
+  private final int ENTRY_NOT_FOUND = 0;
 
   ShuffleboardTab tab = Shuffleboard.getTab("Limelight");
   public enum Pipeline {
