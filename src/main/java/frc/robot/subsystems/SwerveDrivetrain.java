@@ -445,16 +445,14 @@ public class SwerveDrivetrain extends SubsystemBase
   }
 
   public void addLimelightReadingToOdometry() {
-    if (limelight.hasTarget()) {
-      Pose2d limelightPose = limelight.getBosePose2d_wpiBlue();
+    Pose2d limelightPose = limelight.getBosePose2d_wpiBlue();
 
-      boolean poseIsTooOff = getPose().getTranslation().getDistance(limelightPose.getTranslation()) > 1;
-      boolean doesNotHaveTarget = !limelight.hasTarget();
-      if (poseIsTooOff || doesNotHaveTarget) {
-        return;
-      } else {
-        swerveDrive.addVisionMeasurement(limelightPose, Timer.getFPGATimestamp() - limelight.getLatency());
-      }
+    boolean poseIsTooOff = getPose().getTranslation().getDistance(limelightPose.getTranslation()) > 1;
+    boolean doesNotHaveTarget = !limelight.hasTarget();
+    if (poseIsTooOff || doesNotHaveTarget) {
+      return;
+    } else {
+      swerveDrive.addVisionMeasurement(limelightPose, Timer.getFPGATimestamp() - limelight.getLatency());
     }
   }
 
