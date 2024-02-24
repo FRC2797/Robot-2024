@@ -449,7 +449,8 @@ public class SwerveDrivetrain extends SubsystemBase
       Pose2d limelightPose = limelight.getBosePose2d_wpiBlue();
 
       boolean poseIsTooOff = getPose().getTranslation().getDistance(limelightPose.getTranslation()) > 1;
-      if (poseIsTooOff) {
+      boolean doesNotHaveTarget = !limelight.hasTarget();
+      if (poseIsTooOff || doesNotHaveTarget) {
         return;
       } else {
         swerveDrive.addVisionMeasurement(limelightPose, Timer.getFPGATimestamp() - limelight.getLatency());
