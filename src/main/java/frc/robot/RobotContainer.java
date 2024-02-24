@@ -61,7 +61,7 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(joystickTeleCommand);
 
     Command intakeUntilNoteIsIn = intake.intakeUntilNoteIsIn();
-    controller.b().whileTrue(intakeUntilNoteIsIn);
+    controller.b().onTrue(intakeUntilNoteIsIn);
 
     Command fireIntoSubwoofer = new FireIntoSubwoofer(intake, shooter, shooterLift, drivetrain, limelight);
     controller.x().whileTrue(fireIntoSubwoofer);
