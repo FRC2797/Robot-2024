@@ -133,7 +133,7 @@ public class Limelight {
   }
 
 
-  public Pose2d getBosePose2d_wpiBlue() {
+  public Pose2d getBotPose2d_wpiBlue() {
     return LimelightHelpers.getBotPose2d_wpiBlue("limelight");
   }
 
