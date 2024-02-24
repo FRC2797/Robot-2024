@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
 import static frc.robot.Constants.showNonessentialShuffleboardInfo;
@@ -54,6 +55,7 @@ public class Limelight {
     Shuffleboard.getTab("Driver").addBoolean("Has Target", this::hasTarget);
     tab.addDouble("horizontal offset", this::getHorizontalOffset);
     tab.addBoolean("Has Target", this::hasTarget);
+    tab.addDouble("Distance", () -> getDistance().in(Meters));
   }
 
   private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
