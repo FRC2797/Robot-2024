@@ -71,12 +71,12 @@ public class SwerveDrivetrain extends SubsystemBase
     tab.add("Drive 1 meter with just pid", driveDistanceWithJustPID(1).withName("Drive 1 meter with just pid"));
     tab.add("Drive -1 meter with just pid", driveDistanceWithJustPID(-1).withName("Drive -1 meter with just pid"));
     tab.add("Drive to pose (1, 0)", driveToPose(new Pose2d(new Translation2d(2, 3), new Rotation2d())));
-    tab.add("Pathfind to BLUE_SOURCE", driveToPose(Poses.BLUE_SOURCE.value).withName("Pathfind to BLUE_SOURCE"));
-    tab.add("Pathfind to RED_SOURCE", driveToPose(Poses.RED_SOURCE.value).withName("Pathfind to RED_SOURCE"));
-    tab.add("Pathfind to BLUE_SUBWOOFER", driveToPose(Poses.BLUE_SUBWOOFER.value).withName("Pathfind to BLUE_SUBWOOFER"));
-    tab.add("Pathfind to RED_SUBWOOFER", driveToPose(Poses.RED_SUBWOOFER.value).withName("Pathfind to RED_SUBWOOFER"));
-    tab.add("Pathfind to BLUE_AMP", driveToPose(Poses.BLUE_AMP.value).withName("Pathfind to BLUE_AMP"));
-    tab.add("Pathfind to RED_AMP", driveToPose(Poses.RED_AMP.value).withName("Pathfind to RED_AMP"));
+    tab.add("Pathfind to BLUE_SOURCE", driveToPose(PosesToGoToPlaces.BLUE_SOURCE.value).withName("Pathfind to BLUE_SOURCE"));
+    tab.add("Pathfind to RED_SOURCE", driveToPose(PosesToGoToPlaces.RED_SOURCE.value).withName("Pathfind to RED_SOURCE"));
+    tab.add("Pathfind to BLUE_SUBWOOFER", driveToPose(PosesToGoToPlaces.BLUE_SUBWOOFER.value).withName("Pathfind to BLUE_SUBWOOFER"));
+    tab.add("Pathfind to RED_SUBWOOFER", driveToPose(PosesToGoToPlaces.RED_SUBWOOFER.value).withName("Pathfind to RED_SUBWOOFER"));
+    tab.add("Pathfind to BLUE_AMP", driveToPose(PosesToGoToPlaces.BLUE_AMP.value).withName("Pathfind to BLUE_AMP"));
+    tab.add("Pathfind to RED_AMP", driveToPose(PosesToGoToPlaces.RED_AMP.value).withName("Pathfind to RED_AMP"));
     tab.add("Add limelight vision measurement", runOnce(this::addLimelightReadingToOdometry));
 
     swerveDrive.setHeadingCorrection(true);
@@ -147,7 +147,7 @@ public class SwerveDrivetrain extends SubsystemBase
     return AutoBuilder.followPath(path);
   }
 
-  static enum Poses {
+  static enum PosesToGoToPlaces {
     BLUE_SOURCE(15, 1.64, Rotation2d.fromDegrees(125)),
     RED_SOURCE(1.51, 1.81, Rotation2d.fromDegrees(58)),
     BLUE_SUBWOOFER(1.74, 5.49, Rotation2d.fromDegrees(0)),
@@ -157,7 +157,7 @@ public class SwerveDrivetrain extends SubsystemBase
 
     final Pose2d value;
 
-    Poses(double x, double y, Rotation2d rotation) {
+    PosesToGoToPlaces(double x, double y, Rotation2d rotation) {
         this.value = new Pose2d(x, y, rotation);
     }
 }
