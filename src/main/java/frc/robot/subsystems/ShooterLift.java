@@ -2,25 +2,29 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.Constants;
 
 public class ShooterLift extends PIDSubsystem {
+    // DONT DIRECTLY SET MOTORS, use the "setMotors" wrapper to ensure the limit switches stop the motors when necessary
     protected CANSparkMaxSimWrapper left = new CANSparkMaxSimWrapper(9, MotorType.kBrushless);
     protected CANSparkMaxSimWrapper right = new CANSparkMaxSimWrapper(10, MotorType.kBrushless);
 
     protected RelativeEncoder leftEncoder = left.getEncoder();
     protected RelativeEncoder rightEncoder = right.getEncoder();
+
+    private DigitalInput bottomLimitSwitch = new DigitalInput(0);
+    private DigitalInput topLimitSwitch = new DigitalInput(1);
+
 
     PIDController pid = new PIDController(1.3, 0.1, 0);
 
@@ -48,6 +52,9 @@ public class ShooterLift extends PIDSubsystem {
         tab.addDouble("left encoder value", leftEncoder::getPosition);
         tab.addDouble("right encoder value", rightEncoder::getPosition);
 
+        tab.addBoolean("Is fully up", this::isFullyUp);
+        tab.addBoolean("Is fully down", this::isFullyDown);
+
         tab.add(this.getGoToPositionCommand(0).withName("Go to 0%"));
         tab.add(this.getGoToPositionCommand(0.1).withName("Go to 10%"));
         tab.add(this.getGoToPositionCommand(0.2).withName("Go to 20%"));
@@ -68,6 +75,33 @@ public class ShooterLift extends PIDSubsystem {
         tab.add("Reset Encoders", runOnce(this::resetEncoderPositions));
 
         this.disable();
+    }
+
+    @Override
+    public void periodic() {
+        super.periodic();
+        boolean leftGoingUp = left.get() > 0;
+        boolean leftGoingDown = left.get() < 0;
+
+        boolean rightGoingUp = right.get() > 0;
+        boolean rightGoingDown = right.get() < 0;
+
+        if (isFullyDown() && (leftGoingDown || rightGoingDown)) {
+            setMotors(0);
+        }
+
+        if (isFullyUp() && (leftGoingUp || rightGoingUp)) {
+            setMotors(0);
+        }
+
+        if (isFullyDown()) {
+            resetEncoderPositions();
+        }
+
+        if (isFullyUp()) {
+            leftEncoder.setPosition(Constants.kShooterLiftMaxRotationsToFullyVertical);
+            rightEncoder.setPosition(Constants.kShooterLiftMaxRotationsToFullyVertical);
+        }
     }
 
     // Setpoint is from 0 to 1
@@ -135,8 +169,21 @@ public class ShooterLift extends PIDSubsystem {
     }
 
     private void setMotors(double speed) {
-        left.set(speed);
-        right.set(speed);
+        if ((isFullyDown() && speed < 0) || (isFullyUp() && speed > 0)) {
+            left.set(0);
+            right.set(0);
+        } else {
+            left.set(speed);
+            right.set(speed);
+        }
+    }
+
+    protected boolean isFullyDown() {
+        return !bottomLimitSwitch.get();
+    }
+
+    protected boolean isFullyUp() {
+        return !topLimitSwitch.get();
     }
 
     public void resetEncoderPositions() {

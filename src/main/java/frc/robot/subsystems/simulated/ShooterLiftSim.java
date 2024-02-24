@@ -11,14 +11,17 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.Constants;
 import frc.robot.subsystems.ShooterLift;
 
+import edu.wpi.first.wpilibj2.command.Commands;
 public class ShooterLiftSim extends ShooterLift {
   private double measurement = 0;
+
+  private boolean isFullyUp = false;
+  private boolean isFullyDown = false;
 
   // Constants taken from the arm sim example
   private final SingleJointedArmSim armSim = 
@@ -54,6 +57,12 @@ public class ShooterLiftSim extends ShooterLift {
     tab.add("ShooterLift sim visualization", m_mech2d);
     
     m_armTower.setColor(new Color8Bit(Color.kBlue));
+
+    tab.add(Commands.runOnce(() -> setFullyUp(true)).withName("set fullyUp to true"));
+    tab.add(Commands.runOnce(() -> setFullyDown(true)).withName("set fullyDown to true"));
+
+    tab.add(Commands.runOnce(() -> setFullyUp(false)).withName("set fullyUp to false"));
+    tab.add(Commands.runOnce(() -> setFullyDown(false)).withName("set fullyDown to false"));
   }
 
   @Override
@@ -72,4 +81,23 @@ public class ShooterLiftSim extends ShooterLift {
   public double getMeasurement() {
       return measurement;
   }
+
+  @Override
+  public boolean isFullyUp() {
+    return isFullyUp;
+  }
+
+  public void setFullyUp(boolean isFullyUp) {
+    this.isFullyUp = isFullyUp;
+  }
+
+  @Override
+  public boolean isFullyDown() {
+    return isFullyDown;
+  }
+
+  public void setFullyDown(boolean isFullyDown) {
+    this.isFullyDown = isFullyDown;
+  }
+
 }
