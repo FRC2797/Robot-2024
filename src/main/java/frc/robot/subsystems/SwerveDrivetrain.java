@@ -77,6 +77,7 @@ public class SwerveDrivetrain extends SubsystemBase
     tab.add("Pathfind to RED_SUBWOOFER", driveToPose(Poses.RED_SUBWOOFER.value).withName("Pathfind to RED_SUBWOOFER"));
     tab.add("Pathfind to BLUE_AMP", driveToPose(Poses.BLUE_AMP.value).withName("Pathfind to BLUE_AMP"));
     tab.add("Pathfind to RED_AMP", driveToPose(Poses.RED_AMP.value).withName("Pathfind to RED_AMP"));
+    tab.add("Add limelight vision measurement", runOnce(this::addLimelightReadingToOdometry));
 
     swerveDrive.setHeadingCorrection(true);
 
