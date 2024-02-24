@@ -21,7 +21,7 @@ import frc.robot.subsystems.ShooterLift;
 import frc.robot.subsystems.SwerveDrivetrain;
 
 public class FireIntoSubwoofer extends DeferredCommand {
-    final private static Measure<Distance> kDistanceToFireAt = Inches.of(45);
+    final private static Measure<Distance> kDistanceToFireAt = Inches.of(90);
     final private static double kHeightToFireAt = 0.8;
     final private static double kShooterRPMToFireAt = 2000;
 
