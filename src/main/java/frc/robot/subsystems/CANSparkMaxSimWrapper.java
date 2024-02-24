@@ -11,6 +11,8 @@ public class CANSparkMaxSimWrapper extends CANSparkMax {
     public CANSparkMaxSimWrapper(int deviceId, CANSparkLowLevel.MotorType type) {
         super(deviceId, type);
     }
+    private double lastSetSpeed = 0;
+
 
     @Override
     public void set(double speed) {
@@ -19,8 +21,18 @@ public class CANSparkMaxSimWrapper extends CANSparkMax {
 
         if (RobotBase.isSimulation()) {
             super.setVoltage(speed * maxVoltage);
+            lastSetSpeed = speed;
         } else {
             super.set(speed);
+        }
+    }
+
+    @Override
+    public double get() {
+        if (RobotBase.isReal()) {
+            return super.get();
+        } else {
+            return lastSetSpeed;
         }
     }
 }
