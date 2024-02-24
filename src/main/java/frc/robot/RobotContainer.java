@@ -76,6 +76,12 @@ public class RobotContainer {
     controller.leftTrigger().whileTrue(reverseIntake);
   }
 
+  private void configureClimbBindings() {
+    drivetrain.setDefaultCommand(joystickTeleCommand);
+    controller.y().toggleOnTrue(shooterLift.getGoToPositionCommand(1));
+    controller.a().toggleOnTrue(shooterLift.getGoToPositionCommand(0.1));
+  }
+
   private void configureDirectPowerControllerBindings() {
     drivetrain.setDefaultCommand(joystickTeleCommand);
 
