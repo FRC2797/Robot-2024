@@ -48,6 +48,11 @@ public class Shooter extends SubsystemBase {
         tab.addDouble("RPM", this::getRotationsPerMinute);
 
         tab.add("2000 RPM", getGoToRPMCommand(2000));
+        tab.add("99999 RPM", getGoToRPMCommand(99999));
+
+        tab.addDouble("Left RPM", this::getLeftRPM);
+        tab.addDouble("Right RPM", this::getRightRPM);
+
     }
 
     @Override
@@ -117,6 +122,14 @@ public class Shooter extends SubsystemBase {
 
     public double getRotationsPerMinute() {
         return (Math.abs(leftEnc.getVelocity()) + Math.abs(rightEnc.getVelocity())) / 2;
+    }
+
+    public double getLeftRPM() {
+        return leftEnc.getVelocity();
+    }
+
+    public double getRightRPM() {
+        return rightEnc.getVelocity();
     }
 
 
