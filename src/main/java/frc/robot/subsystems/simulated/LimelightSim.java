@@ -42,7 +42,8 @@ public class LimelightSim extends Limelight {
   }
 
   Pipeline currentPipeline = Pipeline.placeholder;
-  private void switchPipeline(Pipeline pipeline) {
+  @Override
+  protected void switchPipeline(Pipeline pipeline) {
     currentPipeline = pipeline;
   }
 
