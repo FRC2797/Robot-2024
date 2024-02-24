@@ -143,7 +143,6 @@ public class Limelight {
 
   public Measure<Distance> getDistance() {
     if  (!hasTarget()) {
-        System.out.println("Tried to get distance but no target");
         return Inches.of(0);
     }
 
