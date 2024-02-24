@@ -151,6 +151,8 @@ public class Limelight {
     return Inches.of(distanceFromLimelightToGoalInches);
   }
 
+  // Make wrapper around this class using limelight object instead of using it directly.
+  // Using the limelight object allows for easy mocking of it, e.g for simulation
   public class LimelightHelpers {
     public static class LimelightTarget_Retro {
 
