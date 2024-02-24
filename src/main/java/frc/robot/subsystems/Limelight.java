@@ -142,6 +142,11 @@ public class Limelight {
   }
 
   public Measure<Distance> getDistance() {
+    if  (!hasTarget()) {
+        System.out.println("Tried to get distance but no target");
+        return Inches.of(0);
+    }
+
     double angleToGoalDegrees = Constants.Limelight.mountingAngleDegrees + getVerticalOffset();
     double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
 
