@@ -26,8 +26,6 @@ public class ShooterLift extends PIDSubsystem {
     private DigitalInput topLimitSwitch = new DigitalInput(1);
 
 
-    PIDController pid = new PIDController(1.3, 0.1, 0);
-
     ShuffleboardTab tab = Shuffleboard.getTab("ShooterLift");
 
     // Should probably have a measurement using radians instead of 0 to 1 with 1 being perfectly vertical
