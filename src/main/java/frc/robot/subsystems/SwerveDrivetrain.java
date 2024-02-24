@@ -139,6 +139,21 @@ public class SwerveDrivetrain extends SubsystemBase
     return AutoBuilder.followPath(path);
   }
 
+  static enum Poses {
+    BLUE_SOURCE(15, 1.64, Rotation2d.fromDegrees(125)),
+    RED_SOURCE(1.51, 1.81, Rotation2d.fromDegrees(58)),
+    BLUE_SUBWOOFER(1.74, 5.49, Rotation2d.fromDegrees(0)),
+    RED_SUBWOOFER(14.8, 5.59, Rotation2d.fromDegrees(180)),
+    BLUE_AMP(1.71, 7.19, Rotation2d.fromDegrees(-90)),
+    RED_AMP(14.89, 7.16, Rotation2d.fromDegrees(-90));
+
+    final Pose2d value;
+
+    Poses(double x, double y, Rotation2d rotation) {
+        this.value = new Pose2d(x, y, rotation);
+    }
+}
+
   /**
    * Use PathPlanner Path finding to go to a point on the field.
    *
