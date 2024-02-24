@@ -42,7 +42,7 @@ public class Intake extends SubsystemBase {
     }
 
 
-    public static final double kIntakePower = 0.77;
+    public static final double kIntakePower = 0.4;
     public Command intake() {
         return intake(kIntakePower);
     }
