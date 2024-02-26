@@ -6,6 +6,9 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -134,6 +137,11 @@ public class RobotContainer {
 
     Command firingWhenDirectlyUpToSubwoofer = new FireNote(0, 2000, intake, shooter, shooterLift).withName("firingWhenDirectlyUpToSubwoofer");
     commandsForTesting.add(firingWhenDirectlyUpToSubwoofer);
+
+    NamedCommands.registerCommand("FireNoteIntoSubwoofer", new FireIntoSubwoofer(intake, shooter, shooterLift, drivetrain, limelight));
+    NamedCommands.registerCommand("IntakeUntilNoteIsIn", intake.intakeUntilNoteIsIn());
+
+    commandsForTesting.add("Path planner middle auto", new PathPlannerAuto("Middle"));
   }
 
   public Command getAutonomousCommand() {
