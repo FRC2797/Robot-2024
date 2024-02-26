@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AimWithLimelight;
 import frc.robot.commands.SwerveJoystick;
 import frc.robot.commands.autos.FireIntoAmp;
@@ -30,6 +31,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterLift;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Winch;
+
 
 public class RobotContainer {
   Navx navx = new Navx();
@@ -142,6 +144,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeUntilNoteIsIn", intake.intakeUntilNoteIsIn());
 
     commandsForTesting.add("Path planner middle auto", new PathPlannerAuto("Middle"));
+    commandsForTesting.add("Run sysid quasic static on right forward", shooter.sysIdQuasistaticForRight(SysIdRoutine.Direction.kForward));
+    commandsForTesting.add("Run sysid quasic static on right backwards", shooter.sysIdQuasistaticForRight(SysIdRoutine.Direction.kReverse));
   }
 
   public Command getAutonomousCommand() {
