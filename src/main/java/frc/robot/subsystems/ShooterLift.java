@@ -97,20 +97,6 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         tab.addBoolean("Is fully up", this::isFullyUp);
         tab.addBoolean("Is fully down", this::isFullyDown);
 
-        ShuffleboardLayout goToPosition = tab.getLayout("Go to position", BuiltInLayouts.kList).withSize(2, 2).withProperties(Map.of("Label position", "HIDDEN"));
-        for (double i = 0; i <= 90; i += 5) {
-            goToPosition.add(
-                getGoToPositionCommand(i).withName(String.format("Go to %.2f degrees", i))
-            );
-        }
-
-        ShuffleboardLayout goToPowerList = tab.getLayout("Go to power", BuiltInLayouts.kList).withSize(2, 2).withProperties(Map.of("Label position", "HIDDEN"));
-        for (double i = -1; i < 1.05; i += 0.05) {
-            goToPowerList.add(
-                getGoToPowerCommand(Volts.of(i * 12)).withName(String.format("Go to %.2f power", i))
-            );
-        }
-
         tab.add("Reset Encoders", runOnce(this::resetEncoderPositions));
 
         this.disable();
