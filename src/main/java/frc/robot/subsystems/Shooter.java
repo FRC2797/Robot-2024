@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.BangBangController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -23,8 +24,8 @@ public class Shooter extends SubsystemBase {
     protected RelativeEncoder rightEnc = right.getEncoder();
 
     boolean enabled = false;
-    BangBangController leftBangBang = new BangBangController();
-    BangBangController rightBangBang = new BangBangController();
+    PIDController leftController = new PIDController(0.03, 0, 0);
+    PIDController rightController = new PIDController(0.03, 0, 0);
 
     double setpoint = 0; 
 
@@ -61,10 +62,10 @@ public class Shooter extends SubsystemBase {
     public void periodic() {
         if (enabled) {
             left.set(
-                leftBangBang.calculate(getLeftRPM(), setpoint)
+                leftController.calculate(getLeftRPM(), setpoint)
             );
             right.set(
-                rightBangBang.calculate(getRightRPM(), setpoint)
+                rightController.calculate(getRightRPM(), setpoint)
             );
         }
     }
@@ -75,6 +76,8 @@ public class Shooter extends SubsystemBase {
 
     public void enable() {
         enabled = true;
+        leftController.reset();
+        rightController.reset();
     }
 
     public void disable() {

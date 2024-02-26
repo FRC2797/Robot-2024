@@ -7,19 +7,25 @@ import frc.robot.subsystems.Shooter;
 
 public class ShooterSim extends Shooter {
   private final DCMotor m_armGearbox = DCMotor.getNEO(2);
-  private final FlywheelSim shooterSim = new FlywheelSim(m_armGearbox, 1, 0.1);
+  private final FlywheelSim leftSim = new FlywheelSim(m_armGearbox, 1, 0.1);
+  private final FlywheelSim rightSim = new FlywheelSim(m_armGearbox, 1, 0.1);
 
   public void simulationPeriodic() {
-    shooterSim.setInput((left.getAppliedOutput() + right.getAppliedOutput()) / 2);
+    leftSim.setInput(left.getAppliedOutput());
+    rightSim.setInput(right.getAppliedOutput());
 
-    shooterSim.update(0.020);
-
-    SmartDashboard.putNumber("Shooter wheel rpm sim", shooterSim.getAngularVelocityRPM());
+    leftSim.update(0.020);
+    rightSim.update(0.020);
   }
 
   @Override
-  public double getRotationsPerMinute() {
-    return shooterSim.getAngularVelocityRPM();
+  public double getLeftRPM() {
+    return leftSim.getAngularVelocityRPM();
+  }
+
+  @Override
+  public double getRightRPM() {
+    return rightSim.getAngularVelocityRPM();
   }
 
   @Override
