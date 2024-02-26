@@ -78,6 +78,7 @@ public class SwerveDrivetrain extends SubsystemBase
     tab.add("Pathfind to BLUE_AMP", driveToPose(PosesToGoToPlaces.BLUE_AMP.value).withName("Pathfind to BLUE_AMP"));
     tab.add("Pathfind to RED_AMP", driveToPose(PosesToGoToPlaces.RED_AMP.value).withName("Pathfind to RED_AMP"));
     tab.add("Add limelight vision measurement", runOnce(this::addLimelightReadingToOdometry));
+    tab.add("Drive to face speaker", driveToFacePoint(PositionsToAim.BLUE_SPEAKER.value));
 
     swerveDrive.setHeadingCorrection(true);
 
@@ -218,6 +219,31 @@ public class SwerveDrivetrain extends SubsystemBase
       rotate,
       this
     ).until(controller::atSetpoint);
+  }
+
+  static enum PositionsToAim {
+    BLUE_SPEAKER(0, 5.54);
+
+    final Translation2d value;
+
+    PositionsToAim(double x, double y) {
+      this.value = new Translation2d(x, y);
+    }
+  } 
+
+  public Command driveToFacePoint(Translation2d pointToFace) {
+    return defer(
+      () -> {
+        Rotation2d rotationNeeded = pointToFace.minus(getPose().getTranslation()).getAngle();
+        return driveToRotation(rotationNeeded.getRadians());
+      }
+    );
+  }
+
+  public static double getAngle(Translation2d starting, Translation2d target) {
+    double angle = Math.atan2(target.getX() - starting.getY(), target.getX() - starting.getX());
+
+    return angle;
   }
 
   public Command driveToRotationRelative(double radians) {
