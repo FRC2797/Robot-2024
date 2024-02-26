@@ -9,9 +9,6 @@ public class ShooterSim extends Shooter {
   private final DCMotor m_armGearbox = DCMotor.getNEO(2);
   private final FlywheelSim shooterSim = new FlywheelSim(m_armGearbox, 1, 0.1);
 
-  double minProximityValue = 0;
-  double proximitySensorDistanceToNote = minProximityValue;
-
   public void simulationPeriodic() {
     shooterSim.setInput((left.getAppliedOutput() + right.getAppliedOutput()) / 2);
 
