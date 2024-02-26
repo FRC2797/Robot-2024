@@ -6,6 +6,9 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.VoltsPerRadianPerSecond;
+import static edu.wpi.first.units.Units.VoltsPerRadianPerSecondSquared;
 
 import java.util.Map;
 
@@ -14,10 +17,15 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.Angle;
 import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Per;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.Velocity;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -44,10 +52,20 @@ public class ShooterLift extends ProfiledPIDSubsystem {
 
     ShuffleboardTab tab = Shuffleboard.getTab("ShooterLift");
 
+    private Measure<Voltage> kS = Volts.of(0);
+    private Measure<Voltage> kG = Volts.of(0);
+
+    private Measure<Per<Voltage, Velocity<Angle>>> kV = VoltsPerRadianPerSecond.of(0);
+    private Measure<Per<Voltage, Velocity<Velocity<Angle>>>> kA = VoltsPerRadianPerSecondSquared.of(0);
+
+    // kA can be ommitted, apparently
+    ArmFeedforward feedforward = new ArmFeedforward(kS.in(Volts), kG.in(Volts), kV.in(VoltsPerRadianPerSecond), kA.in(VoltsPerRadianPerSecondSquared));
+
     //static because something was up with how java handles superclasses. Shouldn't be done this way but throws error otherwise
     private static ProfiledPIDController pidController = getPidController();
     private static ProfiledPIDController getPidController() {
         TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(RadiansPerSecond.of(0.25), RadiansPerSecond.per(Second).of(0.25));
+        ProfiledPIDController pid = new ProfiledPIDController(5.4, 1.56, 0, constraints);
         pid.setTolerance(0.05);
 
         pid.enableContinuousInput(-Math.PI, Math.PI);
@@ -90,7 +108,7 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         ShuffleboardLayout goToPowerList = tab.getLayout("Go to power", BuiltInLayouts.kList).withSize(2, 2).withProperties(Map.of("Label position", "HIDDEN"));
         for (double i = -1; i < 1.05; i += 0.05) {
             goToPowerList.add(
-                getGoToPowerCommand(i).withName(String.format("Go to %.2f power", i))
+                getGoToPowerCommand(Volts.of(i * 12)).withName(String.format("Go to %.2f power", i))
             );
         }
 
@@ -109,11 +127,11 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         boolean rightGoingDown = right.get() < 0;
 
         if (isFullyDown() && (leftGoingDown || rightGoingDown)) {
-            setMotors(0);
+            setMotors(Volts.of(0));
         }
 
         if (isFullyUp() && (leftGoingUp || rightGoingUp)) {
-            setMotors(0);
+            setMotors(Volts.of(0));
         }
 
         if (isFullyDown()) {
@@ -142,7 +160,7 @@ public class ShooterLift extends ProfiledPIDSubsystem {
 
     @Override
     protected void useOutput(double output, TrapezoidProfile.State state) {
-        setMotors(output);
+        setMotors(Volts.of(output).plus(Volts.of(feedforward.calculate(state.position, state.velocity))));
     }
 
     public void brakeMotors(){
@@ -170,11 +188,11 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         return getGoToPositionCommand(Degrees.of(degrees));
     }
 
-    public Command getGoToPowerCommand(double power) {
+    public Command getGoToPowerCommand(Measure<Voltage> power) {
         Command goToPower = run(() -> {
-            setMotors(getMeasurement() > 0.5 ? 0 : power);
+            setMotors(getMeasurement() > 0.5 ? Volts.of(0.0) : power);
         }).finallyDo(() -> {
-            setMotors(0);
+            setMotors(Volts.of(0));
         });
 
         return goToPower;
@@ -192,13 +210,13 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         return pidController.atGoal();
     }
 
-    private void setMotors(double speed) {
-        if ((isFullyDown() && speed < 0) || (isFullyUp() && speed > 0)) {
-            left.set(0);
-            right.set(0);
+    private void setMotors(Measure<Voltage> speed) {
+        if ((isFullyDown() && speed.in(Volts) < 0) || (isFullyUp() && speed.in(Volts) > 0)) {
+            left.setVoltage(0);
+            right.setVoltage(0);
         } else {
-            left.set(speed);
-            right.set(speed);
+            left.setVoltage(speed.in(Volts));
+            right.setVoltage(speed.in(Volts));
         }
     }
 
