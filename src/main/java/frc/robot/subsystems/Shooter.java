@@ -23,7 +23,9 @@ public class Shooter extends SubsystemBase {
     protected RelativeEncoder rightEnc = right.getEncoder();
 
     boolean enabled = false;
-    BangBangController bangBang = new BangBangController();
+    BangBangController leftBangBang = new BangBangController();
+    BangBangController rightBangBang = new BangBangController();
+
     double setpoint = 0; 
 
     public Shooter() {
@@ -59,10 +61,10 @@ public class Shooter extends SubsystemBase {
     public void periodic() {
         if (enabled) {
             left.set(
-                bangBang.calculate(getRotationsPerMinute(), setpoint)
+                leftBangBang.calculate(getLeftRPM(), setpoint)
             );
             right.set(
-                bangBang.calculate(getRotationsPerMinute(), setpoint)
+                rightBangBang.calculate(getRightRPM(), setpoint)
             );
         }
     }
