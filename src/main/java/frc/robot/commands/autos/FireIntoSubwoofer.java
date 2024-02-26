@@ -35,6 +35,9 @@ public class FireIntoSubwoofer extends DeferredCommand {
         super(() -> {
             Measure<Distance> currentDistance = limelight.getDistance();
             Measure<Distance> distanceToDrive = currentDistance.minus(kDistanceToFireAt);
+            
+            // because the limelight is on the back
+            distanceToDrive = distanceToDrive.times(-1);
             return 
                 sequence(
                     new AimWithLimelight(drivetrain, limelight),
