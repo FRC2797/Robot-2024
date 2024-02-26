@@ -1,6 +1,7 @@
 package frc.robot.subsystems.simulated;
 
-import static edu.wpi.first.math.util.Units.degreesToRadians;
+import static edu.wpi.first.math.util.Units.radiansToDegrees;
+import static edu.wpi.first.units.Units.Radians;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -18,8 +19,6 @@ import frc.robot.subsystems.ShooterLift;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 public class ShooterLiftSim extends ShooterLift {
-  private double measurement = 0;
-
   private boolean isFullyUp = false;
   private boolean isFullyDown = false;
 
@@ -30,8 +29,8 @@ public class ShooterLiftSim extends ShooterLift {
       Constants.kShooterLiftGearRatio,
       SingleJointedArmSim.estimateMOI(Units.inchesToMeters(Constants.kShooterLiftLengthInches), Units.lbsToKilograms(Constants.kShooterLiftMassRoughlyPounds)),
       Units.inchesToMeters(Constants.kShooterLiftLengthInches),
-      degreesToRadians(Constants.kShooterLiftMinAngleDegrees),
-      degreesToRadians(Constants.kShooterLiftMaxAngleDegrees),
+      ShooterLift.atRest.in(Radians),
+      Math.PI / 2,
       true,
       0,
       VecBuilder.fill(2.0 * Math.PI / 4096) // Add noise with a std-dev of 1 tick
@@ -72,14 +71,9 @@ public class ShooterLiftSim extends ShooterLift {
 
       armSim.update(0.020);
 
-      double armSimAngleAsPercentage = (armSim.getAngleRads() - degreesToRadians(Constants.kShooterLiftMinAngleDegrees)) / degreesToRadians(Constants.kShooterLiftMaxAngleDegrees);
-      measurement = armSimAngleAsPercentage;
-      m_arm.setAngle(Units.radiansToDegrees(armSim.getAngleRads()));
-  }
-
-  @Override
-  public double getMeasurement() {
-      return measurement;
+      leftEncoder.setPosition(Units.radiansToRotations(armSim.getAngleRads()));
+      rightEncoder.setPosition(Units.radiansToRotations(armSim.getAngleRads()));
+      m_arm.setAngle(radiansToDegrees(armSim.getAngleRads()));
   }
 
   @Override
@@ -99,5 +93,4 @@ public class ShooterLiftSim extends ShooterLift {
   public void setFullyDown(boolean isFullyDown) {
     this.isFullyDown = isFullyDown;
   }
-
 }
