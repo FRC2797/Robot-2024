@@ -23,7 +23,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.Angle;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Per;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -34,6 +33,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 
 public class ShooterLift extends ProfiledPIDSubsystem {
@@ -240,5 +240,19 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     public void resetEncoderPositions() {
         leftEncoder.setPosition(atRest.in(Rotations));
         rightEncoder.setPosition(atRest.in(Rotations));
+    }
+
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        SysIdRoutine sysIdRoutine = new SysIdRoutine(
+            new SysIdRoutine.Config(),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> this.setMotors(voltage),
+                null, // No log consumer, since data is recorded by URCL
+                this
+            )
+        );
+
+        // The methods below return Command objects
+        return sysIdRoutine.quasistatic(direction);
     }
 }
