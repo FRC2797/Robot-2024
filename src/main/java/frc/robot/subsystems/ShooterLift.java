@@ -1,13 +1,23 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
+
+import java.util.Map;
+
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
@@ -25,10 +35,11 @@ public class ShooterLift extends PIDSubsystem {
     private DigitalInput bottomLimitSwitch = new DigitalInput(0);
     private DigitalInput topLimitSwitch = new DigitalInput(1);
 
+    // TODO: this needs to be measured on the actual robot
+    static protected final Measure<Angle> atRest = Degrees.of(10);
 
     ShuffleboardTab tab = Shuffleboard.getTab("ShooterLift");
 
-    // Should probably have a measurement using radians instead of 0 to 1 with 1 being perfectly vertical
     public ShooterLift() {
         super(getPidController());
 
@@ -47,28 +58,25 @@ public class ShooterLift extends PIDSubsystem {
         tab.addDouble("Current left speed", left::get);
         tab.addDouble("Current right speed", right::get);
 
-        tab.addDouble("left encoder value", leftEncoder::getPosition);
-        tab.addDouble("right encoder value", rightEncoder::getPosition);
+        tab.addDouble("left encoder value in rotations", leftEncoder::getPosition);
+        tab.addDouble("right encoder value in rotations", rightEncoder::getPosition);
 
         tab.addBoolean("Is fully up", this::isFullyUp);
         tab.addBoolean("Is fully down", this::isFullyDown);
 
-        tab.add(this.getGoToPositionCommand(0).withName("Go to 0%"));
-        tab.add(this.getGoToPositionCommand(0.1).withName("Go to 10%"));
-        tab.add(this.getGoToPositionCommand(0.2).withName("Go to 20%"));
-        tab.add(this.getGoToPositionCommand(0.3).withName("Go to 30%"));
-        tab.add(this.getGoToPositionCommand(0.4).withName("Go to 40%"));
-        tab.add(this.getGoToPositionCommand(0.5).withName("Go to 50%"));
-        tab.add(this.getGoToPositionCommand(0.6).withName("Go to 60%"));
-        tab.add(this.getGoToPositionCommand(0.7).withName("Go to 70%"));
-        tab.add(this.getGoToPositionCommand(0.8).withName("Go to 80%"));
-        tab.add(this.getGoToPositionCommand(0.9).withName("Go to 90%"));
-        tab.add(this.getGoToPositionCommand(1).withName("Go to 100%"));
+        ShuffleboardLayout goToPosition = tab.getLayout("Go to position", BuiltInLayouts.kList).withSize(2, 2).withProperties(Map.of("Label position", "HIDDEN"));
+        for (double i = 0; i <= 90; i += 5) {
+            goToPosition.add(
+                getGoToPositionCommand(i).withName(String.format("Go to %.2f degrees", i))
+            );
+        }
 
-        tab.add(getGoToPowerCommand(1).withName("Go to full power up"));
-        tab.add(getGoToPowerCommand(0.3).withName("Go to 0.3 Power"));
-        tab.add(getGoToPowerCommand(-0.3).withName("Go to -0.3 Power"));
-        tab.add(getGoToPowerCommand(-1).withName("Go to full power down"));
+        ShuffleboardLayout goToPowerList = tab.getLayout("Go to power", BuiltInLayouts.kList).withSize(2, 2).withProperties(Map.of("Label position", "HIDDEN"));
+        for (double i = -1; i < 1.05; i += 0.05) {
+            goToPowerList.add(
+                getGoToPowerCommand(i).withName(String.format("Go to %.2f power", i))
+            );
+        }
 
         tab.add("Reset Encoders", runOnce(this::resetEncoderPositions));
 
@@ -97,21 +105,23 @@ public class ShooterLift extends PIDSubsystem {
         }
 
         if (isFullyUp()) {
-            leftEncoder.setPosition(Constants.kShooterLiftMaxRotationsToFullyVertical);
-            rightEncoder.setPosition(Constants.kShooterLiftMaxRotationsToFullyVertical);
+            leftEncoder.setPosition(Radians.of(Math.PI / 2).in(Rotations));
+            rightEncoder.setPosition(Radians.of(Math.PI / 2).in(Rotations));
         }
     }
 
-    // Setpoint is from 0 to 1
-    public void setPosition(double setpoint) {
-        this.setSetpoint(MathUtil.clamp(setpoint, 0, 1));
+    public void setPosition(Measure<Angle> setpoint) {
+        this.setSetpoint(MathUtil.clamp(setpoint.in(Radians), atRest.in(Radians), Math.PI / 2));
     }
 
-    // From 0 to 1
+    public Measure<Angle> getMeasurementAsMeasure() {
+        Measure<Angle> encoderReading = rightGetPosition();
+        return encoderReading;
+    }
+
     @Override
     public double getMeasurement() {
-        double encoderReading = rightEncoder.getPosition();
-        return encoderReading / Constants.kShooterLiftMaxRotationsToFullyVertical;
+        return getMeasurementAsMeasure().in(Radians);
     }
 
     @Override
@@ -124,20 +134,24 @@ public class ShooterLift extends PIDSubsystem {
         right.setIdleMode(IdleMode.kBrake);
     }
 
-    public Command getGoToPositionCommand(double setpoint) {
+    public Command getGoToPositionCommand(Measure<Angle> setpoint) {
         Command goToPosition = new StartEndCommand(
             () -> {
                 this.setPosition(setpoint);
                 this.enable();
             },
             () -> {
-                this.setPosition(0);
+                this.setPosition(Radians.of(0));
                 this.disable();
             },
             this
         );
 
         return goToPosition;
+    }
+
+    public Command getGoToPositionCommand(double degrees) {
+        return getGoToPositionCommand(Degrees.of(degrees));
     }
 
     public Command getGoToPowerCommand(double power) {
@@ -157,8 +171,10 @@ public class ShooterLift extends PIDSubsystem {
     }
 
     private static PIDController getPidController() {
-        PIDController pid = new PIDController(0.7, 0.2, 0);
+        PIDController pid = new PIDController(0.45, 0.13, 0);
         pid.setTolerance(0.05);
+
+        pid.enableContinuousInput(-Math.PI, Math.PI);
         return pid;
     }
 
@@ -184,8 +200,17 @@ public class ShooterLift extends PIDSubsystem {
         return !topLimitSwitch.get();
     }
 
+    Measure<Angle> rightGetPosition() {
+        return Rotations.of(rightEncoder.getPosition());
+    }
+
+    Measure<Angle> leftGetPosition() {
+        return Rotations.of(leftEncoder.getPosition());
+    }
+
+
     public void resetEncoderPositions() {
-        leftEncoder.setPosition(0);
-        rightEncoder.setPosition(0);
+        leftEncoder.setPosition(atRest.in(Rotations));
+        rightEncoder.setPosition(atRest.in(Rotations));
     }
 }
