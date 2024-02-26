@@ -130,6 +130,8 @@ public class RobotContainer {
     commandsForTesting.add("Side Auto", new SideAuto(intake, shooter, shooterLift, drivetrain, limelight));
     commandsForTesting.add("Fire Note", new FireNote(0.5, 2000, intake, shooter, shooterLift));
 
+    Command firingWhenDirectlyUpToSubwoofer = new FireNote(0, 2000, intake, shooter, shooterLift).withName("firingWhenDirectlyUpToSubwoofer");
+    commandsForTesting.add(firingWhenDirectlyUpToSubwoofer);
   }
 
   public Command getAutonomousCommand() {
