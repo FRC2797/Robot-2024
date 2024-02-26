@@ -6,6 +6,7 @@ import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -24,7 +25,12 @@ public class Shooter extends SubsystemBase {
     protected RelativeEncoder rightEnc = right.getEncoder();
 
     boolean enabled = false;
+
+    // only kS and kV are necessary
+    SimpleMotorFeedforward leftFeedforward = new SimpleMotorFeedforward(0, 0);
     PIDController leftController = new PIDController(0.03, 0, 0);
+
+    SimpleMotorFeedforward rightFeedforward = new SimpleMotorFeedforward(0, 0);
     PIDController rightController = new PIDController(0.03, 0, 0);
 
     double setpoint = 0; 
@@ -61,11 +67,11 @@ public class Shooter extends SubsystemBase {
     @Override
     public void periodic() {
         if (enabled) {
-            left.set(
-                leftController.calculate(getLeftRPM(), setpoint)
+            left.setVoltage(
+                leftController.calculate(getLeftRPM(), setpoint) + leftFeedforward.calculate(setpoint)
             );
-            right.set(
-                rightController.calculate(getRightRPM(), setpoint)
+            right.setVoltage(
+                rightController.calculate(getRightRPM(), setpoint) + rightFeedforward.calculate(setpoint)
             );
         }
     }
