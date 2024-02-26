@@ -2,9 +2,11 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import static edu.wpi.first.units.Units.Volts;
+
 import com.revrobotics.RelativeEncoder;
 
-import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -13,6 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
@@ -147,6 +150,34 @@ public class Shooter extends SubsystemBase {
     public double getRotations() {
         return (
             Math.abs(leftEnc.getPosition()) + Math.abs(rightEnc.getPosition())) / 2;
+    }
+
+    public Command sysIdQuasistaticForLeft(SysIdRoutine.Direction direction) {
+        SysIdRoutine sysIdRoutine = new SysIdRoutine(
+            new SysIdRoutine.Config(),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> left.setVoltage(voltage.in(Volts)),
+                null, // No log consumer, since data is recorded by URCL
+                this
+            )
+        );
+
+        // The methods below return Command objects
+        return sysIdRoutine.quasistatic(direction);
+    }
+
+    public Command sysIdQuasistaticForRight(SysIdRoutine.Direction direction) {
+        SysIdRoutine sysIdRoutine = new SysIdRoutine(
+            new SysIdRoutine.Config(),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> right.setVoltage(voltage.in(Volts)),
+                null, // No log consumer, since data is recorded by URCL
+                this
+            )
+        );
+
+        // The methods below return Command objects
+        return sysIdRoutine.quasistatic(direction);
     }
 
 }
