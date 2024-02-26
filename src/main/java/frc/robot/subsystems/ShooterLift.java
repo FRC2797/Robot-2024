@@ -1,8 +1,11 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.math.util.Units.radiansToDegrees;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Second;
 
 import java.util.Map;
 
@@ -11,7 +14,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.Angle;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -20,11 +24,11 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.Constants;
 
-public class ShooterLift extends PIDSubsystem {
+public class ShooterLift extends ProfiledPIDSubsystem {
     // DONT DIRECTLY SET MOTORS, use the "setMotors" wrapper to ensure the limit switches stop the motors when necessary
     protected CANSparkMaxSimWrapper left = new CANSparkMaxSimWrapper(9, MotorType.kBrushless);
     protected CANSparkMaxSimWrapper right = new CANSparkMaxSimWrapper(10, MotorType.kBrushless);
@@ -40,8 +44,18 @@ public class ShooterLift extends PIDSubsystem {
 
     ShuffleboardTab tab = Shuffleboard.getTab("ShooterLift");
 
+    //static because something was up with how java handles superclasses. Shouldn't be done this way but throws error otherwise
+    private static ProfiledPIDController pidController = getPidController();
+    private static ProfiledPIDController getPidController() {
+        TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(RadiansPerSecond.of(0.25), RadiansPerSecond.per(Second).of(0.25));
+        pid.setTolerance(0.05);
+
+        pid.enableContinuousInput(-Math.PI, Math.PI);
+        return pid;
+    }
+
     public ShooterLift() {
-        super(getPidController());
+        super(pidController);
 
         leftEncoder.setPositionConversionFactor(1 / Constants.kShooterLiftGearRatio);
         rightEncoder.setPositionConversionFactor(1 / Constants.kShooterLiftGearRatio);
@@ -53,8 +67,10 @@ public class ShooterLift extends PIDSubsystem {
         resetEncoderPositions();
 
         brakeMotors();
-        tab.addDouble("Current measurement", this::getMeasurement);
-        tab.addDouble("Current setpoint", this::getSetpoint);
+        tab.addDouble("Current measurement", () -> getMeasurementAsMeasure().in(Degrees));
+        tab.addDouble("Current setpoint", () -> radiansToDegrees(pidController.getSetpoint().position));
+        tab.addBoolean("At goal?", this::atGoal);
+
         tab.addDouble("Current left speed", left::get);
         tab.addDouble("Current right speed", right::get);
 
@@ -111,7 +127,7 @@ public class ShooterLift extends PIDSubsystem {
     }
 
     public void setPosition(Measure<Angle> setpoint) {
-        this.setSetpoint(MathUtil.clamp(setpoint.in(Radians), atRest.in(Radians), Math.PI / 2));
+        this.setGoal((MathUtil.clamp(setpoint.in(Radians), atRest.in(Radians), Math.PI / 2)));
     }
 
     public Measure<Angle> getMeasurementAsMeasure() {
@@ -125,7 +141,7 @@ public class ShooterLift extends PIDSubsystem {
     }
 
     @Override
-    protected void useOutput(double output, double setpoint) {
+    protected void useOutput(double output, TrapezoidProfile.State state) {
         setMotors(output);
     }
 
@@ -170,16 +186,10 @@ public class ShooterLift extends PIDSubsystem {
         right.setIdleMode(IdleMode.kCoast);
     }
 
-    private static PIDController getPidController() {
-        PIDController pid = new PIDController(0.45, 0.13, 0);
-        pid.setTolerance(0.05);
 
-        pid.enableContinuousInput(-Math.PI, Math.PI);
-        return pid;
-    }
-
-    public boolean atSetpoint() {
-        return MathUtil.isNear(getSetpoint(), getMeasurement(), 0.05);
+    public boolean atGoal() {
+        // don't set tolerance here, set tolerance in pid controller itself
+        return pidController.atGoal();
     }
 
     private void setMotors(double speed) {
