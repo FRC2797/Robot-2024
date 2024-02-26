@@ -47,8 +47,7 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     private DigitalInput bottomLimitSwitch = new DigitalInput(0);
     private DigitalInput topLimitSwitch = new DigitalInput(1);
 
-    // TODO: this needs to be measured on the actual robot
-    static protected final Measure<Angle> atRest = Degrees.of(10);
+    static protected final Measure<Angle> atRest = Degrees.of(2);
 
     ShuffleboardTab tab = Shuffleboard.getTab("ShooterLift");
 
