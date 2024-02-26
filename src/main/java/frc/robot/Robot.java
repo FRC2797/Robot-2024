@@ -15,8 +15,11 @@ public class Robot extends TimedRobot {
   RobotContainer robotContainer = new RobotContainer();
   @Override
   public void robotInit() {
-      DataLogManager.start();
-      URCL.start();
+      boolean dataLoggingEnabled = false;
+      if (dataLoggingEnabled) {
+        DataLogManager.start();
+        URCL.start();
+      }
   }
 
   @Override
