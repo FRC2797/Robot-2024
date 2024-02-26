@@ -121,7 +121,7 @@ public class Shooter extends SubsystemBase {
 
 
     public boolean atSetpoint() {
-        return getRotationsPerMinute() > setpoint;
+        return (getLeftRPM() > setpoint) && getRightRPM() > setpoint;
     }
 
 
