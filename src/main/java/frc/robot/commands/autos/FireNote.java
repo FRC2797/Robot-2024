@@ -14,7 +14,7 @@ public class FireNote extends ParallelRaceGroup {
             shooterLift.getGoToPositionCommand(height),
             shooter.getGoToRPMCommand(shooterRPM),
             sequence(
-                waitUntil(() -> shooterLift.atSetpoint()),
+                waitUntil(() -> shooterLift.atGoal()),
                 waitUntil(() -> shooter.atSetpoint()),
                 intake.intakeIntoShooter()
             )
