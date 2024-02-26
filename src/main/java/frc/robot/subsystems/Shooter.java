@@ -1,12 +1,12 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import static edu.wpi.first.units.Units.Volts;
 
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -30,11 +30,12 @@ public class Shooter extends SubsystemBase {
     boolean enabled = false;
 
     // only kS and kV are necessary
-    SimpleMotorFeedforward leftFeedforward = new SimpleMotorFeedforward(0, 0);
-    PIDController leftController = new PIDController(0.03, 0, 0);
+    SimpleMotorFeedforward leftFeedforward = new SimpleMotorFeedforward(0.125, 0.00212);
+    PIDController leftController = new PIDController(0.0012, 0, 0);
 
-    SimpleMotorFeedforward rightFeedforward = new SimpleMotorFeedforward(0, 0);
-    PIDController rightController = new PIDController(0.03, 0, 0);
+    
+    SimpleMotorFeedforward rightFeedforward = new SimpleMotorFeedforward(0.135, 0.00212);
+    PIDController rightController = new PIDController(0.0016, 0, 0);
 
     double setpoint = 0; 
 
@@ -59,8 +60,18 @@ public class Shooter extends SubsystemBase {
         }
         tab.addDouble("RPM", this::getRotationsPerMinute);
 
+        tab.addBoolean("At setpoint", this::atSetpoint);
+
+        tab.add("4500 RPM", getGoToRPMCommand(4500));
+        tab.add("4000 RPM", getGoToRPMCommand(4000));
+        tab.add("3000 RPM", getGoToRPMCommand(3000));
         tab.add("2000 RPM", getGoToRPMCommand(2000));
+        tab.add("500 RPM", getGoToRPMCommand(500));
+
         tab.add("99999 RPM", getGoToRPMCommand(99999));
+
+        tab.addDouble("Right bus voltage",  right::getBusVoltage);
+        tab.addDouble("Right power", right::getAppliedOutput);
 
         tab.addDouble("Left RPM", this::getLeftRPM);
         tab.addDouble("Right RPM", this::getRightRPM);
@@ -73,6 +84,7 @@ public class Shooter extends SubsystemBase {
             left.setVoltage(
                 leftController.calculate(getLeftRPM(), setpoint) + leftFeedforward.calculate(setpoint)
             );
+ 
             right.setVoltage(
                 rightController.calculate(getRightRPM(), setpoint) + rightFeedforward.calculate(setpoint)
             );
@@ -130,7 +142,8 @@ public class Shooter extends SubsystemBase {
 
 
     public boolean atSetpoint() {
-        return (getLeftRPM() > setpoint) && getRightRPM() > setpoint;
+        double tolerance = 300;
+        return MathUtil.isNear(setpoint, getLeftRPM(), tolerance) && MathUtil.isNear(setpoint, getRightRPM(), tolerance);
     }
 
 
