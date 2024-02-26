@@ -10,8 +10,6 @@ import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.VoltsPerRadianPerSecond;
 import static edu.wpi.first.units.Units.VoltsPerRadianPerSecondSquared;
 
-import java.util.Map;
-
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
@@ -26,9 +24,7 @@ import edu.wpi.first.units.Per;
 import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
@@ -48,6 +44,8 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     private DigitalInput topLimitSwitch = new DigitalInput(1);
 
     static protected final Measure<Angle> atRest = Degrees.of(2);
+    static protected final Measure<Angle> hittingTopLimitSwitch = Degrees.of(130);
+
 
     ShuffleboardTab tab = Shuffleboard.getTab("ShooterLift");
 
@@ -64,7 +62,7 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     private static ProfiledPIDController pidController = getPidController();
     private static ProfiledPIDController getPidController() {
         TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(RadiansPerSecond.of(0.25), RadiansPerSecond.per(Second).of(0.25));
-        ProfiledPIDController pid = new ProfiledPIDController(5.4, 1.56, 0, constraints);
+        ProfiledPIDController pid = new ProfiledPIDController(5.4, 0, 0, constraints);
         pid.setTolerance(0.05);
 
         pid.enableContinuousInput(-Math.PI, Math.PI);
@@ -99,6 +97,11 @@ public class ShooterLift extends ProfiledPIDSubsystem {
 
         tab.add("Reset Encoders", runOnce(this::resetEncoderPositions));
 
+        tab.add("shooter lift go to 30", getGoToPositionCommand(30));
+        tab.add("shooter lift go to 45", getGoToPositionCommand(45));
+        tab.add("shooter lift go to 70", getGoToPositionCommand(70));
+        tab.add("shooter lift go to 90", getGoToPositionCommand(90));
+
         this.disable();
     }
 
@@ -124,8 +127,8 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         }
 
         if (isFullyUp()) {
-            leftEncoder.setPosition(Radians.of(Math.PI / 2).in(Rotations));
-            rightEncoder.setPosition(Radians.of(Math.PI / 2).in(Rotations));
+            leftEncoder.setPosition(hittingTopLimitSwitch.in(Rotations));
+            rightEncoder.setPosition(hittingTopLimitSwitch.in(Rotations));
         }
     }
 
