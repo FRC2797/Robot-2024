@@ -19,6 +19,8 @@ public class Robot extends TimedRobot {
       if (dataLoggingEnabled) {
         DataLogManager.start();
         URCL.start();
+      } else {
+        DataLogManager.stop();
       }
   }
 
