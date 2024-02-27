@@ -46,11 +46,16 @@ public class Intake extends SubsystemBase {
     }
 
     public Command intake(double speed) {
+        Command temporaryStopGapFromIntakeNotMoving = new StartEndCommand(
+            () -> motor.set(-0.1),
+            () -> motor.set(0),
+            this
+        ).withTimeout(0.2);
         return new StartEndCommand(
             () -> motor.set(speed),
             () -> motor.set(0),
             this
-        );
+        ).beforeStarting(temporaryStopGapFromIntakeNotMoving);
     }
 
     public boolean noteIsIn(){
@@ -70,7 +75,7 @@ public class Intake extends SubsystemBase {
     }
 
     public Command intakeUntilNoteIsIn() {
-        return intakeInitially().until(() -> noteIsIn()).andThen(intakeInitially().withTimeout(0.5));
+        return intakeInitially().until(() -> noteIsIn()).andThen(intakeInitially().withTimeout(0.75));
     }
 
     public Command intakeIntoShooter() {
