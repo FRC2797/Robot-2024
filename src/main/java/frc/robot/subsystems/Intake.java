@@ -42,6 +42,8 @@ public class Intake extends SubsystemBase {
         tab.add(this.getGoToPowerCommand(0.9).withName("Go to 90%"));
         tab.add(this.getGoToPowerCommand(1).withName("Go to 100%"));
 
+        tab.add("Intake into shooter", this.intakeIntoShooter());
+
         tab.add("Intake until note is in", intakeUntilNoteIsIn());
     }
 

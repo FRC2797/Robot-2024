@@ -100,6 +100,7 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         tab.add("shooter lift go to 30", getGoToPositionCommand(30));
         tab.add("shooter lift go to 45", getGoToPositionCommand(45));
         tab.add("shooter lift go to 70", getGoToPositionCommand(70));
+        tab.add("shooter lift go to 80", getGoToPositionCommand(80));
         tab.add("shooter lift go to 90", getGoToPositionCommand(90));
         tab.add("shooter lift go to rest", getGoToPositionCommand(atRest.in(Degrees)));
 

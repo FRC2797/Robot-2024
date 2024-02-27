@@ -68,6 +68,8 @@ public class RobotContainer {
     configureCommandsForTesting();
   }
 
+
+  Supplier<Command> fireWhenDirectlyUpToSubwoofer = () -> new FireNote(0, 2700, intake, shooter, shooterLift);
   private void configureBindings() {
     drivetrain.setDefaultCommand(joystickTeleCommand);
 
