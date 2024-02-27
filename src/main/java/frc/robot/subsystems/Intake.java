@@ -42,6 +42,7 @@ public class Intake extends SubsystemBase {
         tab.add(this.getGoToPowerCommand(0.9).withName("Go to 90%"));
         tab.add(this.getGoToPowerCommand(1).withName("Go to 100%"));
 
+        tab.add("Intake until note is in", intakeUntilNoteIsIn());
     }
 
     public Command intake(double speed) {
@@ -52,17 +53,6 @@ public class Intake extends SubsystemBase {
         );
     }
 
-
-    public static final double kIntakePower = 0.20;
-    public Command intake() {
-        return intake(kIntakePower);
-    }
-
-    public Command reverseIntake() {
-        return intake(-kIntakePower);
-    }
-
-
     public boolean noteIsIn(){
         return getProximity() > 95;
     }
@@ -72,11 +62,11 @@ public class Intake extends SubsystemBase {
     }
 
     public Command intakeUntilNoteIsIn() {
-        return intake().until(() -> noteIsIn()).andThen(intake().withTimeout(0.5));
+        return intake(0.2).until(() -> noteIsIn()).andThen(intake(0.2).withTimeout(0.5));
     }
 
     public Command intakeIntoShooter() {
-        return intake().withTimeout(1.5);
+        return intake(1).withTimeout(1.5);
     }
 
     public Command getGoToPowerCommand(double power) {
