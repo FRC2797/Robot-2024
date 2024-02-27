@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.Supplier;
@@ -145,9 +147,9 @@ public class RobotContainer {
 
     commandsForTesting.add("basic auto",
       fireWhenDirectlyUpToSubwoofer.get().andThen(
-        drivetrain.driveDistanceWithJustPID(1).alongWith(intake.intakeUntilNoteIsIn())
+        drivetrain.driveDistanceWithJustPID(Inches.of(50).in(Meters)).alongWith(intake.intakeUntilNoteIsIn())
       ).andThen(
-        new FireNote(30, 2900, intake, shooter, shooterLift)
+        new FireNote(20, 3500, intake, shooter, shooterLift)
       ));
 
     NamedCommands.registerCommand("FireNoteIntoSubwoofer", new FireIntoSubwoofer(intake, shooter, shooterLift, drivetrain, limelight));
