@@ -62,8 +62,8 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     private static ProfiledPIDController pidController = getPidController();
     private static ProfiledPIDController getPidController() {
         TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(RadiansPerSecond.of(0.25), RadiansPerSecond.per(Second).of(0.25));
-        ProfiledPIDController pid = new ProfiledPIDController(5.4, 0, 0, constraints);
-        pid.setTolerance(0.05);
+        ProfiledPIDController pid = new ProfiledPIDController(18, 0, 0, constraints);
+        pid.setTolerance(Degrees.of(4).in(Radians));
 
         pid.enableContinuousInput(-Math.PI, Math.PI);
         return pid;
@@ -101,6 +101,7 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         tab.add("shooter lift go to 45", getGoToPositionCommand(45));
         tab.add("shooter lift go to 70", getGoToPositionCommand(70));
         tab.add("shooter lift go to 90", getGoToPositionCommand(90));
+        tab.add("shooter lift go to rest", getGoToPositionCommand(atRest.in(Degrees)));
 
         this.disable();
     }
