@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.function.Supplier;
+
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
@@ -135,10 +137,18 @@ public class RobotContainer {
     commandsForTesting.add("Fire into subwoofer", new FireIntoSubwoofer(intake, shooter, shooterLift, drivetrain, limelight));
     commandsForTesting.add("Middle auto", new MiddleAuto(intake, shooter, shooterLift, drivetrain, limelight));
     commandsForTesting.add("Side Auto", new SideAuto(intake, shooter, shooterLift, drivetrain, limelight));
-    commandsForTesting.add("Fire Note", new FireNote(0.5, 2000, intake, shooter, shooterLift));
+    commandsForTesting.add("Fire Note", new FireNote(30, 2000, intake, shooter, shooterLift));
 
-    Command firingWhenDirectlyUpToSubwoofer = new FireNote(0, 2000, intake, shooter, shooterLift).withName("firingWhenDirectlyUpToSubwoofer");
-    commandsForTesting.add(firingWhenDirectlyUpToSubwoofer);
+    Supplier<Command> fireWhenDirectlyUpToSubwoofer = () -> new FireNote(0, 2700, intake, shooter, shooterLift);
+
+    commandsForTesting.add("fire when directly up to subwoofer", fireWhenDirectlyUpToSubwoofer.get());
+
+    commandsForTesting.add("basic auto",
+      fireWhenDirectlyUpToSubwoofer.get().andThen(
+        drivetrain.driveDistanceWithJustPID(1).alongWith(intake.intakeUntilNoteIsIn())
+      ).andThen(
+        new FireNote(30, 2900, intake, shooter, shooterLift)
+      ));
 
     NamedCommands.registerCommand("FireNoteIntoSubwoofer", new FireIntoSubwoofer(intake, shooter, shooterLift, drivetrain, limelight));
     NamedCommands.registerCommand("IntakeUntilNoteIsIn", intake.intakeUntilNoteIsIn());
