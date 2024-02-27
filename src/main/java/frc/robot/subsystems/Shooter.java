@@ -73,6 +73,11 @@ public class Shooter extends SubsystemBase {
         tab.addDouble("Right bus voltage",  right::getBusVoltage);
         tab.addDouble("Right power", right::getAppliedOutput);
 
+        tab.addDouble("Left bus voltage",  left::getBusVoltage);
+        tab.addDouble("left power", left::getAppliedOutput);
+
+        tab.addDouble("current setpoint", () -> setpoint);
+
         tab.addDouble("Left RPM", this::getLeftRPM);
         tab.addDouble("Right RPM", this::getRightRPM);
 
