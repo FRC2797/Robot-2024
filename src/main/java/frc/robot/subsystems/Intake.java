@@ -61,8 +61,16 @@ public class Intake extends SubsystemBase {
         return colorSensor.getProximity();
     }
 
+    public Command reverseIntake() {
+        return intake(-0.2);
+    }
+
+    public Command intakeInitially() {
+        return intake(0.2);
+    }
+
     public Command intakeUntilNoteIsIn() {
-        return intake(0.2).until(() -> noteIsIn()).andThen(intake(0.2).withTimeout(0.5));
+        return intakeInitially().until(() -> noteIsIn()).andThen(intakeInitially().withTimeout(0.5));
     }
 
     public Command intakeIntoShooter() {
