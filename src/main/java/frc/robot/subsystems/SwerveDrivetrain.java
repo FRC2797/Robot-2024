@@ -68,7 +68,9 @@ public class SwerveDrivetrain extends SubsystemBase
     tab.addString("One of the modules", () -> swerveDrive.getModulePositions()[0].toString());
     tab.add("Reset odometry", runOnce(() -> resetOdometry(new Pose2d())));
     tab.add("Drive to rotation 0", driveToRotation(0));
+    tab.add("Drive 1 meter with driveToPoseRelative", driveToPoseRelativeToCurrent(new Pose2d(1.0, 0.0, Rotation2d.fromDegrees(0)), true));
     tab.add("Drive 1 meter with just pid", driveDistanceWithJustPID(1).withName("Drive 1 meter with just pid"));
+    tab.add("Drive 2 meter with just pid", driveDistanceWithJustPID(2).withName("Drive 2 meter with just pid"));
     tab.add("Drive -1 meter with just pid", driveDistanceWithJustPID(-1).withName("Drive -1 meter with just pid"));
     tab.add("Drive to pose (1, 0)", driveToPose(new Pose2d(new Translation2d(2, 3), new Rotation2d())));
     tab.add("Pathfind to BLUE_SOURCE", driveToPose(PosesToGoToPlaces.BLUE_SOURCE.value).withName("Pathfind to BLUE_SOURCE"));
@@ -259,10 +261,11 @@ public class SwerveDrivetrain extends SubsystemBase
 
   // Should be using the driveToPose but it wasn't working
   public Command driveDistanceWithJustPID(double meters) {
+
     PIDConstants constants = getTranslationConstants();
     PIDController controller = new PIDController(constants.kP, constants.kI, constants.kD);
 
-    controller.setTolerance(0.1);
+    controller.setTolerance(0.01);
 
     DoubleConsumer drive = (output) -> {
       swerveDrive.drive(new Translation2d(output, 0), 0, false, false, new Translation2d());
@@ -270,6 +273,7 @@ public class SwerveDrivetrain extends SubsystemBase
 
     return defer(
       () -> {
+        Command lineWheelsUp = run(() -> this.drive(new ChassisSpeeds(0.0001, 0, 0))).withTimeout(0.5);
         Translation2d originalTranslation = getPose().getTranslation();
         return new PIDCommand(
           controller,
@@ -277,7 +281,7 @@ public class SwerveDrivetrain extends SubsystemBase
           meters,
           drive,
           this
-        ).until(controller::atSetpoint);
+        ).until(controller::atSetpoint).beforeStarting(lineWheelsUp);
       }
     );
   }
@@ -494,6 +498,6 @@ public class SwerveDrivetrain extends SubsystemBase
   }
 
   private PIDConstants getTranslationConstants() {
-    return new PIDConstants(2.0, 0.0, 0.0);
+    return new PIDConstants(1.7, 0.1, 0.0);
   }
 }
