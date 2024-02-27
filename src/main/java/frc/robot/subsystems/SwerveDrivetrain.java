@@ -494,6 +494,6 @@ public class SwerveDrivetrain extends SubsystemBase
   }
 
   private PIDConstants getTranslationConstants() {
-    return new PIDConstants(5.0, 0.0, 0.0);
+    return new PIDConstants(2.0, 0.0, 0.0);
   }
 }
