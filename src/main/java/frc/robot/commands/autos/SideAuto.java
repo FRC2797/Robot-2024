@@ -22,7 +22,7 @@ public class SideAuto extends SequentialCommandGroup {
         super(
             new FireIntoSubwoofer(intake, shooter, shooterLift, drivetrain, limelight),
             race(
-                intake.intake(),
+                intake.intakeInitially(),
                 shooterLift.getGoToPositionCommand(0),
                 drivetrain.driveDistanceWithJustPID(feetToMeters(6))
             ),
