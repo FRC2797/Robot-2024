@@ -126,11 +126,13 @@ public class ShooterLift extends ProfiledPIDSubsystem {
 
         if (isFullyDown()) {
             resetEncoderPositions();
+            pidController.reset(getMeasurement());
         }
 
         if (isFullyUp()) {
             leftEncoder.setPosition(hittingTopLimitSwitch.in(Rotations));
             rightEncoder.setPosition(hittingTopLimitSwitch.in(Rotations));
+            pidController.reset(getMeasurement());
         }
     }
 
