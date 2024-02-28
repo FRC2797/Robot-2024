@@ -70,6 +70,19 @@ public class Shooter extends SubsystemBase {
 
         tab.add("99999 RPM", getGoToRPMCommand(99999));
 
+        tab.add(this.getGoToPowerCommand(0).withName("Go to 0%"));
+        tab.add(this.getGoToPowerCommand(0.1).withName("Go to 10%"));
+        tab.add(this.getGoToPowerCommand(0.2).withName("Go to 20%"));
+        tab.add(this.getGoToPowerCommand(0.3).withName("Go to 30%"));
+        tab.add(this.getGoToPowerCommand(0.4).withName("Go to 40%"));
+        tab.add(this.getGoToPowerCommand(0.5).withName("Go to 50%"));
+        tab.add(this.getGoToPowerCommand(0.6).withName("Go to 60%"));
+        tab.add(this.getGoToPowerCommand(0.7).withName("Go to 70%"));
+        tab.add(this.getGoToPowerCommand(0.8).withName("Go to 80%"));
+        tab.add(this.getGoToPowerCommand(0.9).withName("Go to 90%"));
+        tab.add(this.getGoToPowerCommand(1).withName("Go to 100%"));
+
+
         tab.addDouble("Right bus voltage",  right::getBusVoltage);
         tab.addDouble("Right power", right::getAppliedOutput);
 
