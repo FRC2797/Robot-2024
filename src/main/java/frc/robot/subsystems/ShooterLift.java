@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 
@@ -104,6 +105,14 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         tab.add("shooter lift go to 90", getGoToPositionCommand(90));
         tab.add("shooter lift go to rest", getGoToPositionCommand(atRest.in(Degrees)));
 
+        tab.add("Brace against amp", braceAgainstAmp());
+
+        Trigger liftDown = new Trigger(this::isFullyDown);
+        liftDown.onTrue(runOnce(() -> pidController.reset(getMeasurement())));
+
+        Trigger liftUp = new Trigger(this::isFullyUp);
+        liftUp.onTrue(runOnce(() -> pidController.reset(getMeasurement())));
+
         this.disable();
     }
 
@@ -126,13 +135,11 @@ public class ShooterLift extends ProfiledPIDSubsystem {
 
         if (isFullyDown()) {
             resetEncoderPositions();
-            pidController.reset(getMeasurement());
         }
 
         if (isFullyUp()) {
             leftEncoder.setPosition(hittingTopLimitSwitch.in(Rotations));
             rightEncoder.setPosition(hittingTopLimitSwitch.in(Rotations));
-            pidController.reset(getMeasurement());
         }
     }
 
