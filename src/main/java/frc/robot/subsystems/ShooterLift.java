@@ -189,7 +189,20 @@ public class ShooterLift extends ProfiledPIDSubsystem {
 
     public Command getGoToPowerCommand(Measure<Voltage> power) {
         Command goToPower = run(() -> {
-            setMotors(getMeasurement() > 0.5 ? Volts.of(0.0) : power);
+            boolean goingUp = power.in(Volts) > 0;
+            boolean goingDown = power.in(Volts) < 0;
+
+            if (goingUp && isFullyUp()) {
+                setMotors(Volts.of(0));
+                return;
+            }
+
+            if (goingDown && isFullyDown()) {
+                setMotors(Volts.of(0));
+                return;
+            }
+
+            setMotors(power);
         }).finallyDo(() -> {
             setMotors(Volts.of(0));
         });
