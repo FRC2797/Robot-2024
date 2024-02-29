@@ -105,8 +105,6 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         tab.add("shooter lift go to 90", getGoToPositionCommand(90));
         tab.add("shooter lift go to rest", getGoToPositionCommand(atRest.in(Degrees)));
 
-        tab.add("Brace against amp", braceAgainstAmp());
-
         Trigger liftDown = new Trigger(this::isFullyDown);
         liftDown.onTrue(runOnce(() -> pidController.reset(getMeasurement())));
 
