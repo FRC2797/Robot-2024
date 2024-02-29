@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -14,6 +15,7 @@ public class Winch extends SubsystemBase {
 
     public Winch() {
         motor.setInverted(false);
+        motor.setIdleMode(IdleMode.kBrake);
     }
 
     public Command getGoToPowerCommand(double power) {
