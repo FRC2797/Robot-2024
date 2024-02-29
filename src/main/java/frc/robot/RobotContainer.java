@@ -7,6 +7,10 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.wpilibj2.command.Commands.parallel;
+import static edu.wpi.first.wpilibj2.command.Commands.run;
+import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
+import static edu.wpi.first.wpilibj2.command.Commands.startEnd;
 
 import java.util.function.Supplier;
 
@@ -63,11 +67,55 @@ public class RobotContainer {
 
 
   public RobotContainer() {
-    configureBindings();
+    configureMinimumViableControllerScheme();
     configureDriverShuffleboard();
     configureCommandsForTesting();
   }
 
+  private void configureMinimumViableControllerScheme() {
+    drivetrain.setDefaultCommand(joystickTeleCommand);
+    
+    Command intakeIn = intake.getGoToPowerCommand(0.4);
+    Command intakeOut = intake.getGoToPowerCommand(-0.4);
+    controller.x().whileTrue(intakeIn);
+    controller.b().whileTrue(intakeOut);
+
+    Command armUp = shooterLift.getGoToPowerCommand(Volts.of(12 * 0.2));
+    Command armDown = shooterLift.getGoToPowerCommand(Volts.of(12 * -0.2));
+    controller.y().whileTrue(armUp);
+    controller.a().whileTrue(armDown);
+
+    double maxShooterRPM = 3500;
+    Command analogShooter = runOnce(() -> shooter.enable()).andThen(run(() -> shooter.setSetpoint(maxShooterRPM * controller.getRightTriggerAxis()), shooter)).finallyDo(() -> shooter.disable());
+    controller.rightTrigger(0.01).whileTrue(analogShooter);
+
+    Command shootWhenDirectlyUpAgainstSubwoofer = shooter.getGoToRPMCommand(2700);
+    controller.povUp().toggleOnTrue(shootWhenDirectlyUpAgainstSubwoofer);
+    controller.povLeft().onTrue(runOnce(() -> shooterLift.unbrakeMotors(), shooterLift));
+    controller.povRight().onTrue(runOnce(() -> shooterLift.brakeMotors(), shooterLift));
+
+    Supplier<Command> unbrakeThenBrakeShooterLift = () -> startEnd(shooterLift::unbrakeMotors, shooterLift::brakeMotors, shooterLift);
+    controller.leftBumper().whileTrue(parallel(
+      unbrakeThenBrakeShooterLift.get(),
+      winch.getGoToPowerCommand(0.2)
+    ).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
+
+    controller.rightBumper().whileTrue(parallel(
+      unbrakeThenBrakeShooterLift.get(),
+      winch.getGoToPowerCommand(-0.2)
+    ).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
+
+    
+    // don't be stupid and forget the shooterLift isn't required
+    Supplier<Command> unbrakeThenBrakeShooterLiftWithoutShooterliftRequired = () -> startEnd(shooterLift::unbrakeMotors, shooterLift::brakeMotors);
+    Command winchAndShooterDown = parallel(
+      unbrakeThenBrakeShooterLiftWithoutShooterliftRequired.get(),
+      winch.getGoToPowerCommand(-0.2),
+      shooterLift.getGoToPowerCommand(Volts.of(12 * -0.2))
+    );
+
+    controller.povDown().whileTrue(winchAndShooterDown);
+  }
 
   Supplier<Command> fireWhenDirectlyUpToSubwoofer = () -> new FireNote(0, 2700, intake, shooter, shooterLift);
   private void configureBindings() {
