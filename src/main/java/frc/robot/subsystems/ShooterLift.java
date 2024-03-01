@@ -60,7 +60,7 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     ArmFeedforward feedforward = new ArmFeedforward(kS.in(Volts), kG.in(Volts), kV.in(VoltsPerRadianPerSecond), kA.in(VoltsPerRadianPerSecondSquared));
 
     //static because something was up with how java handles superclasses. Shouldn't be done this way but throws error otherwise
-    private static ProfiledPIDController pidController = getPidController();
+    public static ProfiledPIDController pidController = getPidController();
     private static ProfiledPIDController getPidController() {
         TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(RadiansPerSecond.of(0.25), RadiansPerSecond.per(Second).of(0.25));
         ProfiledPIDController pid = new ProfiledPIDController(18, 5, 0, constraints);
@@ -113,6 +113,8 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         tab.add("shooter lift go to 90", getGoToPositionCommand(90));
         tab.add("shooter lift go to rest", getGoToPositionCommand(atRest.in(Degrees)));
 
+        tab.add("Shooter lift subsystem", this);
+
         Trigger liftDown = new Trigger(this::isFullyDown);
         liftDown.onTrue(runOnce(() -> pidController.reset(getMeasurement())));
 
@@ -158,6 +160,13 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         return encoderReading;
     }
 
+    public void setInitialMeasurement(double degrees) {
+        leftEncoder.setPosition(Degrees.of(90).in(Rotations));
+        rightEncoder.setPosition(Degrees.of(90).in(Rotations));
+
+        pidController.reset(Degrees.of(90).in(Radians));
+    }
+
     @Override
     public double getMeasurement() {
         return getMeasurementAsMeasure().in(Radians);
@@ -165,7 +174,10 @@ public class ShooterLift extends ProfiledPIDSubsystem {
 
     @Override
     protected void useOutput(double output, TrapezoidProfile.State state) {
-        setMotors(Volts.of(output).plus(Volts.of(feedforward.calculate(state.position, state.velocity))));
+        Measure<Voltage> outputInVolts = Volts.of(output).plus(Volts.of(feedforward.calculate(state.position, state.velocity)));
+        setMotors(
+            outputInVolts
+        );
     }
 
     public void brakeMotors(){
@@ -238,7 +250,7 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         }
     }
 
-    protected boolean isFullyDown() {
+    public boolean isFullyDown() {
         return !bottomLimitSwitch.get();
     }
 

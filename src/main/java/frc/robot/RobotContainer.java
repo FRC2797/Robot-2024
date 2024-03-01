@@ -4,8 +4,10 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.wpilibj2.command.Commands.none;
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
@@ -40,6 +42,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterLift;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Winch;
+import frc.robot.subsystems.simulated.ShooterLiftSim;
 
 
 public class RobotContainer {
@@ -183,8 +186,9 @@ public class RobotContainer {
   }
 
   private void setUpAutoChooser(SendableChooser<Command> autChooser) {
-    autoChooser.addOption("Middle Auto", new FireNote(8, 2700, intake, shooter, shooterLift));
-    autoChooser.addOption("Sideways", new FireNote(10, 4500, intake, shooter, shooterLift));
+    Supplier<Command> resetPosition = () -> shooterLift.getGoToPowerCommand(Volts.of(-1)).until(shooterLift::isFullyDown);
+    autoChooser.addOption("Middle Auto", resetPosition.get().andThen(new FireNote(8, 2700, intake, shooter, shooterLift)));
+    autoChooser.addOption("Sideways", new FireNote(10, 4500, intake, shooter, shooterLift).beforeStarting(resetPosition.get()));
     autoChooser.addOption("Nothing", none());
   }
 
@@ -213,6 +217,10 @@ public class RobotContainer {
     commandsForTesting.add("Path planner middle auto", new PathPlannerAuto("Middle"));
     commandsForTesting.add("Run sysid quasic static on right forward", shooter.sysIdQuasistaticForRight(SysIdRoutine.Direction.kForward));
     commandsForTesting.add("Run sysid quasic static on right backwards", shooter.sysIdQuasistaticForRight(SysIdRoutine.Direction.kReverse));
+  }
+
+  public void setInitialShooterLiftAngle() {
+    shooterLift.setInitialMeasurement(90);
   }
 
   public Command getAutonomousCommand() {
