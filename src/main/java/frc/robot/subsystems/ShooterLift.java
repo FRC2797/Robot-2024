@@ -63,8 +63,8 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     private static ProfiledPIDController pidController = getPidController();
     private static ProfiledPIDController getPidController() {
         TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(RadiansPerSecond.of(0.25), RadiansPerSecond.per(Second).of(0.25));
-        ProfiledPIDController pid = new ProfiledPIDController(18, 0, 0, constraints);
-        pid.setTolerance(Degrees.of(4).in(Radians));
+        ProfiledPIDController pid = new ProfiledPIDController(18, 5, 0, constraints);
+        pid.setTolerance(Degrees.of(1).in(Radians));
 
         pid.enableContinuousInput(-Math.PI, Math.PI);
         return pid;
@@ -98,6 +98,14 @@ public class ShooterLift extends ProfiledPIDSubsystem {
 
         tab.add("Reset Encoders", runOnce(this::resetEncoderPositions));
 
+        tab.add("shooter lift go to 3", getGoToPositionCommand(3));
+        tab.add("shooter lift go to 4", getGoToPositionCommand(4));
+        tab.add("shooter lift go to 5", getGoToPositionCommand(5));
+        tab.add("shooter lift go to 6", getGoToPositionCommand(6));
+        tab.add("shooter lift go to 7", getGoToPositionCommand(7));
+        tab.add("shooter lift go to 8", getGoToPositionCommand(8));
+        tab.add("shooter lift go to 9", getGoToPositionCommand(9));
+        tab.add("shooter lift go to 10", getGoToPositionCommand(10));
         tab.add("shooter lift go to 30", getGoToPositionCommand(30));
         tab.add("shooter lift go to 45", getGoToPositionCommand(45));
         tab.add("shooter lift go to 70", getGoToPositionCommand(70));
