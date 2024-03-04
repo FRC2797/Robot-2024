@@ -24,6 +24,7 @@ import edu.wpi.first.units.Per;
 import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -163,8 +164,6 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     public void setInitialMeasurement(double degrees) {
         leftEncoder.setPosition(Degrees.of(90).in(Rotations));
         rightEncoder.setPosition(Degrees.of(90).in(Rotations));
-
-        pidController.reset(Degrees.of(90).in(Radians));
     }
 
     @Override
@@ -175,8 +174,9 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     @Override
     protected void useOutput(double output, TrapezoidProfile.State state) {
         Measure<Voltage> outputInVolts = Volts.of(output).plus(Volts.of(feedforward.calculate(state.position, state.velocity)));
+        System.out.println(Timer.getFPGATimestamp() + " outputInVolts is " + outputInVolts.in(Volts));
         setMotors(
-            outputInVolts
+            Volts.of(0)
         );
     }
 

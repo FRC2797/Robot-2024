@@ -4,16 +4,15 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.wpilibj2.command.Commands.none;
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import static edu.wpi.first.wpilibj2.command.Commands.run;
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import static edu.wpi.first.wpilibj2.command.Commands.startEnd;
+import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
 
 import java.util.function.Supplier;
 
@@ -42,7 +41,6 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterLift;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Winch;
-import frc.robot.subsystems.simulated.ShooterLiftSim;
 
 
 public class RobotContainer {
@@ -186,9 +184,12 @@ public class RobotContainer {
   }
 
   private void setUpAutoChooser(SendableChooser<Command> autChooser) {
-    Supplier<Command> resetPosition = () -> shooterLift.getGoToPowerCommand(Volts.of(-1)).until(shooterLift::isFullyDown);
-    autoChooser.addOption("Middle Auto", resetPosition.get().andThen(new FireNote(8, 2700, intake, shooter, shooterLift)));
-    autoChooser.addOption("Sideways", new FireNote(10, 4500, intake, shooter, shooterLift).beforeStarting(resetPosition.get()));
+    autoChooser.addOption("Middle Auto", new FireNote(8, 2700, intake, shooter, shooterLift));
+    autoChooser.addOption("Sideways", new FireNote(10, 4500, intake, shooter, shooterLift));
+
+    autoChooser.addOption("Middle Auto with delay", new FireNote(8, 2700, intake, shooter, shooterLift).beforeStarting(waitSeconds(1)));
+    autoChooser.addOption("Sideways with delay", new FireNote(10, 4500, intake, shooter, shooterLift).beforeStarting(waitSeconds(1)));
+
     autoChooser.addOption("Nothing", none());
   }
 
