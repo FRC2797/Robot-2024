@@ -114,6 +114,19 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         tab.add("shooter lift go to 90", getGoToPositionCommand(90));
         tab.add("shooter lift go to rest", getGoToPositionCommand(atRest.in(Degrees)));
 
+        tab.add(this.getGoToPowerCommand(Volts.of(12 * 0)).withName("Go to 0%"));
+        tab.add(this.getGoToPowerCommand(Volts.of(12 * 0.1)).withName("Go to 10%"));
+        tab.add(this.getGoToPowerCommand(Volts.of(12 * 0.2)).withName("Go to 20%"));
+        tab.add(this.getGoToPowerCommand(Volts.of(12 * 0.3)).withName("Go to 30%"));
+        tab.add(this.getGoToPowerCommand(Volts.of(12 * 0.4)).withName("Go to 40%"));
+        tab.add(this.getGoToPowerCommand(Volts.of(12 * 0.5)).withName("Go to 50%"));
+        tab.add(this.getGoToPowerCommand(Volts.of(12 * 0.6)).withName("Go to 60%"));
+        tab.add(this.getGoToPowerCommand(Volts.of(12 * 0.7)).withName("Go to 70%"));
+        tab.add(this.getGoToPowerCommand(Volts.of(12 * 0.8)).withName("Go to 80%"));
+        tab.add(this.getGoToPowerCommand(Volts.of(12 * 0.9)).withName("Go to 90%"));
+        tab.add(this.getGoToPowerCommand(Volts.of(12 * 1)).withName("Go to 100%"));
+
+
         tab.add("Shooter lift subsystem", this);
 
         Trigger liftDown = new Trigger(this::isFullyDown);
