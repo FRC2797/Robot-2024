@@ -184,11 +184,16 @@ public class RobotContainer {
   }
 
   private void setUpAutoChooser(SendableChooser<Command> autChooser) {
+    Supplier<Command> setInitialShooterLiftAngle = () -> runOnce(this::setInitialShooterLiftAngle);
+    // When encoders are reset, it takes a little bit
+    Supplier<Command> goDownWhileWaitingForEncodersToUpdate = () -> shooterLift.getGoToPowerCommand(Volts.of(-3)).withTimeout(0.25);
+    Supplier<Command> resetEncodersAndGoDown = () -> setInitialShooterLiftAngle.get().andThen(goDownWhileWaitingForEncodersToUpdate.get());
+
     autoChooser.addOption("Middle Auto", new FireNote(8, 2700, intake, shooter, shooterLift));
     autoChooser.addOption("Sideways", new FireNote(10, 4500, intake, shooter, shooterLift));
 
-    autoChooser.addOption("Middle Auto with delay", new FireNote(8, 2700, intake, shooter, shooterLift).beforeStarting(waitSeconds(1)));
-    autoChooser.addOption("Sideways with delay", new FireNote(10, 4500, intake, shooter, shooterLift).beforeStarting(waitSeconds(1)));
+    autoChooser.addOption("Middle Auto with delay", new FireNote(8, 2700, intake, shooter, shooterLift).beforeStarting(resetEncodersAndGoDown.get()));
+    autoChooser.addOption("Sideways with delay", new FireNote(10, 4500, intake, shooter, shooterLift).beforeStarting(resetEncodersAndGoDown.get()));
 
     autoChooser.addOption("Nothing", none());
   }
