@@ -1,7 +1,10 @@
 package frc.robot.subsystems.simulated;
 
+import static edu.wpi.first.math.util.Units.degreesToRadians;
 import static edu.wpi.first.math.util.Units.radiansToDegrees;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -14,16 +17,15 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.subsystems.ShooterLift;
-
-import edu.wpi.first.wpilibj2.command.Commands;
 public class ShooterLiftSim extends ShooterLift {
   private boolean isFullyUp = false;
   private boolean isFullyDown = false;
 
   // Constants taken from the arm sim example
-  private final SingleJointedArmSim armSim = 
+  public final SingleJointedArmSim armSim = 
     new SingleJointedArmSim(
       DCMotor.getNEO(2),
       Constants.kShooterLiftGearRatio,
@@ -92,5 +94,11 @@ public class ShooterLiftSim extends ShooterLift {
 
   public void setFullyDown(boolean isFullyDown) {
     this.isFullyDown = isFullyDown;
+  }
+
+  @Override
+  public void setInitialMeasurement(double degrees) {
+    super.setInitialMeasurement(degrees);
+    armSim.setState(degreesToRadians(90), 0);
   }
 }
