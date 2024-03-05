@@ -19,7 +19,7 @@
       "drive": null
     },
     "encoder": {
-      "type": "attached",
+      "type": "none",
       "id": null,
       "canbus": null
     },
