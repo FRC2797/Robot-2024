@@ -2,9 +2,7 @@ package frc.robot.subsystems.simulated;
 
 import static edu.wpi.first.math.util.Units.degreesToRadians;
 import static edu.wpi.first.math.util.Units.radiansToDegrees;
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -17,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.subsystems.ShooterLift;
@@ -97,8 +96,7 @@ public class ShooterLiftSim extends ShooterLift {
   }
 
   @Override
-  public void setInitialMeasurement(double degrees) {
-    super.setInitialMeasurement(degrees);
-    armSim.setState(degreesToRadians(90), 0);
+  public Command getSetInitialMeasurement() {
+    return super.getSetInitialMeasurement().beforeStarting(runOnce(() -> armSim.setState(degreesToRadians(90), 0)));
   }
 }

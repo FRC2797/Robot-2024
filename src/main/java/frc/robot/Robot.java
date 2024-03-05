@@ -32,7 +32,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     Command auto = robotContainer.getAutonomousCommand();
-    robotContainer.setInitialShooterLiftAngle();
     if (auto == null) {
       System.out.println("No Auto command selected");
     } else {

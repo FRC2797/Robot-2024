@@ -12,7 +12,6 @@ import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import static edu.wpi.first.wpilibj2.command.Commands.run;
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import static edu.wpi.first.wpilibj2.command.Commands.startEnd;
-import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
 
 import java.util.function.Supplier;
 
@@ -82,7 +81,7 @@ public class RobotContainer {
     controller.x().whileTrue(intakeIn);
     controller.b().whileTrue(intakeOut);
 
-    Command armUp = shooterLift.getGoToPowerCommand(Volts.of(12 * 0.2));
+    Command armUp = shooterLift.getGoToPowerCommand(Volts.of(12 * 0.4));
     Command armDown = shooterLift.getGoToPowerCommand(Volts.of(12 * -0.2));
     controller.y().whileTrue(armUp);
     controller.a().whileTrue(armDown);
@@ -184,16 +183,13 @@ public class RobotContainer {
   }
 
   private void setUpAutoChooser(SendableChooser<Command> autChooser) {
-    Supplier<Command> setInitialShooterLiftAngle = () -> runOnce(this::setInitialShooterLiftAngle);
-    // When encoders are reset, it takes a little bit
-    Supplier<Command> goDownWhileWaitingForEncodersToUpdate = () -> shooterLift.getGoToPowerCommand(Volts.of(-3)).withTimeout(0.25);
-    Supplier<Command> resetEncodersAndGoDown = () -> setInitialShooterLiftAngle.get().andThen(goDownWhileWaitingForEncodersToUpdate.get());
+    Supplier<Command> liftGoToRest = () -> shooterLift.getSetInitialMeasurement().andThen(shooterLift.getGoToRestCommand()).withName("liftGoToRest");
+    autoChooser.addOption("liftGoToRest", liftGoToRest.get());
+    autoChooser.addOption("Middle Auto without going to rest", new FireNote(8, 2700, intake, shooter, shooterLift));
 
-    autoChooser.addOption("Middle Auto", new FireNote(8, 2700, intake, shooter, shooterLift));
+    autoChooser.addOption("Middle Auto", new FireNote(8, 2700, intake, shooter, shooterLift).beforeStarting(liftGoToRest.get()));
+
     autoChooser.addOption("Sideways", new FireNote(10, 4500, intake, shooter, shooterLift));
-
-    autoChooser.addOption("Middle Auto with delay", new FireNote(8, 2700, intake, shooter, shooterLift).beforeStarting(resetEncodersAndGoDown.get()));
-    autoChooser.addOption("Sideways with delay", new FireNote(10, 4500, intake, shooter, shooterLift).beforeStarting(resetEncodersAndGoDown.get()));
 
     autoChooser.addOption("Nothing", none());
   }
@@ -223,10 +219,6 @@ public class RobotContainer {
     commandsForTesting.add("Path planner middle auto", new PathPlannerAuto("Middle"));
     commandsForTesting.add("Run sysid quasic static on right forward", shooter.sysIdQuasistaticForRight(SysIdRoutine.Direction.kForward));
     commandsForTesting.add("Run sysid quasic static on right backwards", shooter.sysIdQuasistaticForRight(SysIdRoutine.Direction.kReverse));
-  }
-
-  public void setInitialShooterLiftAngle() {
-    shooterLift.setInitialMeasurement(90);
   }
 
   public Command getAutonomousCommand() {

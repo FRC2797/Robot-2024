@@ -221,6 +221,10 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         return getGoToPositionCommand(Degrees.of(degrees));
     }
 
+    public Command getGoToRestCommand() {
+        return getGoToPositionCommand(atRest).until(this::atGoal).andThen(getGoToPowerCommand(Volts.of(-0.05)).until(this::isFullyDown));
+    }
+
     public Command getGoToPowerCommand(Measure<Voltage> power) {
         Command goToPower = run(() -> {
             boolean goingUp = power.in(Volts) > 0;
