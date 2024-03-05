@@ -95,11 +95,14 @@ public class RobotContainer {
     controller.povRight().onTrue(runOnce(() -> shooterLift.brakeMotors(), shooterLift));
 
     Supplier<Command> unbrakeThenBrakeShooterLift = () -> startEnd(shooterLift::unbrakeMotors, shooterLift::brakeMotors, shooterLift);
+    
+    // spool in
     controller.leftBumper().whileTrue(parallel(
       unbrakeThenBrakeShooterLift.get(),
       winch.getGoToPowerCommand(0.2)
     ).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
 
+    // spool out
     controller.rightBumper().whileTrue(parallel(
       unbrakeThenBrakeShooterLift.get(),
       winch.getGoToPowerCommand(-0.2)
