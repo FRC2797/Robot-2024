@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.VoltsPerRadianPerSecond;
 import static edu.wpi.first.units.Units.VoltsPerRadianPerSecondSquared;
+import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -24,7 +25,6 @@ import edu.wpi.first.units.Per;
 import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -51,10 +51,11 @@ public class ShooterLift extends ProfiledPIDSubsystem {
 
     ShuffleboardTab tab = Shuffleboard.getTab("ShooterLift");
 
+    // Values gotten through recalc
     private Measure<Voltage> kS = Volts.of(0);
-    private Measure<Voltage> kG = Volts.of(0);
+    private Measure<Voltage> kG = Volts.of(0.17);
 
-    private Measure<Per<Voltage, Velocity<Angle>>> kV = VoltsPerRadianPerSecond.of(0);
+    private Measure<Per<Voltage, Velocity<Angle>>> kV = VoltsPerRadianPerSecond.of(0.78);
     private Measure<Per<Voltage, Velocity<Velocity<Angle>>>> kA = VoltsPerRadianPerSecondSquared.of(0);
 
     // kA can be ommitted, apparently
@@ -64,7 +65,7 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     public static ProfiledPIDController pidController = getPidController();
     private static ProfiledPIDController getPidController() {
         TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(RadiansPerSecond.of(0.25), RadiansPerSecond.per(Second).of(0.25));
-        ProfiledPIDController pid = new ProfiledPIDController(18, 5, 0, constraints);
+        ProfiledPIDController pid = new ProfiledPIDController(45, 11, 0, constraints);
         pid.setTolerance(Degrees.of(1).in(Radians));
 
         pid.enableContinuousInput(-Math.PI, Math.PI);
@@ -112,7 +113,7 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         tab.add("shooter lift go to 70", getGoToPositionCommand(70));
         tab.add("shooter lift go to 80", getGoToPositionCommand(80));
         tab.add("shooter lift go to 90", getGoToPositionCommand(90));
-        tab.add("shooter lift go to rest", getGoToPositionCommand(atRest.in(Degrees)));
+        tab.add("shooter lift go to rest", getGoToRestCommand());
 
         tab.add(this.getGoToPowerCommand(Volts.of(12 * 0)).withName("Go to 0%"));
         tab.add(this.getGoToPowerCommand(Volts.of(12 * 0.1)).withName("Go to 10%"));
@@ -174,9 +175,12 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         return encoderReading;
     }
 
-    public void setInitialMeasurement(double degrees) {
-        leftEncoder.setPosition(Degrees.of(90).in(Rotations));
-        rightEncoder.setPosition(Degrees.of(90).in(Rotations));
+    public Command getSetInitialMeasurement() {
+        // have to wait because resetting it in the hardware is slow
+        return runOnce(() -> {
+            leftEncoder.setPosition(Degrees.of(90).in(Rotations));
+            rightEncoder.setPosition(Degrees.of(90).in(Rotations));
+        }).andThen(waitSeconds(0.25));
     }
 
     @Override
@@ -187,9 +191,8 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     @Override
     protected void useOutput(double output, TrapezoidProfile.State state) {
         Measure<Voltage> outputInVolts = Volts.of(output).plus(Volts.of(feedforward.calculate(state.position, state.velocity)));
-        System.out.println(Timer.getFPGATimestamp() + " outputInVolts is " + outputInVolts.in(Volts));
         setMotors(
-            Volts.of(0)
+            outputInVolts
         );
     }
 
