@@ -186,7 +186,7 @@ public class RobotContainer {
 
   private void setUpAutoChooser(SendableChooser<Command> autChooser) {
     Supplier<Command> liftGoToRest = () -> shooterLift.getSetInitialMeasurement().andThen(shooterLift.getGoToRestCommand());
-    Supplier<Command> releaseLock = () -> shooterLift.getGoToPowerCommand(Volts.of(1.5)).withTimeout(0.25);
+    Supplier<Command> releaseLock = () -> shooterLift.getGoToPowerCommand(Volts.of(1)).withTimeout(0.5).andThen(shooterLift.getGoToPowerCommand(Volts.of(-1)).withTimeout(0.5));
     autoChooser.addOption("liftGoToRest", liftGoToRest.get());
     autoChooser.addOption("Middle Auto without going to rest", new FireNote(8, 2700, intake, shooter, shooterLift));
 
@@ -202,7 +202,7 @@ public class RobotContainer {
       sequence(
         releaseLock.get(),
         liftGoToRest.get(),
-        new FireNote(10, 4500, intake, shooter, shooterLift)
+        new FireNote(20, 4500, intake, shooter, shooterLift)
       )
     );
 
@@ -235,6 +235,7 @@ public class RobotContainer {
     commandsForTesting.add("Run sysid quasic static on right forward", shooter.sysIdQuasistaticForRight(SysIdRoutine.Direction.kForward));
     commandsForTesting.add("Run sysid quasic static on right backwards", shooter.sysIdQuasistaticForRight(SysIdRoutine.Direction.kReverse));
 
+    commandsForTesting.add("Fire side note ", new FireNote(20, 4500, intake, shooter, shooterLift));
     commandsForTesting.add(CommandScheduler.getInstance());
   }
 
