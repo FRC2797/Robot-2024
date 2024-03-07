@@ -19,8 +19,8 @@
       "drive": null
     },
     "encoder": {
-      "type": "none",
-      "id": null,
+      "type": "attached",
+      "id": 0,
       "canbus": null
     },
     "inverted": {
