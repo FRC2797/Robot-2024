@@ -11,6 +11,7 @@ import static edu.wpi.first.wpilibj2.command.Commands.none;
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import static edu.wpi.first.wpilibj2.command.Commands.run;
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
+import static edu.wpi.first.wpilibj2.command.Commands.sequence;
 import static edu.wpi.first.wpilibj2.command.Commands.startEnd;
 
 import java.util.function.Supplier;
@@ -23,6 +24,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AimWithLimelight;
@@ -183,13 +185,26 @@ public class RobotContainer {
   }
 
   private void setUpAutoChooser(SendableChooser<Command> autChooser) {
-    Supplier<Command> liftGoToRest = () -> shooterLift.getSetInitialMeasurement().andThen(shooterLift.getGoToRestCommand()).withName("liftGoToRest");
+    Supplier<Command> liftGoToRest = () -> shooterLift.getSetInitialMeasurement().andThen(shooterLift.getGoToRestCommand());
+    Supplier<Command> releaseLock = () -> shooterLift.getGoToPowerCommand(Volts.of(1.5)).withTimeout(0.25);
     autoChooser.addOption("liftGoToRest", liftGoToRest.get());
     autoChooser.addOption("Middle Auto without going to rest", new FireNote(8, 2700, intake, shooter, shooterLift));
 
-    autoChooser.addOption("Middle Auto", new FireNote(8, 2700, intake, shooter, shooterLift).beforeStarting(liftGoToRest.get()));
+    autoChooser.addOption("Middle Auto", 
+      sequence(
+        releaseLock.get(),
+        liftGoToRest.get(),
+        new FireNote(8, 2700, intake, shooter, shooterLift)
+      )  
+    );
 
-    autoChooser.addOption("Sideways", new FireNote(10, 4500, intake, shooter, shooterLift));
+    autoChooser.addOption("Sideways", 
+      sequence(
+        releaseLock.get(),
+        liftGoToRest.get(),
+        new FireNote(10, 4500, intake, shooter, shooterLift)
+      )
+    );
 
     autoChooser.addOption("Nothing", none());
   }
@@ -219,6 +234,8 @@ public class RobotContainer {
     commandsForTesting.add("Path planner middle auto", new PathPlannerAuto("Middle"));
     commandsForTesting.add("Run sysid quasic static on right forward", shooter.sysIdQuasistaticForRight(SysIdRoutine.Direction.kForward));
     commandsForTesting.add("Run sysid quasic static on right backwards", shooter.sysIdQuasistaticForRight(SysIdRoutine.Direction.kReverse));
+
+    commandsForTesting.add(CommandScheduler.getInstance());
   }
 
   public Command getAutonomousCommand() {

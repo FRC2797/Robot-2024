@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.VoltsPerRadianPerSecond;
 import static edu.wpi.first.units.Units.VoltsPerRadianPerSecondSquared;
+import static edu.wpi.first.wpilibj2.command.Commands.print;
 import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
 
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -30,7 +31,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 
@@ -53,9 +53,9 @@ public class ShooterLift extends ProfiledPIDSubsystem {
 
     // Values gotten through recalc
     private Measure<Voltage> kS = Volts.of(0);
-    private Measure<Voltage> kG = Volts.of(0.17);
+    private Measure<Voltage> kG = Volts.of(0.17 * 4);
 
-    private Measure<Per<Voltage, Velocity<Angle>>> kV = VoltsPerRadianPerSecond.of(0.78);
+    private Measure<Per<Voltage, Velocity<Angle>>> kV = VoltsPerRadianPerSecond.of(0);
     private Measure<Per<Voltage, Velocity<Velocity<Angle>>>> kA = VoltsPerRadianPerSecondSquared.of(0);
 
     // kA can be ommitted, apparently
@@ -65,7 +65,7 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     public static ProfiledPIDController pidController = getPidController();
     private static ProfiledPIDController getPidController() {
         TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(RadiansPerSecond.of(0.25), RadiansPerSecond.per(Second).of(0.25));
-        ProfiledPIDController pid = new ProfiledPIDController(45, 11, 0, constraints);
+        ProfiledPIDController pid = new ProfiledPIDController(17, 8, 0, constraints);
         pid.setTolerance(Degrees.of(1).in(Radians));
 
         pid.enableContinuousInput(-Math.PI, Math.PI);
@@ -87,6 +87,7 @@ public class ShooterLift extends ProfiledPIDSubsystem {
         brakeMotors();
         tab.addDouble("Current measurement", () -> getMeasurementAsMeasure().in(Degrees));
         tab.addDouble("Current setpoint", () -> radiansToDegrees(pidController.getSetpoint().position));
+        tab.addDouble("Current goal", () -> radiansToDegrees(pidController.getGoal().position));
         tab.addBoolean("At goal?", this::atGoal);
 
         tab.addDouble("Current left speed", left::get);
@@ -94,6 +95,9 @@ public class ShooterLift extends ProfiledPIDSubsystem {
 
         tab.addDouble("left encoder value in rotations", leftEncoder::getPosition);
         tab.addDouble("right encoder value in rotations", rightEncoder::getPosition);
+
+        tab.addDouble("left encoder value in degrees", () -> leftGetPosition().in(Degrees));
+        tab.addDouble("right encoder value in degrees", () -> rightGetPosition().in(Degrees));
 
         tab.addBoolean("Is fully up", this::isFullyUp);
         tab.addBoolean("Is fully down", this::isFullyDown);
@@ -130,11 +134,7 @@ public class ShooterLift extends ProfiledPIDSubsystem {
 
         tab.add("Shooter lift subsystem", this);
 
-        Trigger liftDown = new Trigger(this::isFullyDown);
-        liftDown.onTrue(runOnce(() -> pidController.reset(getMeasurement())));
-
-        Trigger liftUp = new Trigger(this::isFullyUp);
-        liftUp.onTrue(runOnce(() -> pidController.reset(getMeasurement())));
+        resetEncoderPositions();
 
         this.disable();
     }
@@ -154,15 +154,6 @@ public class ShooterLift extends ProfiledPIDSubsystem {
 
         if (isFullyUp() && (leftGoingUp || rightGoingUp)) {
             setMotors(Volts.of(0));
-        }
-
-        if (isFullyDown()) {
-            resetEncoderPositions();
-        }
-
-        if (isFullyUp()) {
-            leftEncoder.setPosition(hittingTopLimitSwitch.in(Rotations));
-            rightEncoder.setPosition(hittingTopLimitSwitch.in(Rotations));
         }
     }
 
@@ -222,7 +213,10 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     }
 
     public Command getGoToRestCommand() {
-        return getGoToPositionCommand(atRest).until(this::atGoal).andThen(getGoToPowerCommand(Volts.of(-0.05)).until(this::isFullyDown));
+        Command goToRest = getGoToPositionCommand(Degrees.of(30)).until(() -> getMeasurementAsMeasure().in(Degrees) < 40);
+        Command goUntilHittingTheLimitSwitch = getGoToPowerCommand(Volts.of(-0.05)).until(this::isFullyDown);
+        Command resetEncoderPositions = runOnce(this::resetEncoderPositions); 
+        return goToRest.andThen(goUntilHittingTheLimitSwitch).andThen(resetEncoderPositions);
     }
 
     public Command getGoToPowerCommand(Measure<Voltage> power) {
