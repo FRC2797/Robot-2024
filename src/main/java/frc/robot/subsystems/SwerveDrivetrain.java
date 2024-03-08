@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.math.util.Units.degreesToRadians;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import java.io.File;
 import java.util.function.DoubleConsumer;
@@ -82,6 +84,10 @@ public class SwerveDrivetrain extends SubsystemBase
     tab.add("Pathfind to RED_AMP", driveToPose(PosesToGoToPlaces.RED_AMP.value).withName("Pathfind to RED_AMP"));
     tab.add("Add limelight vision measurement", runOnce(this::addLimelightReadingToOdometry));
     tab.add("Drive to face speaker", driveToFacePoint(PositionsToAim.BLUE_SPEAKER.value));
+
+    tab.add("Drive speed to 5 meters a second", run( () -> swerveDrive.drive(new ChassisSpeeds(MetersPerSecond.of(5), MetersPerSecond.of(0), RadiansPerSecond.of(0)))));
+    tab.add("Drive speed to 1 meters a second", run( () -> swerveDrive.drive(new ChassisSpeeds(MetersPerSecond.of(1), MetersPerSecond.of(0), RadiansPerSecond.of(0)))));
+    tab.add("Drive speed to 3 meters a second", run( () -> swerveDrive.drive(new ChassisSpeeds(MetersPerSecond.of(3), MetersPerSecond.of(0), RadiansPerSecond.of(0)))));
 
     swerveDrive.setHeadingCorrection(true);
 
