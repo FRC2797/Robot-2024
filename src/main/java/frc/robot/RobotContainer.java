@@ -126,32 +126,6 @@ public class RobotContainer {
     controller.povDown().whileTrue(winchAndShooterDown);
   }
 
-  Supplier<Command> fireWhenDirectlyUpToSubwoofer = () -> new FireNote(0, 2700, 2700, intake, shooter, shooterLift);
-  private void configureBindings() {
-    drivetrain.setDefaultCommand(joystickTeleCommand);
-
-    Command intakeUntilNoteIsIn = intake.intakeUntilNoteIsIn();
-    controller.b().onTrue(intakeUntilNoteIsIn);
-
-    Command fireIntoSubwoofer = new FireIntoSubwoofer(intake, shooter, shooterLift, drivetrain, limelight);
-    controller.x().whileTrue(fireIntoSubwoofer);
-
-    Command fireIntoAmp = new FireIntoAmp(intake, shooter, shooterLift, drivetrain, limelight);
-    controller.y().whileTrue(fireIntoAmp);
-
-    Command holdOntoChains = shooterLift.getGoToPositionCommand(0);
-    controller.a().whileTrue(holdOntoChains);
-
-    Command reverseIntake = intake.reverseIntake();
-    controller.leftTrigger().whileTrue(reverseIntake);
-  }
-
-  private void configureClimbBindings() {
-    drivetrain.setDefaultCommand(joystickTeleCommand);
-    controller.y().toggleOnTrue(shooterLift.getGoToPositionCommand(1));
-    controller.a().toggleOnTrue(shooterLift.getGoToPositionCommand(0.1));
-  }
-
   private void configureDirectPowerControllerBindings() {
     drivetrain.setDefaultCommand(joystickTeleCommand);
 
