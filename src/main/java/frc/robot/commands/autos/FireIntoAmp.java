@@ -15,7 +15,7 @@ public class FireIntoAmp extends SequentialCommandGroup {
     public FireIntoAmp(Intake intake, Shooter shooter, ShooterLift shooterLift, SwerveDrivetrain drivetrain, Limelight limelight) {
         super(
             new AimWithLimelight(drivetrain, limelight),
-            new FireNote(kHeightToFireAt, kShooterRPMToFireAt, intake, shooter, shooterLift)
+            new FireNote(kHeightToFireAt, kShooterRPMToFireAt, kShooterRPMToFireAt, intake, shooter, shooterLift)
         );
     }
 }

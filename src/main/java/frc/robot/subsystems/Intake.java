@@ -25,7 +25,7 @@ public class Intake extends SubsystemBase {
     public Intake() {
         motor.setInverted(false);
 
-        motor.setIdleMode(IdleMode.kCoast);
+        motor.setIdleMode(IdleMode.kBrake);
         tab.addBoolean("Is the ring in?", this::noteIsIn);
         tab.addDouble("Current proximity", this::getProximity);
         tab.addDouble("Current encoder position", encoder::getPosition);
@@ -56,7 +56,7 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean noteIsIn(){
-        return getProximity() > 300;
+        return getProximity() > 150;
     }
 
     public double getProximity() {
@@ -72,11 +72,11 @@ public class Intake extends SubsystemBase {
     }
 
     public Command intakeUntilNoteIsIn() {
-        return intakeInitially().until(() -> noteIsIn());
+        return intakeInitially().until(() -> noteIsIn()).andThen(intake(0.1).withTimeout(0.25));
     }
 
     public Command intakeIntoShooter() {
-        return intake(1).withTimeout(1.5);
+        return intake(1).withTimeout(0.8);
     }
 
     public Command getGoToPowerCommand(double power) {

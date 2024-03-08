@@ -42,7 +42,7 @@ public class FireIntoSubwoofer extends DeferredCommand {
                 sequence(
                     new AimWithLimelight(drivetrain, limelight),
                     drivetrain.driveDistanceWithJustPID(distanceToDrive.in(Meters)),
-                    new FireNote(kHeightToFireAt, kShooterRPMToFireAt, intake, shooter, shooterLift)
+                    new FireNote(kHeightToFireAt, kShooterRPMToFireAt, kShooterRPMToFireAt, intake, shooter, shooterLift)
                 );
         }, Set.of(intake, shooter, shooterLift, drivetrain));
     }

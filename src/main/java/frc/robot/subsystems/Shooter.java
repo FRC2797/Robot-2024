@@ -35,9 +35,10 @@ public class Shooter extends SubsystemBase {
 
     
     SimpleMotorFeedforward rightFeedforward = new SimpleMotorFeedforward(0.135, 0.00212);
-    PIDController rightController = new PIDController(0.0016, 0, 0);
+    PIDController rightController = new PIDController(0.0008, 0, 0);
 
-    double setpoint = 0; 
+    double leftSetpoint = 0;
+    double rightSetpoint = 0; 
 
     public Shooter() {
         left.setIdleMode(IdleMode.kCoast);
@@ -89,7 +90,8 @@ public class Shooter extends SubsystemBase {
         tab.addDouble("Left bus voltage",  left::getBusVoltage);
         tab.addDouble("left power", left::getAppliedOutput);
 
-        tab.addDouble("current setpoint", () -> setpoint);
+        tab.addDouble("current left setpoint", () -> leftSetpoint);
+        tab.addDouble("current right setpoint", () -> rightSetpoint);
 
         tab.addDouble("Left RPM", this::getLeftRPM);
         tab.addDouble("Right RPM", this::getRightRPM);
@@ -100,17 +102,23 @@ public class Shooter extends SubsystemBase {
     public void periodic() {
         if (enabled) {
             left.setVoltage(
-                leftController.calculate(getLeftRPM(), setpoint) + leftFeedforward.calculate(setpoint)
+                leftController.calculate(getLeftRPM(), leftSetpoint) + leftFeedforward.calculate(leftSetpoint)
             );
  
             right.setVoltage(
-                rightController.calculate(getRightRPM(), setpoint) + rightFeedforward.calculate(setpoint)
+                rightController.calculate(getRightRPM(), rightSetpoint) + rightFeedforward.calculate(rightSetpoint)
             );
         }
     }
 
     public void setSetpoint(double setpoint) {
-        this.setpoint = setpoint;
+        this.rightSetpoint = setpoint;
+        this.leftSetpoint = setpoint;
+    }
+
+    public void setSetpoint(double leftSetpoint, double rightSetpoint) {
+        this.leftSetpoint = leftSetpoint;
+        this.rightSetpoint = rightSetpoint;
     }
 
     public void enable() {
@@ -141,6 +149,23 @@ public class Shooter extends SubsystemBase {
         return goToRPM;
     }
 
+    public Command getGoToRPMCommand(double leftSetpoint, double rightSetpoint) {
+        Command goToRPM = new StartEndCommand(
+            () -> {
+                this.setSetpoint(leftSetpoint, rightSetpoint);
+                this.enable();
+            },
+            () -> {
+                this.setSetpoint(0);
+                this.disable();
+            },
+            this
+        );
+
+        return goToRPM;
+    }
+
+
     public Command getGoToPowerCommand(double power) {
         Command goToPower = new StartEndCommand(
             () -> {
@@ -160,8 +185,8 @@ public class Shooter extends SubsystemBase {
 
 
     public boolean atSetpoint() {
-        double tolerance = 300;
-        return MathUtil.isNear(setpoint, getLeftRPM(), tolerance) && MathUtil.isNear(setpoint, getRightRPM(), tolerance);
+        double tolerance = 50;
+        return MathUtil.isNear(leftSetpoint, getLeftRPM(), tolerance) && MathUtil.isNear(rightSetpoint, getRightRPM(), tolerance);
     }
 
 

@@ -22,6 +22,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -125,7 +126,7 @@ public class RobotContainer {
     controller.povDown().whileTrue(winchAndShooterDown);
   }
 
-  Supplier<Command> fireWhenDirectlyUpToSubwoofer = () -> new FireNote(0, 2700, intake, shooter, shooterLift);
+  Supplier<Command> fireWhenDirectlyUpToSubwoofer = () -> new FireNote(0, 2700, 2700, intake, shooter, shooterLift);
   private void configureBindings() {
     drivetrain.setDefaultCommand(joystickTeleCommand);
 
@@ -188,21 +189,22 @@ public class RobotContainer {
 
   private void setUpAutoChooser(SendableChooser<Command> autChooser) {
     Supplier<Command> liftGoToRest = () -> shooterLift.getSetInitialMeasurement().andThen(shooterLift.getGoToRestCommand());
-    Supplier<Command> releaseLock = () -> shooterLift.getGoToPowerCommand(Volts.of(1.05)).withTimeout(0.5).andThen(shooterLift.getGoToPowerCommand(Volts.of(-1)).withTimeout(0.5));
+    Supplier<Command> releaseLock = () -> shooterLift.getGoToPowerCommand(Volts.of(1.15)).withTimeout(0.5).andThen(shooterLift.getGoToPowerCommand(Volts.of(-1)).withTimeout(0.5));
     autoChooser.addOption("liftGoToRest", liftGoToRest.get());
-    autoChooser.addOption("Middle Auto without going to rest", new FireNote(8, 2700, intake, shooter, shooterLift));
+    autoChooser.addOption("Middle Auto without going to rest", new FireNote(8, 2700, 2700, intake, shooter, shooterLift));
 
-    autoChooser.addOption("Middle Auto", 
+    autoChooser.setDefaultOption("Middle Auto", 
       sequence(
         releaseLock.get(),
-        liftGoToRest.get(),
-        new FireNote(2, 2500, intake, shooter, shooterLift),
+        deadline(liftGoToRest.get(), intake.intakeUntilNoteIsIn()),
+        new FireNote(2, 2700, 2200, intake, shooter, shooterLift),
         deadline(
           intake.intakeUntilNoteIsIn(),
-          drivetrain.driveDistanceWithJustPID(inchesToMeters(42))
+          drivetrain.driveDistanceWithJustPID(inchesToMeters(48))
         ),
         drivetrain.driveDistanceWithJustPID(inchesToMeters(-41)),
-        new FireNote(2, 2500, intake, shooter, shooterLift)
+        run(() -> drivetrain.drive(new ChassisSpeeds(-0.5, 0.0, 0.0)), drivetrain).withTimeout(0.5),
+        new FireNote(2, 2700, 2200 , intake, shooter, shooterLift)
       )  
     );
 
@@ -210,7 +212,7 @@ public class RobotContainer {
       sequence(
         releaseLock.get(),
         liftGoToRest.get(),
-        new FireNote(20, 4500, intake, shooter, shooterLift)
+        new FireNote(20, 4500, 4500, intake, shooter, shooterLift)
       )
     );
 
@@ -223,9 +225,9 @@ public class RobotContainer {
     commandsForTesting.add("Fire into subwoofer", new FireIntoSubwoofer(intake, shooter, shooterLift, drivetrain, limelight));
     commandsForTesting.add("Middle auto", new MiddleAuto(intake, shooter, shooterLift, drivetrain, limelight));
     commandsForTesting.add("Side Auto", new SideAuto(intake, shooter, shooterLift, drivetrain, limelight));
-    commandsForTesting.add("Fire Note", new FireNote(30, 2000, intake, shooter, shooterLift));
+    commandsForTesting.add("Fire Note", new FireNote(30, 2000, 2000, intake, shooter, shooterLift));
 
-    Supplier<Command> fireWhenDirectlyUpToSubwoofer = () -> new FireNote(0, 2700, intake, shooter, shooterLift);
+    Supplier<Command> fireWhenDirectlyUpToSubwoofer = () -> new FireNote(0, 2700, 2700, intake, shooter, shooterLift);
 
     commandsForTesting.add("fire when directly up to subwoofer", fireWhenDirectlyUpToSubwoofer.get());
 
@@ -233,7 +235,7 @@ public class RobotContainer {
       fireWhenDirectlyUpToSubwoofer.get().andThen(
         drivetrain.driveDistanceWithJustPID(Inches.of(50).in(Meters)).alongWith(intake.intakeUntilNoteIsIn())
       ).andThen(
-        new FireNote(20, 3500, intake, shooter, shooterLift)
+        new FireNote(20, 3500, 3500, intake, shooter, shooterLift)
       ));
 
     NamedCommands.registerCommand("FireNoteIntoSubwoofer", new FireIntoSubwoofer(intake, shooter, shooterLift, drivetrain, limelight));
@@ -243,7 +245,7 @@ public class RobotContainer {
     commandsForTesting.add("Run sysid quasic static on right forward", shooter.sysIdQuasistaticForRight(SysIdRoutine.Direction.kForward));
     commandsForTesting.add("Run sysid quasic static on right backwards", shooter.sysIdQuasistaticForRight(SysIdRoutine.Direction.kReverse));
 
-    commandsForTesting.add("Fire side note ", new FireNote(20, 4500, intake, shooter, shooterLift));
+    commandsForTesting.add("Fire side note ", new FireNote(20, 4500, 4500, intake, shooter, shooterLift));
     commandsForTesting.add(CommandScheduler.getInstance());
   }
 

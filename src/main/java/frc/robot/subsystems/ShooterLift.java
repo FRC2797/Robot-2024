@@ -9,7 +9,6 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.VoltsPerRadianPerSecond;
 import static edu.wpi.first.units.Units.VoltsPerRadianPerSecondSquared;
-import static edu.wpi.first.wpilibj2.command.Commands.print;
 import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
 
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -28,6 +27,7 @@ import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -45,7 +45,7 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     private DigitalInput bottomLimitSwitch = new DigitalInput(0);
     private DigitalInput topLimitSwitch = new DigitalInput(1);
 
-    static protected final Measure<Angle> atRest = Degrees.of(2);
+    static public final Measure<Angle> atRest = Degrees.of(2);
     static protected final Measure<Angle> hittingTopLimitSwitch = Degrees.of(110);
 
 
@@ -101,6 +101,8 @@ public class ShooterLift extends ProfiledPIDSubsystem {
 
         tab.addBoolean("Is fully up", this::isFullyUp);
         tab.addBoolean("Is fully down", this::isFullyDown);
+
+        tab.addBoolean("Is enabled", this::isEnabled);
 
         tab.add("Reset Encoders", runOnce(this::resetEncoderPositions));
 
@@ -167,10 +169,14 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     }
 
     public Command getSetInitialMeasurement() {
+        return  getSetInitialMeasurement(Degrees.of(90));
+    }
+
+    public Command getSetInitialMeasurement(Measure<Angle> initialMeasurement) {
         // have to wait because resetting it in the hardware is slow
         return runOnce(() -> {
-            leftEncoder.setPosition(Degrees.of(90).in(Rotations));
-            rightEncoder.setPosition(Degrees.of(90).in(Rotations));
+            leftEncoder.setPosition(initialMeasurement.in(Rotations));
+            rightEncoder.setPosition(initialMeasurement.in(Rotations));
         }).andThen(waitSeconds(0.25));
     }
 
@@ -213,9 +219,9 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     }
 
     public Command getGoToRestCommand() {
-        Command goToRest = getGoToPositionCommand(Degrees.of(30)).until(() -> getMeasurementAsMeasure().in(Degrees) < 40);
-        Command goUntilHittingTheLimitSwitch = getGoToPowerCommand(Volts.of(-0.05)).until(this::isFullyDown);
-        Command resetEncoderPositions = runOnce(this::resetEncoderPositions); 
+        Command goToRest = getGoToPositionCommand(Degrees.of(30)).withTimeout(0.5);
+        Command goUntilHittingTheLimitSwitch = getGoToPowerCommand(Volts.of(-0.1)).until(this::isFullyDown);
+        Command resetEncoderPositions = this.getSetInitialMeasurement(atRest);
         return goToRest.andThen(goUntilHittingTheLimitSwitch).andThen(resetEncoderPositions);
     }
 

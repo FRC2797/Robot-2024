@@ -272,7 +272,7 @@ public class SwerveDrivetrain extends SubsystemBase
     PIDConstants constants = getTranslationConstants();
     PIDController controller = new PIDController(constants.kP, constants.kI, constants.kD);
 
-    controller.setTolerance(0.01);
+    controller.setTolerance(0.1);
 
     DoubleConsumer drive = (output) -> {
       swerveDrive.drive(new Translation2d(output, 0), 0, false, false, new Translation2d());
@@ -532,6 +532,6 @@ public class SwerveDrivetrain extends SubsystemBase
   }
 
   private PIDConstants getTranslationConstants() {
-    return new PIDConstants(1.7, 0.1, 0.0);
+    return new PIDConstants(2.3, 0.1, 0.0);
   }
 }
