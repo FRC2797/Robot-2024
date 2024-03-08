@@ -82,7 +82,7 @@ public class RobotContainer {
     
     Command intakeIn = intake.getGoToPowerCommand(0.4);
     Command intakeOut = intake.getGoToPowerCommand(-0.4);
-    controller.x().whileTrue(intakeIn);
+    controller.x().onTrue(intakeIn);
     controller.b().whileTrue(intakeOut);
 
     Command armUp = shooterLift.getGoToPowerCommand(Volts.of(12 * 0.4));
