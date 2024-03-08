@@ -68,7 +68,7 @@ public class Intake extends SubsystemBase {
     }
 
     public Command intakeInitially() {
-        return intake(0.2);
+        return intake(0.3);
     }
 
     public Command intakeUntilNoteIsIn() {

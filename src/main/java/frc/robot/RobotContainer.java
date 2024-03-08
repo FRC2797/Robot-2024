@@ -4,9 +4,11 @@
 
 package frc.robot;
 
+import static edu.wpi.first.math.util.Units.inchesToMeters;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.wpilibj2.command.Commands.deadline;
 import static edu.wpi.first.wpilibj2.command.Commands.none;
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import static edu.wpi.first.wpilibj2.command.Commands.run;
@@ -186,7 +188,7 @@ public class RobotContainer {
 
   private void setUpAutoChooser(SendableChooser<Command> autChooser) {
     Supplier<Command> liftGoToRest = () -> shooterLift.getSetInitialMeasurement().andThen(shooterLift.getGoToRestCommand());
-    Supplier<Command> releaseLock = () -> shooterLift.getGoToPowerCommand(Volts.of(1)).withTimeout(0.5).andThen(shooterLift.getGoToPowerCommand(Volts.of(-1)).withTimeout(0.5));
+    Supplier<Command> releaseLock = () -> shooterLift.getGoToPowerCommand(Volts.of(1.05)).withTimeout(0.5).andThen(shooterLift.getGoToPowerCommand(Volts.of(-1)).withTimeout(0.5));
     autoChooser.addOption("liftGoToRest", liftGoToRest.get());
     autoChooser.addOption("Middle Auto without going to rest", new FireNote(8, 2700, intake, shooter, shooterLift));
 
@@ -194,7 +196,13 @@ public class RobotContainer {
       sequence(
         releaseLock.get(),
         liftGoToRest.get(),
-        new FireNote(8, 2700, intake, shooter, shooterLift)
+        new FireNote(2, 2500, intake, shooter, shooterLift),
+        deadline(
+          intake.intakeUntilNoteIsIn(),
+          drivetrain.driveDistanceWithJustPID(inchesToMeters(42))
+        ),
+        drivetrain.driveDistanceWithJustPID(inchesToMeters(-41)),
+        new FireNote(2, 2500, intake, shooter, shooterLift)
       )  
     );
 
