@@ -190,9 +190,6 @@ public class RobotContainer {
   private void setUpAutoChooser(SendableChooser<Command> autChooser) {
     Supplier<Command> liftGoToRest = () -> shooterLift.getSetInitialMeasurement().andThen(shooterLift.getGoToRestCommand());
     Supplier<Command> releaseLock = () -> shooterLift.getGoToPowerCommand(Volts.of(1.15)).withTimeout(0.5).andThen(shooterLift.getGoToPowerCommand(Volts.of(-1)).withTimeout(0.5));
-    autoChooser.addOption("liftGoToRest", liftGoToRest.get());
-    autoChooser.addOption("Middle Auto without going to rest", new FireNote(8, 2700, 2700, intake, shooter, shooterLift));
-
     autoChooser.setDefaultOption("Middle Auto", 
       sequence(
         releaseLock.get(),
@@ -211,8 +208,8 @@ public class RobotContainer {
     autoChooser.addOption("Sideways", 
       sequence(
         releaseLock.get(),
-        liftGoToRest.get(),
-        new FireNote(20, 4500, 4500, intake, shooter, shooterLift)
+        deadline(liftGoToRest.get(), intake.intakeUntilNoteIsIn()),
+        new FireNote(10, 4000, 4000, intake, shooter, shooterLift)
       )
     );
 

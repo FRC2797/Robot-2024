@@ -138,7 +138,7 @@ public class Limelight {
   }
 
   public double getLatency() {
-    return LimelightHelpers.getLatency_Capture("limelight") + LimelightHelpers.getLatency_Pipeline("pipeline");
+    return (LimelightHelpers.getLatency_Capture("limelight") + LimelightHelpers.getLatency_Pipeline("pipeline")) / 1000;
   }
 
   public Measure<Distance> getDistance() {
@@ -158,6 +158,7 @@ public class Limelight {
   // Make wrapper around this class using limelight object instead of using it directly.
   // Using the limelight object allows for easy mocking of it, e.g for simulation
   public class LimelightHelpers {
+
     public static class LimelightTarget_Retro {
 
         @JsonProperty("t6c_ts")

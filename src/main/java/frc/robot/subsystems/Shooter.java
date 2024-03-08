@@ -185,7 +185,7 @@ public class Shooter extends SubsystemBase {
 
 
     public boolean atSetpoint() {
-        double tolerance = 50;
+        double tolerance = 200;
         return MathUtil.isNear(leftSetpoint, getLeftRPM(), tolerance) && MathUtil.isNear(rightSetpoint, getRightRPM(), tolerance);
     }
 

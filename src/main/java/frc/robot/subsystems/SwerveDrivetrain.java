@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.Limelight.LimelightHelpers;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
@@ -366,6 +367,7 @@ public class SwerveDrivetrain extends SubsystemBase
   @Override
   public void periodic()
   {
+    addLimelightReadingToOdometry();
   }
 
   @Override
@@ -511,14 +513,13 @@ public class SwerveDrivetrain extends SubsystemBase
   }
 
   public void addLimelightReadingToOdometry() {
-    Pose2d limelightPose = limelight.getBotPose2d_wpiBlue();
-
-    boolean poseIsTooOff = getPose().getTranslation().getDistance(limelightPose.getTranslation()) > 1;
+    LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+    boolean poseIsTooOff = getPose().getTranslation().getDistance(limelightMeasurement.pose.getTranslation()) > 1;
     boolean doesNotHaveTarget = !limelight.hasTarget();
     if (poseIsTooOff || doesNotHaveTarget) {
       return;
     } else {
-      swerveDrive.addVisionMeasurement(limelightPose, Timer.getFPGATimestamp() - limelight.getLatency());
+      swerveDrive.addVisionMeasurement(limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
     }
   }
 
