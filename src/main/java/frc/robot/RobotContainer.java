@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.wpilibj2.command.Commands.deadline;
+import static edu.wpi.first.wpilibj2.command.Commands.defer;
 import static edu.wpi.first.wpilibj2.command.Commands.none;
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import static edu.wpi.first.wpilibj2.command.Commands.run;
@@ -16,6 +17,7 @@ import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import static edu.wpi.first.wpilibj2.command.Commands.sequence;
 import static edu.wpi.first.wpilibj2.command.Commands.startEnd;
 
+import java.util.Set;
 import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.NamedCommands;
@@ -23,6 +25,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -164,8 +167,15 @@ public class RobotContainer {
   private void setUpAutoChooser(SendableChooser<Command> autChooser) {
     Supplier<Command> liftGoToRest = () -> shooterLift.getSetInitialMeasurement().andThen(shooterLift.getGoToRestCommand());
     Supplier<Command> releaseLock = () -> shooterLift.getGoToPowerCommand(Volts.of(1.15)).withTimeout(0.5).andThen(shooterLift.getGoToPowerCommand(Volts.of(-1)).withTimeout(0.5));
+    Supplier<Command> sidewaysAuto = () -> sequence(
+        releaseLock.get(),
+        deadline(liftGoToRest.get(), intake.intakeUntilNoteIsIn()),
+        new FireNote(10, 4000, 4000, intake, shooter, shooterLift)
+    );
+
     autoChooser.setDefaultOption("Middle Auto", 
       sequence(
+        defer(() -> drivetrain.resetGyroAtBeginningOfMatch(DriverStation.getAlliance().get(), false, false), Set.of(drivetrain)),
         releaseLock.get(),
         deadline(liftGoToRest.get(), intake.intakeUntilNoteIsIn()),
         new FireNote(2, 2700, 2200, intake, shooter, shooterLift),
@@ -179,13 +189,13 @@ public class RobotContainer {
       )  
     );
 
-    autoChooser.addOption("Sideways", 
-      sequence(
-        releaseLock.get(),
-        deadline(liftGoToRest.get(), intake.intakeUntilNoteIsIn()),
-        new FireNote(10, 4000, 4000, intake, shooter, shooterLift)
-      )
-    );
+    autoChooser.addOption("Sideways long side", sidewaysAuto.get().beforeStarting(
+      defer(() -> drivetrain.resetGyroAtBeginningOfMatch(DriverStation.getAlliance().get(), true, true), Set.of(drivetrain))
+    ));
+
+    autoChooser.addOption("Sideways short side", sidewaysAuto.get().beforeStarting(
+      defer(() -> drivetrain.resetGyroAtBeginningOfMatch(DriverStation.getAlliance().get(), true, false), Set.of(drivetrain))
+    ));
 
     autoChooser.addOption("Nothing", none());
   }

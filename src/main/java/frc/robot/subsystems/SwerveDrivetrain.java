@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.math.util.Units.degreesToRadians;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
@@ -26,9 +27,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -395,6 +399,43 @@ public class SwerveDrivetrain extends SubsystemBase
   public void resetOdometry(Pose2d initialHolonomicPose)
   {
     swerveDrive.resetOdometry(initialHolonomicPose);
+  }
+
+  public Command resetGyroAtBeginningOfMatch(Alliance alliance, boolean isSideways, boolean isOnLongSide) {
+      boolean isBlueAlliance = alliance == Alliance.Blue;
+      boolean isRedAlliance = !isBlueAlliance;
+      boolean isMiddle = !isSideways;
+      boolean isOnShortSide = !isOnLongSide;
+
+      if (isBlueAlliance && isMiddle) {
+        return getResetOdometryForRotation(Degrees.of(0));
+      }
+
+      if (isBlueAlliance && isOnLongSide) {
+        return getResetOdometryForRotation(Degrees.of(-150));
+      }
+
+      if (isBlueAlliance && isOnShortSide) {
+        return getResetOdometryForRotation(Degrees.of(150));
+      }
+
+      if(isRedAlliance && isMiddle) {
+        return getResetOdometryForRotation(Degrees.of(180));
+      }
+
+      if (isRedAlliance && isOnLongSide) {
+        return getResetOdometryForRotation(Degrees.of(-30));
+      }
+
+      if (isRedAlliance && isOnShortSide) {
+        return getResetOdometryForRotation(Degrees.of(30));
+      }
+
+      return getResetOdometryForRotation(Degrees.of(0));
+  }
+
+  private Command getResetOdometryForRotation(Measure<Angle> angle) {
+    return runOnce(() -> resetOdometry(new Pose2d(new Translation2d(), new Rotation2d(angle))));
   }
 
   /**
