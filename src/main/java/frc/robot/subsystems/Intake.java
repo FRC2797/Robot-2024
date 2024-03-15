@@ -56,7 +56,7 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean noteIsIn(){
-        return getProximity() > 150;
+        return getProximity() > 250;
     }
 
     public double getProximity() {
@@ -72,7 +72,7 @@ public class Intake extends SubsystemBase {
     }
 
     public Command intakeUntilNoteIsIn() {
-        return intakeInitially().until(() -> noteIsIn()).andThen(intake(0.1).withTimeout(0.25));
+        return intakeInitially().until(() -> noteIsIn());
     }
 
     public Command intakeIntoShooter() {

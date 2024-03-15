@@ -117,7 +117,7 @@ public class RobotContainer {
     controller.x().whileTrue(intakeIn);
     controller.b().whileTrue(intakeOut);
 
-    Command armUp = shooterLift.getGoToPowerCommand(Volts.of(12 * 0.4));
+    Command armUp = shooterLift.getGoToPowerCommand(Volts.of(12 * 0.2));
     Command armDown = shooterLift.getGoToPowerCommand(Volts.of(12 * -0.2));
     controller.y().whileTrue(armUp);
     controller.a().whileTrue(armDown);
@@ -126,7 +126,7 @@ public class RobotContainer {
     Command analogShooter = runOnce(() -> shooter.enable()).andThen(run(() -> shooter.setSetpoint(maxShooterRPM * controller.getRightTriggerAxis()), shooter)).finallyDo(() -> shooter.disable());
     controller.rightTrigger(0.01).whileTrue(analogShooter);
 
-    Command shootWhenDirectlyUpAgainstSubwoofer = shooter.getGoToRPMCommand(2700);
+    Command shootWhenDirectlyUpAgainstSubwoofer = shooter.getGoToRPMCommand(2400);
     controller.povUp().toggleOnTrue(shootWhenDirectlyUpAgainstSubwoofer);
     controller.povLeft().onTrue(runOnce(() -> shooterLift.unbrakeMotors(), shooterLift));
     controller.povRight().onTrue(runOnce(() -> shooterLift.brakeMotors(), shooterLift));
@@ -139,13 +139,10 @@ public class RobotContainer {
       winch.getGoToPowerCommand(0.2)
     ).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
 
-    // spool out
-    controller.rightBumper().whileTrue(parallel(
-      unbrakeThenBrakeShooterLift.get(),
-      winch.getGoToPowerCommand(-0.2)
-    ).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
+    Command shoot = shooter.getGoToRPMCommand(1500);
+    Command ampShoot = shooterLift.getGoToPositionCommand(115).andThen(shoot);
+    controller.rightBumper().onTrue(ampShoot);
 
-    
     // don't be stupid and forget the shooterLift isn't required
     Supplier<Command> unbrakeThenBrakeShooterLiftWithoutShooterliftRequired = () -> startEnd(shooterLift::unbrakeMotors, shooterLift::brakeMotors);
     Command winchAndShooterDown = parallel(
