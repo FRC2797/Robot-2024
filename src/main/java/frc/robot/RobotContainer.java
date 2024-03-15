@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.wpilibj2.command.Commands.deadline;
 import static edu.wpi.first.wpilibj2.command.Commands.defer;
+import static edu.wpi.first.wpilibj2.command.Commands.either;
 import static edu.wpi.first.wpilibj2.command.Commands.none;
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import static edu.wpi.first.wpilibj2.command.Commands.run;
@@ -81,6 +82,32 @@ public class RobotContainer {
     configureCommandsForTesting();
   }
 
+  private void configureBenControllerScheme() {
+    drivetrain.setDefaultCommand(joystickTeleCommand);
+    
+    controller.rightTrigger().whileTrue(shooter.getGoToRPMCommand(2700, 2200));
+
+    controller.leftTrigger().onTrue(either(intake.intakeUntilNoteIsIn(), none(), () -> shooterLift.isFullyDown()));
+    controller.leftTrigger().whileTrue(either(intake.intakeIntoShooter(), none(), () -> !shooterLift.isFullyDown()));
+
+    Command armUp = shooterLift.getGoToPowerCommand(Volts.of(12 * 0.4));
+    Command armDown = shooterLift.getGoToPowerCommand(Volts.of(12 * -0.2));
+    controller.y().whileTrue(armUp);
+    controller.a().whileTrue(armDown);
+
+    controller.rightBumper().whileTrue(parallel(
+      shooter.getGoToRPMCommand(4000, 4000),
+      shooterLift.getGoToPositionCommand(10)
+    ));
+
+    Supplier<Command> unbrakeThenBrakeShooterLiftWithoutShooterliftRequired = () -> startEnd(shooterLift::unbrakeMotors, shooterLift::brakeMotors);
+    Command winchAndShooterDown = parallel(
+      unbrakeThenBrakeShooterLiftWithoutShooterliftRequired.get(),
+      winch.getGoToPowerCommand(0.4),
+      shooterLift.getGoToPowerCommand(Volts.of(12 * -0.2))
+    );
+    controller.povDown().whileTrue(winchAndShooterDown);
+  }
   
   private void configureMinimumViableControllerScheme() {
     drivetrain.setDefaultCommand(joystickTeleCommand);
@@ -209,10 +236,15 @@ public class RobotContainer {
       CommandScheduler.getInstance().getActiveButtonLoop().clear();
       configureMinimumViableControllerScheme();
     });
-    
+
     controlSchemeChooser.addOption("Direct power controller scheme", () -> {
       CommandScheduler.getInstance().getActiveButtonLoop().clear();
       configureDirectPowerControllerBindings();
+    });
+
+    controlSchemeChooser.addOption("Ben controller scheme", () -> {
+      CommandScheduler.getInstance().getActiveButtonLoop().clear();
+      configureBenControllerScheme();
     });
   }
 
