@@ -164,7 +164,7 @@ public class RobotContainer {
     driverTab.addString("Currently seen april tag", limelight::getSeenAprilTagAsString);
   }
 
-  private void setUpAutoChooser(SendableChooser<Command> autChooser) {
+  private void setUpAutoChooser(SendableChooser<Command> autoChooser) {
     Supplier<Command> liftGoToRest = () -> shooterLift.getSetInitialMeasurement().andThen(shooterLift.getGoToRestCommand());
     Supplier<Command> releaseLock = () -> shooterLift.getGoToPowerCommand(Volts.of(1.15)).withTimeout(0.5).andThen(shooterLift.getGoToPowerCommand(Volts.of(-1)).withTimeout(0.5));
     Supplier<Command> sidewaysAuto = () -> sequence(
