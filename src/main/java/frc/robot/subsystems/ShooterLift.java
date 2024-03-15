@@ -169,7 +169,7 @@ public class ShooterLift extends ProfiledPIDSubsystem {
     }
 
     public Command getSetInitialMeasurement() {
-        return  getSetInitialMeasurement(Degrees.of(90));
+        return  getSetInitialMeasurement(Degrees.of(53));
     }
 
     public Command getSetInitialMeasurement(Measure<Angle> initialMeasurement) {

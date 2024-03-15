@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.math.util.Units.degreesToRadians;
 import static edu.wpi.first.math.util.Units.inchesToMeters;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
@@ -13,6 +14,8 @@ import static edu.wpi.first.wpilibj2.command.Commands.defer;
 import static edu.wpi.first.wpilibj2.command.Commands.either;
 import static edu.wpi.first.wpilibj2.command.Commands.none;
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
+import static edu.wpi.first.wpilibj2.command.Commands.print;
+import static edu.wpi.first.wpilibj2.command.Commands.print;
 import static edu.wpi.first.wpilibj2.command.Commands.run;
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import static edu.wpi.first.wpilibj2.command.Commands.sequence;
@@ -197,23 +200,35 @@ public class RobotContainer {
     Supplier<Command> releaseLock = () -> shooterLift.getGoToPowerCommand(Volts.of(1.15)).withTimeout(0.5).andThen(shooterLift.getGoToPowerCommand(Volts.of(-1)).withTimeout(0.5));
     Supplier<Command> sidewaysAuto = () -> sequence(
         releaseLock.get(),
-        deadline(liftGoToRest.get(), intake.intake(0.1).until(intake::noteIsIn)),
+        deadline(liftGoToRest.get(), intake.intake(0.1).until(intake::noteIsIn)).andThen(intake.intake(0.1).withTimeout(0.25)),
         new FireNote(10, 4000, 4000, intake, shooter, shooterLift)
     );
 
     autoChooser.setDefaultOption("Middle Auto", 
       sequence(
         defer(() -> drivetrain.resetGyroAtBeginningOfMatch(DriverStation.getAlliance().get(), false, false), Set.of(drivetrain)),
+        shooterLift.getSetInitialMeasurement(),
         releaseLock.get(),
-        deadline(liftGoToRest.get(), intake.intake(0.1).until(intake::noteIsIn)),
-        new FireNote(2, 2700, 2200, intake, shooter, shooterLift),
+        deadline(
+          shooterLift.getGoToPositionCommand(10),
+          intake.intake(0.1).until(intake::noteIsIn).andThen(intake.intake(0.1).withTimeout(0.25))
+        ),
+        print("Finished going to a position"),
+        new FireNote(10, 2700, 2200, intake, shooter, shooterLift),
         deadline(
           intake.intakeUntilNoteIsIn(),
           drivetrain.driveDistanceWithJustPID(inchesToMeters(48))
         ),
         drivetrain.driveDistanceWithJustPID(inchesToMeters(-41)),
         run(() -> drivetrain.drive(new ChassisSpeeds(-0.5, 0.0, 0.0)), drivetrain).withTimeout(0.5),
-        new FireNote(2, 2700, 2200 , intake, shooter, shooterLift)
+        new FireNote(2, 2700, 2200, intake, shooter, shooterLift),
+
+        drivetrain.driveSidewaysWithJustPID(inchesToMeters(-60)), 
+        deadline(
+          intake.intakeUntilNoteIsIn(),
+          drivetrain.driveDistanceWithJustPID(inchesToMeters(48))
+        ),
+        deadline(new FireNote(33, 4000, 4000, intake, shooter, shooterLift), drivetrain.driveToRotation(degreesToRadians(150)))
       )  
     );
 
