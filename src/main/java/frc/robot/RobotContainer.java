@@ -197,7 +197,7 @@ public class RobotContainer {
     Supplier<Command> releaseLock = () -> shooterLift.getGoToPowerCommand(Volts.of(1.15)).withTimeout(0.5).andThen(shooterLift.getGoToPowerCommand(Volts.of(-1)).withTimeout(0.5));
     Supplier<Command> sidewaysAuto = () -> sequence(
         releaseLock.get(),
-        deadline(liftGoToRest.get(), intake.intakeUntilNoteIsIn()),
+        deadline(liftGoToRest.get(), intake.intake(0.1).until(intake::noteIsIn)),
         new FireNote(10, 4000, 4000, intake, shooter, shooterLift)
     );
 
