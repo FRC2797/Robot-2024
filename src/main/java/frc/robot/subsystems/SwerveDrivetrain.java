@@ -215,14 +215,13 @@ public class SwerveDrivetrain extends SubsystemBase
   }
 
   public Command driveToRotation(double radians) {
-    PIDController controller = swerveDrive.swerveController.config.headingPIDF.createPIDController();
+    PIDController controller = new PIDController(1.8, 0.2, 0.01);
     controller.enableContinuousInput(-Math.PI, Math.PI);
 
     controller.setTolerance(degreesToRadians(1));
 
-    double minimumOutput = 0.2;
     DoubleConsumer rotate = (output) -> {
-      swerveDrive.drive(new Translation2d(), output + minimumOutput, false, false, new Translation2d());
+      swerveDrive.drive(new Translation2d(), output, false, false, new Translation2d());
       SmartDashboard.putNumber("Current drive to rotation output", output);
     };
 
