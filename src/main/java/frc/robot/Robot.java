@@ -43,4 +43,14 @@ public class Robot extends TimedRobot {
   public void autonomousExit() {
     CommandScheduler.getInstance().cancelAll();
   }
+
+  @Override
+  public void teleopInit() {
+    Runnable controlScheme = robotContainer.getControlScheme();
+    if (controlScheme == null) {
+      System.out.println("No control scheme selected");
+    } else {
+      controlScheme.run();
+    }
+  }
 }

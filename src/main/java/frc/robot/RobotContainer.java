@@ -63,6 +63,7 @@ public class RobotContainer {
   CommandXboxController controller = new CommandXboxController(0);
   ShuffleboardTab commandsForTesting = Shuffleboard.getTab("Commands for testing");
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+  private final SendableChooser<Runnable> controlSchemeChooser = new SendableChooser<>();
 
 
   SwerveJoystick joystickTeleCommand = new SwerveJoystick(
@@ -76,11 +77,11 @@ public class RobotContainer {
 
 
   public RobotContainer() {
-    configureMinimumViableControllerScheme();
     configureDriverShuffleboard();
     configureCommandsForTesting();
   }
 
+  
   private void configureMinimumViableControllerScheme() {
     drivetrain.setDefaultCommand(joystickTeleCommand);
     
@@ -155,8 +156,11 @@ public class RobotContainer {
 
   private void configureDriverShuffleboard() {
     ShuffleboardTab driverTab = Shuffleboard.getTab("Driver");
-    driverTab.add(autoChooser);
     setUpAutoChooser(autoChooser);
+    driverTab.add("Auto Chooser", autoChooser);
+
+    setUpControlSchemeChooser(controlSchemeChooser);
+    driverTab.add("Control Scheme Chooser", controlSchemeChooser);
 
     driverTab.addBoolean("Has Target To Aim", limelight::hasTarget);
     driverTab.add(CameraServer.startAutomaticCapture());
@@ -200,6 +204,18 @@ public class RobotContainer {
     autoChooser.addOption("Nothing", none());
   }
 
+  private void setUpControlSchemeChooser(SendableChooser<Runnable> controlSchemeChooser) { 
+    controlSchemeChooser.setDefaultOption("Minimum viable controller scheme", () -> {
+      CommandScheduler.getInstance().getActiveButtonLoop().clear();
+      configureMinimumViableControllerScheme();
+    });
+    
+    controlSchemeChooser.addOption("Direct power controller scheme", () -> {
+      CommandScheduler.getInstance().getActiveButtonLoop().clear();
+      configureDirectPowerControllerBindings();
+    });
+  }
+
   private void configureCommandsForTesting() {
     commandsForTesting.add("Aim with limelight", new AimWithLimelight(drivetrain, limelight));
     commandsForTesting.add("Fire into amp", new FireIntoAmp(intake, shooter, shooterLift, drivetrain, limelight));
@@ -232,5 +248,9 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
+  }
+
+  public Runnable getControlScheme() {
+    return controlSchemeChooser.getSelected();
   }
 }
