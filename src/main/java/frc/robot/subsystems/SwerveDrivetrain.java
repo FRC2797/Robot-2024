@@ -412,11 +412,11 @@ public class SwerveDrivetrain extends SubsystemBase
       }
 
       if (isBlueAlliance && isOnLongSide) {
-        return getResetOdometryForRotation(Degrees.of(-150));
+        return getResetOdometryForRotation(Degrees.of(-60));
       }
 
       if (isBlueAlliance && isOnShortSide) {
-        return getResetOdometryForRotation(Degrees.of(150));
+        return getResetOdometryForRotation(Degrees.of(60));
       }
 
       if(isRedAlliance && isMiddle) {
@@ -424,11 +424,11 @@ public class SwerveDrivetrain extends SubsystemBase
       }
 
       if (isRedAlliance && isOnLongSide) {
-        return getResetOdometryForRotation(Degrees.of(-30));
+        return getResetOdometryForRotation(Degrees.of(-120));
       }
 
       if (isRedAlliance && isOnShortSide) {
-        return getResetOdometryForRotation(Degrees.of(30));
+        return getResetOdometryForRotation(Degrees.of(120));
       }
 
       return getResetOdometryForRotation(Degrees.of(0));
