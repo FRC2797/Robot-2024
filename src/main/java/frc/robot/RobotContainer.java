@@ -198,7 +198,7 @@ public class RobotContainer {
         new FireNote(10, 4000, 4000, intake, shooter, shooterLift)
     );
 
-    autoChooser.setDefaultOption("Middle Auto", 
+    autoChooser.addOption("Middle Auto", 
       sequence(
         defer(() -> drivetrain.resetGyroAtBeginningOfMatch(DriverStation.getAlliance().get(), false, false), Set.of(drivetrain)),
         releaseLock.get(),
@@ -222,7 +222,7 @@ public class RobotContainer {
       defer(() -> drivetrain.resetGyroAtBeginningOfMatch(DriverStation.getAlliance().get(), true, false), Set.of(drivetrain))
     ));
 
-    autoChooser.addOption("Nothing", none());
+    autoChooser.setDefaultOption("Nothing", none());
   }
 
   private void setUpControlSchemeChooser(SendableChooser<Runnable> controlSchemeChooser) { 
