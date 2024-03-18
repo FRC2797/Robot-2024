@@ -226,7 +226,7 @@ public class RobotContainer {
   }
 
   private void setUpControlSchemeChooser(SendableChooser<Runnable> controlSchemeChooser) { 
-    controlSchemeChooser.setDefaultOption("Minimum viable controller scheme", () -> {
+    controlSchemeChooser.setDefaultOption("Regular controller scheme", () -> {
       CommandScheduler.getInstance().getActiveButtonLoop().clear();
       configureMinimumViableControllerScheme();
     });
