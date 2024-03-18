@@ -44,7 +44,6 @@ import frc.robot.commands.autos.SideAuto;
 import frc.robot.controllers.CommandJoystick;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.Navx;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterLift;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -52,7 +51,6 @@ import frc.robot.subsystems.Winch;
 
 
 public class RobotContainer {
-  Navx navx = new Navx();
   Limelight limelight = new Limelight();
   SwerveDrivetrain drivetrain = new SwerveDrivetrain(limelight);
   ShooterLift shooterLift = new ShooterLift();
@@ -69,7 +67,6 @@ public class RobotContainer {
 
   SwerveJoystick joystickTeleCommand = new SwerveJoystick(
     drivetrain,
-    navx,
     () -> controller.getLeftY() * -1,
     () -> controller.getLeftX() * -1,
     () -> controller.getRightX() * -1,

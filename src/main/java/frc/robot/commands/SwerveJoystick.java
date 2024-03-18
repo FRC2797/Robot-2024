@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.subsystems.Navx;
 import frc.robot.subsystems.SwerveDrivetrain;
 
 public class SwerveJoystick extends Command {
@@ -18,13 +17,10 @@ public class SwerveJoystick extends Command {
     private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction;
     private final Supplier<Boolean> fieldOrientedFunction;
     private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
-    private final Navx navx;
-
-    public SwerveJoystick(SwerveDrivetrain swerveDrivetrain, Navx navx,
+    public SwerveJoystick(SwerveDrivetrain swerveDrivetrain,
             Supplier<Double> xSpdFunction, Supplier<Double> ySpdFunction, Supplier<Double> turningSpdFunction,
             Supplier<Boolean> fieldOrientedFunction) {
         this.swerveDrivetrain = swerveDrivetrain;
-        this.navx = navx;
         this.xSpdFunction = xSpdFunction;
         this.ySpdFunction = ySpdFunction;
         this.turningSpdFunction = turningSpdFunction;
