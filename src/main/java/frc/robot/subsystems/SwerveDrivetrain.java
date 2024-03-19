@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.math.util.Units.degreesToRadians;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
@@ -19,6 +20,8 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -28,11 +31,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Distance;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -435,6 +439,18 @@ public class SwerveDrivetrain extends SubsystemBase
 
   private Command getResetOdometryForRotation(Measure<Angle> angle) {
     return runOnce(() -> resetOdometry(new Pose2d(new Translation2d(), new Rotation2d(angle))));
+  }
+
+
+  private static AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
+  public Measure<Distance> getSpeakerDistance() {
+    Translation2d speaker;
+    if (DriverStation.getAlliance().get() == Alliance.Blue) {
+      speaker = layout.getTagPose(7).get().getTranslation().toTranslation2d();
+    } else {
+      speaker = layout.getTagPose(4).get().getTranslation().toTranslation2d();
+    }
+    return Meters.of(getPose().getTranslation().getDistance(speaker));
   }
 
   /**
