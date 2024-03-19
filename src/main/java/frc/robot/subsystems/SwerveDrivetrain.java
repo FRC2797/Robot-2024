@@ -374,7 +374,7 @@ public class SwerveDrivetrain extends SubsystemBase
   @Override
   public void periodic()
   {
-    addLimelightReadingToOdometry();
+    // addLimelightReadingToOdometry();
   }
 
   @Override
