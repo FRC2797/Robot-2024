@@ -1,5 +1,8 @@
 package frc.robot;
 
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.util.InterpolatingTreeMap;
+
 public class Constants {
   public static boolean showNonessentialShuffleboardInfo = true;
   public static double kShooterLiftGearRatio = 50.8; 
@@ -34,6 +37,23 @@ public class Constants {
     public static final double kTeleDriveMaxAngularSpeedRadiansPerSecond = kPhysicalMaxAngularSpeedRadiansPerSecond;
     public static final double kTeleDriveMaxAccelerationUnitsPerSecond = 3;
     public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = 3;
+  }
+
+  public static final class speakerInterpolationConstants {
+    public static InterpolatingDoubleTreeMap getShooterLeft() {
+      InterpolatingDoubleTreeMap map = new InterpolatingDoubleTreeMap();
+      return map;
+    }
+
+    public static InterpolatingDoubleTreeMap getShooterRight() {
+      InterpolatingDoubleTreeMap map = new InterpolatingDoubleTreeMap();
+      return map;
+    }
+
+    public static InterpolatingDoubleTreeMap getLiftHeight() {
+      InterpolatingDoubleTreeMap map = new InterpolatingDoubleTreeMap();
+      return map;
+    }
   }
 
   public static final class OIConstants {
