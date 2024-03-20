@@ -92,7 +92,8 @@ public class SwerveDrivetrain extends SubsystemBase
     tab.add("Pathfind to BLUE_AMP", driveToPose(PosesToGoToPlaces.BLUE_AMP.value).withName("Pathfind to BLUE_AMP"));
     tab.add("Pathfind to RED_AMP", driveToPose(PosesToGoToPlaces.RED_AMP.value).withName("Pathfind to RED_AMP"));
     tab.add("Add limelight vision measurement", runOnce(this::addLimelightReadingToOdometry));
-    tab.add("Drive to face speaker", driveToFacePoint(PositionsToAim.BLUE_SPEAKER.value));
+    tab.add("Drive to face blue speaker", driveToFacePoint(PositionsToAim.BLUE_SPEAKER.value));
+    tab.add("Drive to face red speaker", driveToFacePoint(layout.getTagPose(4).get().getTranslation().toTranslation2d()));
 
     tab.add("Drive speed to 5 meters a second", run( () -> swerveDrive.drive(new ChassisSpeeds(MetersPerSecond.of(5), MetersPerSecond.of(0), RadiansPerSecond.of(0)))));
     tab.add("Drive speed to 1 meters a second", run( () -> swerveDrive.drive(new ChassisSpeeds(MetersPerSecond.of(1), MetersPerSecond.of(0), RadiansPerSecond.of(0)))));
