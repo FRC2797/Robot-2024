@@ -199,7 +199,7 @@ public class RobotContainer {
       sequence(
         defer(() -> drivetrain.resetGyroAtBeginningOfMatch(DriverStation.getAlliance().get(), false, false), Set.of(drivetrain)),
         releaseLock.get(),
-        deadline(liftGoToRest.get(), intake.intake(0.1).until(intake::noteIsIn)),
+        deadline(liftGoToRest.get(), intake.intake(0.1).until(intake::noteIsIn).andThen(intake.intake(0.1).withTimeout(1))),
         new FireNote(2, 2700, 2200, intake, shooter, shooterLift),
         deadline(
           intake.intakeUntilNoteIsIn(),
