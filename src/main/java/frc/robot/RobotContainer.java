@@ -111,7 +111,7 @@ public class RobotContainer {
     
     Command intakeIn = intake.getGoToPowerCommand(0.4);
     Command intakeOut = intake.getGoToPowerCommand(-0.4);
-    controller.x().whileTrue(intakeIn);
+    controller.x().toggleOnTrue(intake.intakeUntilNoteIsIn());
     controller.b().whileTrue(intakeOut);
 
     Command armUp = shooterLift.getGoToPowerCommand(Volts.of(12 * 0.2));
@@ -124,9 +124,7 @@ public class RobotContainer {
     controller.rightTrigger(0.01).whileTrue(analogShooter);
 
     controller.povUp().whileTrue(new FireNote(2, 2700 * compProportionalOffset, 2200 * compProportionalOffset, intake, shooter, shooterLift));
-    controller.povLeft().onTrue(runOnce(() -> shooterLift.unbrakeMotors(), shooterLift));
-    controller.povRight().onTrue(runOnce(() -> shooterLift.brakeMotors(), shooterLift));
-
+    controller.povLeft().whileTrue(new FireNote(10, 4000 * compProportionalOffset, 4000 * compProportionalOffset, intake, shooter, shooterLift));
     Supplier<Command> unbrakeThenBrakeShooterLift = () -> startEnd(shooterLift::unbrakeMotors, shooterLift::brakeMotors, shooterLift);
     
     // spool in
