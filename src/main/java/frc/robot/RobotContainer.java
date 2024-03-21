@@ -73,6 +73,8 @@ public class RobotContainer {
   );
 
 
+
+  Command intakeUntilNoteIsInSemiAuto = intake.intakeUntilNoteIsIn();
   public RobotContainer() {
     configureDriverShuffleboard();
     configureCommandsForTesting();
@@ -83,7 +85,9 @@ public class RobotContainer {
     
     Command intakeIn = intake.getGoToPowerCommand(0.4);
     Command intakeOut = intake.getGoToPowerCommand(-0.4);
-    controller.x().toggleOnTrue(intake.intakeUntilNoteIsIn());
+
+    controller.x().toggleOnTrue(intakeUntilNoteIsInSemiAuto);
+
     controller.b().whileTrue(intakeOut);
 
     Command armUp = shooterLift.getGoToPowerCommand(Volts.of(12 * 0.2));
@@ -164,6 +168,8 @@ public class RobotContainer {
 
     setUpControlSchemeChooser(controlSchemeChooser);
     driverTab.add("Control Scheme Chooser", controlSchemeChooser).withSize(2, 1).withPosition(4, 0);
+
+    driverTab.addBoolean("Intake is active", intakeUntilNoteIsInSemiAuto::isScheduled);
 
     driverTab.add(CameraServer.startAutomaticCapture()).withSize(12, 4).withPosition(0, 1);
   }
