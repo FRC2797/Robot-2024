@@ -82,7 +82,7 @@ public class RobotContainer {
   private void configureBenControllerScheme() {
     drivetrain.setDefaultCommand(joystickTeleCommand);
     
-    controller.rightTrigger().whileTrue(shooter.getGoToRPMCommand(2700, 2200));
+    controller.rightTrigger().whileTrue(shooter.getGoToRPMCommand(2700 * compProportionalOffset, 2200 * compProportionalOffset));
 
     controller.leftTrigger().onTrue(either(intake.intakeUntilNoteIsIn(), none(), () -> shooterLift.isFullyDown()));
     controller.leftTrigger().whileTrue(either(intake.intakeIntoShooter(), none(), () -> !shooterLift.isFullyDown()));
@@ -192,7 +192,7 @@ public class RobotContainer {
     Supplier<Command> sidewaysAuto = () -> sequence(
         releaseLock.get(),
         deadline(liftGoToRest.get(), intake.intake(0.1).until(intake::noteIsIn)),
-        new FireNote(10, 4000, 4000, intake, shooter, shooterLift)
+        new FireNote(10, 4000 * compProportionalOffset, 4000 * compProportionalOffset, intake, shooter, shooterLift)
     );
 
     autoChooser.addOption("Middle Auto", 
@@ -200,14 +200,14 @@ public class RobotContainer {
         defer(() -> drivetrain.resetGyroAtBeginningOfMatch(DriverStation.getAlliance().get(), false, false), Set.of(drivetrain)),
         releaseLock.get(),
         deadline(liftGoToRest.get(), intake.intake(0.1).until(intake::noteIsIn).andThen(intake.intake(0.1).withTimeout(1))),
-        new FireNote(2, 2700, 2200, intake, shooter, shooterLift),
+        new FireNote(2, 2700 * compProportionalOffset, 2200 * compProportionalOffset, intake, shooter, shooterLift),
         deadline(
           intake.intakeUntilNoteIsIn(),
           drivetrain.driveDistanceWithJustPID(inchesToMeters(48))
         ),
         drivetrain.driveDistanceWithJustPID(inchesToMeters(-41)),
         run(() -> drivetrain.drive(new ChassisSpeeds(-0.5, 0.0, 0.0)), drivetrain).withTimeout(0.5),
-        new FireNote(2, 2700, 2200 , intake, shooter, shooterLift)
+        new FireNote(2, 2700 * compProportionalOffset, 2200 * compProportionalOffset, intake, shooter, shooterLift)
       )  
     );
 
@@ -222,6 +222,7 @@ public class RobotContainer {
     autoChooser.setDefaultOption("Nothing", none());
   }
 
+  static final double compProportionalOffset = 0.95; 
   private void setUpControlSchemeChooser(SendableChooser<Runnable> controlSchemeChooser) { 
     controlSchemeChooser.setDefaultOption("Regular controller scheme", () -> {
       CommandScheduler.getInstance().getActiveButtonLoop().clear();
@@ -265,7 +266,8 @@ public class RobotContainer {
     commandsForTesting.add("Run sysid quasic static on right forward", shooter.sysIdQuasistaticForRight(SysIdRoutine.Direction.kForward));
     commandsForTesting.add("Run sysid quasic static on right backwards", shooter.sysIdQuasistaticForRight(SysIdRoutine.Direction.kReverse));
 
-    commandsForTesting.add("Fire side note ", new FireNote(20, 4500, 4500, intake, shooter, shooterLift));
+    commandsForTesting.add("Fire side note ", new FireNote(2, 4000 * compProportionalOffset, 4000 * compProportionalOffset, intake, shooter, shooterLift));
+    commandsForTesting.add("Fire middle ", new FireNote(2, 3100 * compProportionalOffset, 2200 * compProportionalOffset, intake, shooter, shooterLift));
     commandsForTesting.add(CommandScheduler.getInstance());
   }
 
