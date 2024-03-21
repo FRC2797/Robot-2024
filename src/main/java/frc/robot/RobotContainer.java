@@ -123,8 +123,7 @@ public class RobotContainer {
     Command analogShooter = runOnce(() -> shooter.enable()).andThen(run(() -> shooter.setSetpoint(maxShooterRPM * controller.getRightTriggerAxis()), shooter)).finallyDo(() -> shooter.disable());
     controller.rightTrigger(0.01).whileTrue(analogShooter);
 
-    Command shootWhenDirectlyUpAgainstSubwoofer = shooter.getGoToRPMCommand(2400);
-    controller.povUp().toggleOnTrue(shootWhenDirectlyUpAgainstSubwoofer);
+    controller.povUp().whileTrue(new FireNote(2, 2700 * compProportionalOffset, 2200 * compProportionalOffset, intake, shooter, shooterLift));
     controller.povLeft().onTrue(runOnce(() -> shooterLift.unbrakeMotors(), shooterLift));
     controller.povRight().onTrue(runOnce(() -> shooterLift.brakeMotors(), shooterLift));
 
@@ -178,12 +177,12 @@ public class RobotContainer {
   private void configureDriverShuffleboard() {
     ShuffleboardTab driverTab = Shuffleboard.getTab("Driver");
     setUpAutoChooser(autoChooser);
-    driverTab.add("Auto Chooser", autoChooser);
+    driverTab.add("Auto Chooser", autoChooser).withSize(2, 1).withPosition(0, 0);
 
     setUpControlSchemeChooser(controlSchemeChooser);
-    driverTab.add("Control Scheme Chooser", controlSchemeChooser);
+    driverTab.add("Control Scheme Chooser", controlSchemeChooser).withSize(2, 1).withPosition(4, 0);
 
-    driverTab.add(CameraServer.startAutomaticCapture());
+    driverTab.add(CameraServer.startAutomaticCapture()).withSize(12, 4).withPosition(0, 1);
   }
 
   private void setUpAutoChooser(SendableChooser<Command> autoChooser) {
