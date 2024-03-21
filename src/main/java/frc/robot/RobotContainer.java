@@ -87,6 +87,8 @@ public class RobotContainer {
     Command intakeOut = intake.getGoToPowerCommand(-0.4);
 
     controller.x().toggleOnTrue(intakeUntilNoteIsInSemiAuto);
+    controller.x().and(controller.leftTrigger()).whileTrue(intake.intake(0.4));
+    
 
     controller.b().whileTrue(intakeOut);
 
@@ -103,7 +105,7 @@ public class RobotContainer {
     controller.povUp().whileTrue(
       parallel(
         new FireNote(2, 2700 * compProportionalOffset, 2200 * compProportionalOffset, intake, shooter, shooterLift),
-        run(() -> drivetrain.drive(new ChassisSpeeds(0.5, 0, 0)), drivetrain).withTimeout(3)
+        run(() -> drivetrain.drive(new ChassisSpeeds(-0.5, 0, 0)), drivetrain).withTimeout(3)
       )
     );
 
@@ -111,7 +113,7 @@ public class RobotContainer {
     controller.povLeft().whileTrue(
       parallel(
         new FireNote(20, 4000 * compProportionalOffset, 4000 * compProportionalOffset, intake, shooter, shooterLift),
-        run(() -> drivetrain.drive(new ChassisSpeeds(0.5, 0, 0)), drivetrain).withTimeout(3)
+        run(() -> drivetrain.drive(new ChassisSpeeds(-0.5, 0, 0)), drivetrain).withTimeout(3)
       )
     );
     Supplier<Command> unbrakeThenBrakeShooterLift = () -> startEnd(shooterLift::unbrakeMotors, shooterLift::brakeMotors, shooterLift);
@@ -169,7 +171,7 @@ public class RobotContainer {
     setUpControlSchemeChooser(controlSchemeChooser);
     driverTab.add("Control Scheme Chooser", controlSchemeChooser).withSize(2, 1).withPosition(4, 0);
 
-    driverTab.addBoolean("Intake is active", intakeUntilNoteIsInSemiAuto::isScheduled);
+    driverTab.addBoolean("Intake is active", intakeUntilNoteIsInSemiAuto::isScheduled).withPosition(6, 0);
 
     driverTab.add(CameraServer.startAutomaticCapture()).withSize(12, 4).withPosition(0, 1);
   }
