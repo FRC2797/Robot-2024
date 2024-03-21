@@ -52,7 +52,6 @@ public class Limelight {
   }
 
   public Limelight() {
-    Shuffleboard.getTab("Driver").addBoolean("Has Target", this::hasTarget);
     tab.addDouble("horizontal offset", this::getHorizontalOffset);
     tab.addBoolean("Has Target", this::hasTarget);
     tab.addDouble("Distance", () -> getDistance().in(Inches));
