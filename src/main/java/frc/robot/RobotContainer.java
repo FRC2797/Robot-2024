@@ -181,8 +181,7 @@ public class RobotContainer {
         releaseLock.get(),
         deadline(liftGoToRest.get(), intake.intake(0.1).until(intake::noteIsIn)),
         // sideways
-        new FireNote(20, 4000 * compProportionalOffset, 4000 * compProportionalOffset, intake, shooter, shooterLift),
-        run(() -> drivetrain.driveFieldOriented(new ChassisSpeeds(3, 0, 0)), drivetrain).withTimeout(5)
+        new FireNote(20, 4000 * compProportionalOffset, 4000 * compProportionalOffset, intake, shooter, shooterLift)
     );
 
     autoChooser.addOption("Middle Auto", 
