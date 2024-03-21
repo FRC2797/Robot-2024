@@ -96,8 +96,11 @@ public class RobotContainer {
     Command analogShooter = runOnce(() -> shooter.enable()).andThen(run(() -> shooter.setSetpoint(maxShooterRPM * controller.getRightTriggerAxis()), shooter)).finallyDo(() -> shooter.disable());
     controller.rightTrigger(0.01).whileTrue(analogShooter);
 
+    // middle
     controller.povUp().whileTrue(new FireNote(2, 2700 * compProportionalOffset, 2200 * compProportionalOffset, intake, shooter, shooterLift));
-    controller.povLeft().whileTrue(new FireNote(10, 4000 * compProportionalOffset, 4000 * compProportionalOffset, intake, shooter, shooterLift));
+
+    // side
+    controller.povLeft().whileTrue(new FireNote(20, 4000 * compProportionalOffset, 4000 * compProportionalOffset, intake, shooter, shooterLift));
     Supplier<Command> unbrakeThenBrakeShooterLift = () -> startEnd(shooterLift::unbrakeMotors, shooterLift::brakeMotors, shooterLift);
     
     // spool in
@@ -162,7 +165,8 @@ public class RobotContainer {
     Supplier<Command> sidewaysAuto = () -> sequence(
         releaseLock.get(),
         deadline(liftGoToRest.get(), intake.intake(0.1).until(intake::noteIsIn)),
-        new FireNote(10, 4000 * compProportionalOffset, 4000 * compProportionalOffset, intake, shooter, shooterLift)
+        // sideways
+        new FireNote(20, 4000 * compProportionalOffset, 4000 * compProportionalOffset, intake, shooter, shooterLift)
     );
 
     autoChooser.addOption("Middle Auto", 
@@ -170,6 +174,7 @@ public class RobotContainer {
         defer(() -> drivetrain.resetGyroAtBeginningOfMatch(DriverStation.getAlliance().get(), false, false), Set.of(drivetrain)),
         releaseLock.get(),
         deadline(liftGoToRest.get(), intake.intake(0.1).until(intake::noteIsIn).andThen(intake.intake(0.1).withTimeout(1))),
+        // middle
         new FireNote(2, 2700 * compProportionalOffset, 2200 * compProportionalOffset, intake, shooter, shooterLift),
         deadline(
           intake.intakeUntilNoteIsIn(),
@@ -177,6 +182,7 @@ public class RobotContainer {
         ),
         drivetrain.driveDistanceWithJustPID(inchesToMeters(-41)),
         run(() -> drivetrain.drive(new ChassisSpeeds(-0.5, 0.0, 0.0)), drivetrain).withTimeout(0.5),
+        // middle
         new FireNote(2, 2700 * compProportionalOffset, 2200 * compProportionalOffset, intake, shooter, shooterLift)
       )  
     );
@@ -231,8 +237,11 @@ public class RobotContainer {
     commandsForTesting.add("Run sysid quasic static on right forward", shooter.sysIdQuasistaticForRight(SysIdRoutine.Direction.kForward));
     commandsForTesting.add("Run sysid quasic static on right backwards", shooter.sysIdQuasistaticForRight(SysIdRoutine.Direction.kReverse));
 
+    // side
     commandsForTesting.add("Fire side note ", new FireNote(2, 4000 * compProportionalOffset, 4000 * compProportionalOffset, intake, shooter, shooterLift));
-    commandsForTesting.add("Fire middle ", new FireNote(2, 3100 * compProportionalOffset, 2200 * compProportionalOffset, intake, shooter, shooterLift));
+    
+    // middle
+    commandsForTesting.add("Fire middle ", new FireNote(2, 2700 * compProportionalOffset, 2200 * compProportionalOffset, intake, shooter, shooterLift));
     commandsForTesting.add(CommandScheduler.getInstance());
   }
 
