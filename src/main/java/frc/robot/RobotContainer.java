@@ -126,8 +126,8 @@ public class RobotContainer {
     Supplier<Command> unbrakeThenBrakeShooterLiftWithoutShooterliftRequired = () -> startEnd(shooterLift::unbrakeMotors, shooterLift::brakeMotors);
     Command winchAndShooterDown = parallel(
       unbrakeThenBrakeShooterLiftWithoutShooterliftRequired.get(),
-      winch.getGoToPowerCommand(0.4),
-      shooterLift.getGoToPowerCommand(Volts.of(12 * -0.2))
+      winch.getGoToPowerCommand(0.8),
+      shooterLift.getGoToPowerCommand(Volts.of(12 * -0.8))
     );
 
     controller.povDown().whileTrue(winchAndShooterDown);
