@@ -10,7 +10,6 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.wpilibj2.command.Commands.deadline;
 import static edu.wpi.first.wpilibj2.command.Commands.defer;
-import static edu.wpi.first.wpilibj2.command.Commands.either;
 import static edu.wpi.first.wpilibj2.command.Commands.none;
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import static edu.wpi.first.wpilibj2.command.Commands.run;
@@ -97,10 +96,20 @@ public class RobotContainer {
     controller.rightTrigger(0.01).whileTrue(analogShooter);
 
     // middle
-    controller.povUp().whileTrue(new FireNote(2, 2700 * compProportionalOffset, 2200 * compProportionalOffset, intake, shooter, shooterLift));
+    controller.povUp().whileTrue(
+      parallel(
+        new FireNote(2, 2700 * compProportionalOffset, 2200 * compProportionalOffset, intake, shooter, shooterLift),
+        run(() -> drivetrain.drive(new ChassisSpeeds(0.5, 0, 0)), drivetrain).withTimeout(3)
+      )
+    );
 
     // side
-    controller.povLeft().whileTrue(new FireNote(20, 4000 * compProportionalOffset, 4000 * compProportionalOffset, intake, shooter, shooterLift));
+    controller.povLeft().whileTrue(
+      parallel(
+        new FireNote(20, 4000 * compProportionalOffset, 4000 * compProportionalOffset, intake, shooter, shooterLift),
+        run(() -> drivetrain.drive(new ChassisSpeeds(0.5, 0, 0)), drivetrain).withTimeout(3)
+      )
+    );
     Supplier<Command> unbrakeThenBrakeShooterLift = () -> startEnd(shooterLift::unbrakeMotors, shooterLift::brakeMotors, shooterLift);
     
     // spool in
